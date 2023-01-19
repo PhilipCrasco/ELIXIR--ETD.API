@@ -151,13 +151,20 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                               Uom = total.Key.Uom,
                               QuantityOrder = total.Key.QuantityOrdered,
                               IsActive = total.Key.IsActive,
-                              IsPrepared = total.Key.IsPrepared,
+                              IsPrepared = total.Key.IsPrepared, 
                               StockOnHand = total.Key.Reserve
 
                           });
 
             return await orders.ToListAsync();
 
+        }
+
+        public async Task<bool> GenerateNumber(GenerateOrderNo generate)
+        {
+            await _context.GenerateOrders.AddAsync(generate);
+
+            return true;
         }
 
 
@@ -173,21 +180,29 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             existingOrder.OrderNoPKey = orders.OrderNoPKey;
 
             return true;
-
         }
-
-        public async Task<bool> GenerateNumber(GenerateOrderNo generate)
+        public async Task<bool> EditQuantityOrder(Ordering orders)
         {
-            await _context.GenerateOrders.AddAsync(generate);
+            var existingOrder = await _context.Orders.Where(x => x.Id == orders.Id)
+                                                     .FirstOrDefaultAsync();
+
+            if (existingOrder == null)
+                return false;
+
+            existingOrder.QuantityOrdered = orders.QuantityOrdered;
 
             return true;
         }
+
+
+
+
+
 
         public Task<IReadOnlyList<OrderDto>> OrderSummary(string DateFrom, string DateTo)
         {
             throw new NotImplementedException();
         }
-
 
 
 
@@ -295,8 +310,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-      
-
-      
+  
     }
 }
