@@ -4,6 +4,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ELIXIRETD.DATA.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    partial class StoreContextModelSnapshot : ModelSnapshot
+    [Migration("20230120053622_createApprovePreparedDate")]
+    partial class createApprovePreparedDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,9 +112,6 @@ namespace ELIXIRETD.DATA.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("AddedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("ApprovedDate")
                         .HasColumnType("datetime2");
 
@@ -188,6 +187,9 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<decimal>("QuantityOrdered")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime?>("ReceivedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("RejectBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -196,9 +198,6 @@ namespace ELIXIRETD.DATA.Migrations
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("SyncDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("TimeNeeded")
                         .HasColumnType("nvarchar(max)");

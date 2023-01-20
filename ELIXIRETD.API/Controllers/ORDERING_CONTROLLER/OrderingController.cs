@@ -31,7 +31,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                 List<Ordering> DepartmentNotExist = new List<Ordering>();
                 List<Ordering> UomNotExist = new List<Ordering>();
                 List<Ordering> ItemCodesExist = new List<Ordering>();
-                List<Ordering> ItemCategoriesNotExist = new List<Ordering>();
                 List<Ordering> PreviousDateNeeded = new List<Ordering>();
 
 
@@ -45,7 +44,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                     var validateLocation = await _unitofwork.Orders.ValidateLocation(items.Location);
                     var validateDepartment = await _unitofwork.Orders.ValidateCustomerType(items.Department);
                     var validateItemCode = await _unitofwork.Orders.ValidateItemCode(items.ItemCode);
-                    var validateItemCateg = await _unitofwork.Orders.ValidateItemCategories(items.Category);
                     var validateUom = await _unitofwork.Orders.ValidateUom(items.Uom);
 
 
@@ -74,11 +72,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                     {
                         DepartmentNotExist.Add(items);
                     }
-                    else if(validateItemCateg == false)
-                    {
-                        ItemCategoriesNotExist.Add(items);
-                    }
-
                     else if (validateItemCode == false)
                     {
                         ItemCodesExist.Add(items);
@@ -104,13 +97,12 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                    LocationNotExist,
                    DepartmentNotExist,
                    ItemCodesExist,
-                   ItemCategoriesNotExist,
                    UomNotExist,
                    CustomerNameNotExist,
                    PreviousDateNeeded
                 };
 
-                if ( DuplicateList.Count == 0 && CompanyCodeNotExist.Count == 0  && CustomerNameNotExist.Count == 0 && LocationNotExist.Count == 0 && DepartmentNotExist.Count == 0 && ItemCategoriesNotExist.Count == 0 && ItemCodesExist.Count == 0 && UomNotExist.Count == 0 && PreviousDateNeeded.Count == 0 )
+                if ( DuplicateList.Count == 0 && CompanyCodeNotExist.Count == 0  && CustomerNameNotExist.Count == 0 && LocationNotExist.Count == 0 && DepartmentNotExist.Count == 0  && ItemCodesExist.Count == 0 && UomNotExist.Count == 0 && PreviousDateNeeded.Count == 0 )
                 {
                     await _unitofwork.CompleteAsync();
                     return Ok("Successfully Add!");
@@ -184,6 +176,54 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         }
 
         [HttpPut]
+        [Route("ReturnCancelledOrders")]
+        public async Task<IActionResult> ReturnCancelledOrders([FromBody] Ordering orders)
+        {
+            var validate = await _unitofwork.Orders.ReturnCancelOrdersInList(orders);
+
+            if (validate == false)
+                return BadRequest("Orders is not exist");
+
+            await _unitofwork.CompleteAsync();
+            return Ok("Succesfully Retrun Cancel Orders");
+        }
+
+
+        [HttpPut]
+        [Route("GetAllListofPrepared")]
+        public async Task<IActionResult> GetAlllistofPreparedSched ()
+        {
+            await _unitofwork.Orders.GetAllListPreparedDate();
+            await _unitofwork.CompleteAsync();
+
+            return new JsonResult("Sucessfully schedules ordered");
+        }
+
+        [HttpPut]
+        [Route("ApprovePreparedDate")]
+        public async Task<IActionResult> ApprovedpreparedDate (Ordering orders)
+        {
+            await _unitofwork.Orders.ApprovePreparedDate(orders);
+            await _unitofwork.CompleteAsync();
+
+            return new JsonResult("Successfully approved date!");
+        }
+
+        [HttpPut]
+        [Route("RejectPreparedDate")]
+        public async Task<IActionResult> Rejectdate(Ordering orders)
+        {
+            await _unitofwork.Orders.RejectPreparedDate(orders);
+            await _unitofwork.CompleteAsync();
+
+            return new JsonResult("Successfully reject prepared date!");
+        }
+
+
+
+
+
+        [HttpPut]
         [Route("EditOrderQuantity")]
         public async Task<IActionResult> EditOrderQuantity([FromBody] Ordering order)
         {
@@ -192,6 +232,34 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
             return new JsonResult("Successfully edit Order Quantity");
         }
+
+
+
+
+        [HttpPut]
+        [Route("CancelOrders")]
+        public async Task<IActionResult> Cancelorders ([FromBody]Ordering orders)
+        {
+            var existing = await _unitofwork.Orders.CancelOrders(orders);
+
+            if (existing == false)
+                return BadRequest("Order ID is not existing");
+
+          
+            await _unitofwork.CompleteAsync();
+            return Ok("successfully cancel orders");
+
+        }
+
+        [HttpGet]
+        [Route("GetAllListOfCancelledOrders")]
+        public async Task<IActionResult> GetAllListOfCancelledOrders()
+        {
+            var orders = await _unitofwork.Orders.GetAllListOfCancelOrders();
+            return Ok(orders);
+        }
+
+
             
            
 

@@ -13,9 +13,25 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<bool> SchedulePreparedDate(Ordering orders);
         Task<bool> GenerateNumber(GenerateOrderNo generate);
         Task<bool> EditQuantityOrder(Ordering orders);
+        Task<IReadOnlyList<OrderDto>> GetAllListPreparedDate();
+        Task <bool> ApprovePreparedDate(Ordering orders);
+        Task<bool> RejectPreparedDate(Ordering orders);
+        Task<IReadOnlyList<OrderDto>> GetAllListOfCancelOrders();
+        Task<bool> ReturnCancelOrdersInList( Ordering orders);
 
 
-        
+
+
+       
+            
+
+
+
+        Task<bool> CancelOrders(Ordering orders);
+
+
+
+     
         Task<bool> ValidateExistOrderandItemCode(int TransactId, string ItemCode);
         Task<bool> ValidateDateNeeded(Ordering orders);
         Task<bool> ValidateCompanyCode(string CompanyCode);
@@ -24,7 +40,7 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<bool> ValidateCustomerType(string Department);
         Task<bool> ValidateUom(string Uom);
         Task<bool> ValidateItemCode (string ItemCode);
-        Task<bool> ValidateItemCategories(string Itemcateg);
+       
 
 
 

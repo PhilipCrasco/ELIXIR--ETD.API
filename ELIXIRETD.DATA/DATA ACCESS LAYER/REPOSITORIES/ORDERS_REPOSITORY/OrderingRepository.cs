@@ -5,6 +5,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 {
@@ -181,6 +182,69 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             return true;
         }
+        public async Task<IReadOnlyList<OrderDto>> GetAllListPreparedDate()
+        {
+            var orders = _context.Orders.Select(x => new OrderDto
+            {
+                Id = x.Id,
+
+                CustomerName = x.CustomerName,
+                Category = x.Category,
+                QuantityOrder = x.QuantityOrdered,
+                OrderDate = x.OrderDate.ToString("MM/dd/yyyy"),
+                DateNeeded = x.DateNeeded.ToString("MM/dd/yyyy"),
+                PreparedDate = x.PreparedDate.ToString(),
+                IsApproved = x.IsApproved != null
+
+            }) ;
+            return await orders.Where(x => x.IsApproved  != true)
+                                        .ToListAsync();
+
+        }
+
+        public async Task<bool> ApprovePreparedDate(Ordering orders)
+        {
+            var order = await _context.Orders.Where(x => x.OrderNoPKey == orders.OrderNoPKey)
+                                             .Where(x => x.IsActive == true)
+                                             .ToListAsync() ;
+
+            foreach(var items in order)
+            {
+                items.IsApproved = true;
+                items.ApprovedDate = DateTime.Now;
+                items.RejectBy = null;
+                items.RejectedDate = null;
+                items.Remarks = null;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> RejectPreparedDate(Ordering orders)
+        {
+            var order = await _context.Orders.Where(x => x.OrderNoPKey == orders.OrderNoPKey)
+                                             .Where(x => x.IsActive == true)
+                                             .ToListAsync();
+            foreach (var items in order)
+            {
+                items.IsReject = true;
+                items.RejectBy = orders.RejectBy;
+                items.IsActive = true;
+                items.Remarks = orders.Remarks;
+                items.RejectedDate = DateTime.Now;
+                items.PreparedDate = null;
+                items.OrderNoPKey = 0;
+               
+            }
+
+            return true;
+        }
+
+
+
+
+
+
         public async Task<bool> EditQuantityOrder(Ordering orders)
         {
             var existingOrder = await _context.Orders.Where(x => x.Id == orders.Id)
@@ -194,14 +258,105 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-
-
-
-
-
-        public Task<IReadOnlyList<OrderDto>> OrderSummary(string DateFrom, string DateTo)
+        public async Task<bool> CancelOrders(Ordering orders)
         {
-            throw new NotImplementedException();
+            var existing = await _context.Orders.Where(x => x.Id == orders.Id)
+                                                 .Where(x => x.IsActive == true)
+                                                 .FirstOrDefaultAsync();
+
+            if(existing == null) 
+                return false;
+
+            existing.IsActive = false;
+            existing.IsCancelBy = orders.IsCancelBy;
+            existing.IsCancel = true;
+            existing.CancelDate = DateTime.Now;
+            existing.Remarks = orders.Remarks;
+
+            return true;
+        }
+
+        public async  Task<IReadOnlyList<OrderDto>> GetAllListOfCancelOrders()
+        {
+            var cancelled = _context.Orders.Where(x => x.CancelDate != null)
+                                           .Where(x => x.IsActive == false)
+                                           .Where(x => x.IsCancelBy != null)
+                                           .Select(x => new OrderDto
+                                           {
+                                               Id = x.Id,
+                                               CustomerName = x.CustomerName,
+                                               Category = x.Category,
+                                               QuantityOrder = x.QuantityOrdered,
+                                               OrderDate = x.OrderDate.ToString("MM/dd/yyyy"),
+                                               DateNeeded= x.DateNeeded.ToString("MM/dd/yyyy"),
+                                               PreparedDate = x.PreparedDate.ToString(),
+                                               CancelDate = x.CancelDate.ToString(),
+                                               CancelBy = x.IsCancelBy
+
+
+
+                                           });
+            return await cancelled.ToListAsync();
+        }
+        public async  Task<bool> ReturnCancelOrdersInList(Ordering orders)
+        {
+            var existing = await _context.Orders.Where(x => x.Id == orders.Id)
+                                                .Where(x => x.IsActive == false)
+                                                .FirstOrDefaultAsync();
+
+            if (existing == null)
+                return false;
+
+            existing.IsActive = true;
+            existing.IsCancelBy = null;
+            existing.IsCancel = null;
+            existing.Remarks= null;
+            existing.CancelDate = null;
+
+            return true;
+        }
+
+
+
+
+
+        public async Task<IReadOnlyList<OrderDto>> OrderSummary(string DateFrom, string DateTo)
+        {
+            //var totalRemaining = _context.WarehouseReceived.Where(x => x.IsActive == true)
+            //                                               .GroupBy(x => new
+            //                                               {
+            //                                                   x.ItemCode
+
+            //                                               }).Select (x => new WarehouseInventory
+            //                                               {
+            //                                                   WarehouseId = x.Key
+
+            //                                               }) ;
+            var order = _context.Orders.Where(x => x.IsActive == false)
+                                       .Select (x => new  OrderDto
+                                       {
+
+                                       });
+
+            return await order.ToListAsync();              
+                                   
+                                                          
+                                                             
+     
+            //var totalorders = _context.Orders.GroupBy(x => new
+            //{
+            //    x.ItemCode,
+            //    x.IsPrepared,
+            //    x.IsActive
+
+            //}).Select(x => new OrderDto
+            //{
+            //    ItemCode = x.Key.ItemCode,
+            //    TotalOrders = x.Sum(x => x.QuantityOrdered),
+            //    IsPrepared = x.Key.IsPrepared
+
+            //}).Where(x => x.IsPrepared == false);
+
         }
 
 
@@ -299,17 +454,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-        public async Task<bool> ValidateItemCategories(string Itemcateg)
-        {
-            var validate = await _context.ItemCategories.Where(x => x.ItemCategoryName == Itemcateg)
-                                             .Where(x => x.IsActive == true)
-                                             .FirstOrDefaultAsync();
-            if (validate == null)
-                return false;
-
-            return true;
-        }
-
-  
+       
     }
 }

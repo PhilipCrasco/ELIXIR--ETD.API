@@ -41,17 +41,19 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL
 
         public bool? IsReject { get; set; }
 
+        public string RejectBy { get; set; }
+
         public DateTime? RejectedDate { get ; set; }
         public bool IsPrepared { get; set; }
         public bool? IsCancel { get; set; }
         public string IsCancelBy { get; set; }
         public DateTime? CancelDate { get; set; }
-
+        public string AddedBy { get; set; }
         public string Remarks { get; set; }
         public int OrderNoPKey { get; set; }
         public bool IsMove { get; set; }
         public string DeliveryStatus { get; set; }
-        public DateTime? ReceivedDate { get; set; }
+        public DateTime? SyncDate { get; set; }
 
     }
 }
