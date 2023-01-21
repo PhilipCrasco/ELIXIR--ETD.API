@@ -117,6 +117,8 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return new JsonResult("Something went Wrong!") { StatusCode = 500 };
         }
 
+        //Prepared Schedule
+
         [HttpGet]
         [Route("GetAllListofOrdersPagination")]
         public async Task<ActionResult<IEnumerable<OrderDto>>> GetAlllistofOrdersPagination([FromQuery] UserParams userParams)
@@ -176,6 +178,33 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         }
 
         [HttpPut]
+        [Route("EditOrderQuantity")]
+        public async Task<IActionResult> EditOrderQuantity([FromBody] Ordering order)
+        {
+            await _unitofwork.Orders.EditQuantityOrder(order);
+            await _unitofwork.CompleteAsync();
+
+            return new JsonResult("Successfully edit Order Quantity");
+        }
+
+
+        [HttpPut]
+        [Route("CancelOrders")]
+        public async Task<IActionResult> Cancelorders([FromBody] Ordering orders)
+        {
+            var existing = await _unitofwork.Orders.CancelOrders(orders);
+
+            if (existing == false)
+                return BadRequest("Order ID is not existing");
+
+
+            await _unitofwork.CompleteAsync();
+            return Ok("successfully cancel orders");
+        }
+
+
+
+        [HttpPut]
         [Route("ReturnCancelledOrders")]
         public async Task<IActionResult> ReturnCancelledOrders([FromBody] Ordering orders)
         {
@@ -187,6 +216,18 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             await _unitofwork.CompleteAsync();
             return Ok("Succesfully Retrun Cancel Orders");
         }
+
+
+        [HttpGet]
+        [Route("GetAllListOfCancelledOrders")]
+        public async Task<IActionResult> GetAllListOfCancelledOrders()
+        {
+            var orders = await _unitofwork.Orders.GetAllListOfCancelOrders();
+            return Ok(orders);
+        }
+        
+        //Prepared Ordering
+
 
 
         [HttpPut]
@@ -219,49 +260,17 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return new JsonResult("Successfully reject prepared date!");
         }
 
-
-
-
-
-        [HttpPut]
-        [Route("EditOrderQuantity")]
-        public async Task<IActionResult> EditOrderQuantity([FromBody] Ordering order)
-        {
-            await _unitofwork.Orders.EditQuantityOrder(order);
-            await _unitofwork.CompleteAsync();
-
-            return new JsonResult("Successfully edit Order Quantity");
-        }
-
-
-
-
-        [HttpPut]
-        [Route("CancelOrders")]
-        public async Task<IActionResult> Cancelorders ([FromBody]Ordering orders)
-        {
-            var existing = await _unitofwork.Orders.CancelOrders(orders);
-
-            if (existing == false)
-                return BadRequest("Order ID is not existing");
-
-          
-            await _unitofwork.CompleteAsync();
-            return Ok("successfully cancel orders");
-
-        }
-
         [HttpGet]
-        [Route("GetAllListOfCancelledOrders")]
-        public async Task<IActionResult> GetAllListOfCancelledOrders()
+        [Route("OrderSummary")]
+
+        public async Task<IActionResult> Ordersummary([FromQuery] string DateFrom , [FromQuery] string DateTo)
         {
-            var orders = await _unitofwork.Orders.GetAllListOfCancelOrders();
+            var orders = await _unitofwork.Orders.OrderSummary(DateFrom, DateTo);
             return Ok(orders);
+
         }
 
 
-            
-           
 
 
 

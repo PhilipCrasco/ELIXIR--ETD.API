@@ -240,11 +240,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-
-
-
-
-
         public async Task<bool> EditQuantityOrder(Ordering orders)
         {
             var existingOrder = await _context.Orders.Where(x => x.Id == orders.Id)
@@ -316,46 +311,89 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-
-
-
-
         public async Task<IReadOnlyList<OrderDto>> OrderSummary(string DateFrom, string DateTo)
         {
-            //var totalRemaining = _context.WarehouseReceived.Where(x => x.IsActive == true)
-            //                                               .GroupBy(x => new
-            //                                               {
-            //                                                   x.ItemCode
 
-            //                                               }).Select (x => new WarehouseInventory
-            //                                               {
-            //                                                   WarehouseId = x.Key
+            var Totalramaining = _context.WarehouseReceived.GroupBy(x => new
+            {
+                x.ItemCode,
+                x.ItemDescription,
+                x.ActualDelivered
 
-            //                                               }) ;
-            var order = _context.Orders.Where(x => x.IsActive == false)
-                                       .Select (x => new  OrderDto
-                                       {
+            }).Select(x => new ItemStocksDto
+            {
+                ItemCode = x.Key.ItemCode,
+                ItemDescription = x.Key.ItemDescription,
+                Remaining = x.Key.ActualDelivered
+            });
 
-                                       });
 
-            return await order.ToListAsync();              
-                                   
-                                                          
-                                                             
-     
-            //var totalorders = _context.Orders.GroupBy(x => new
-            //{
-            //    x.ItemCode,
-            //    x.IsPrepared,
-            //    x.IsActive
+            var totalOrders = _context.Orders.GroupBy(x => new
+            {
+                x.ItemCode,
+                x.IsPrepared,
+                x.IsActive
 
-            //}).Select(x => new OrderDto
-            //{
-            //    ItemCode = x.Key.ItemCode,
-            //    TotalOrders = x.Sum(x => x.QuantityOrdered),
-            //    IsPrepared = x.Key.IsPrepared
+            }).Select(x => new OrderDto
+            {
+                ItemCode = x.Key.ItemCode,
+                TotalOrders = x.Sum(x => x.QuantityOrdered),
+                IsPrepared = x.Key.IsPrepared
 
-            //}).Where(x => x.IsPrepared == false);
+
+            }).Where(x => x.IsPrepared == false);
+
+            var orders = (from ordering in _context.Orders
+                          where ordering.OrderDate >= DateTime.Parse(DateFrom) && ordering.OrderDate <= DateTime.Parse(DateTo)
+                          join warehouse in Totalramaining
+                          on ordering.ItemCode equals warehouse.ItemCode
+                          into leftJ
+
+
+                          from warehouse in leftJ.DefaultIfEmpty()
+
+                          group warehouse by new
+                          {
+                              ordering.Id,
+                              ordering.OrderDate,
+                              ordering.DateNeeded,
+                              ordering.CustomerName,
+                              ordering.Department,
+                              ordering.Category,
+                              ordering.ItemCode,
+                              ordering.ItemdDescription,
+                              ordering.Uom,
+                              ordering.QuantityOrdered,
+                              ordering.IsActive,
+                              ordering.IsPrepared,
+                              ordering.PreparedDate,
+                              ordering.IsApproved
+
+                          } into total
+
+                          select new OrderDto
+                          {
+                              Id = total.Key.Id,
+                              OrderDate = total.Key.OrderDate.ToString("MM/dd/yyyy"),
+                              DateNeeded = total.Key.DateNeeded.ToString("MM/dd/yyyy"),
+                              CustomerName = total.Key.CustomerName,
+                              Department = total.Key.Department,
+                              Category = total.Key.Category,
+                              ItemCode = total.Key.ItemCode,
+                              ItemDescription = total.Key.ItemdDescription,
+                              Uom= total.Key.Uom,
+                              QuantityOrder = total.Key.QuantityOrdered,
+                              IsActive = total.Key.IsActive,
+                              IsPrepared  = total.Key.IsPrepared,
+                              StockOnHand = total.Sum(x => x.Remaining),
+                              Difference = total.Sum(x => x.Remaining) - total.Key.QuantityOrdered,
+                              PreparedDate = total.Key.PreparedDate.ToString(),
+                              IsApproved = total.Key.IsApproved != null
+
+
+                          });
+
+            return await orders.ToListAsync();
 
         }
 
