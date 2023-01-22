@@ -3,6 +3,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.EXTENSIONS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
+using System.Net.WebSockets;
 
 namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 {
@@ -240,6 +241,27 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return new JsonResult("Sucessfully schedules ordered");
         }
 
+        [HttpGet]
+        [Route("GetAllListForApprovalOfSchedule")]
+        public async Task<IActionResult> GetAllListforApprovalOfSchedule()
+        {
+            var orders = await _unitofwork.Orders.GetAllListForApprovalOfSchedule();
+            return Ok(orders);
+        }
+
+        [HttpGet]
+        [Route("GetAllOrdersForScheduleApproval")]
+
+        public async Task<IActionResult> GetallOrdersForScheduleApproval ([FromQuery]int id)
+        {
+            var orders = await _unitofwork.Orders.GetAllOrdersForScheduleApproval(id);
+
+            return Ok(orders);
+
+        }
+
+
+
         [HttpPut]
         [Route("ApprovePreparedDate")]
         public async Task<IActionResult> ApprovedpreparedDate (Ordering orders)
@@ -260,6 +282,17 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return new JsonResult("Successfully reject prepared date!");
         }
 
+
+
+        [HttpGet]
+        [Route("DetailedListOfOrders")]
+        public async Task<IActionResult> DetailedListofOrders([FromQuery]string customer)
+        {
+            var orders = await _unitofwork.Orders.DetailedListOfOrders(customer);
+            return Ok(orders);
+        }
+
+
         [HttpGet]
         [Route("OrderSummary")]
 
@@ -269,6 +302,17 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return Ok(orders);
 
         }
+
+        [HttpGet]
+        [Route("GetAllApprovedOrdersForCalendar")]
+        public async Task<IActionResult> GetallApprovedOrdersforCalendar ()
+        {
+            var orders = await _unitofwork.Orders.GetAllApprovedOrdersForCalendar();
+            return Ok(orders);
+
+        }
+
+
 
 
 

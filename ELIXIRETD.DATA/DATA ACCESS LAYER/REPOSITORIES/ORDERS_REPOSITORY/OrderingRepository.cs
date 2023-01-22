@@ -6,6 +6,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
+using System.Runtime.InteropServices;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 {
@@ -33,6 +34,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
           
         }
+
+        //Schedule Prepare
+
         public async Task<PagedList<OrderDto>> GetAllListofOrdersPagination(UserParams userParams)
         {
             var orders = _context.Orders.OrderBy(x => x.OrderDate)
@@ -182,63 +186,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             return true;
         }
-        public async Task<IReadOnlyList<OrderDto>> GetAllListPreparedDate()
-        {
-            var orders = _context.Orders.Select(x => new OrderDto
-            {
-                Id = x.Id,
-
-                CustomerName = x.CustomerName,
-                Category = x.Category,
-                QuantityOrder = x.QuantityOrdered,
-                OrderDate = x.OrderDate.ToString("MM/dd/yyyy"),
-                DateNeeded = x.DateNeeded.ToString("MM/dd/yyyy"),
-                PreparedDate = x.PreparedDate.ToString(),
-                IsApproved = x.IsApproved != null
-
-            }) ;
-            return await orders.Where(x => x.IsApproved  != true)
-                                        .ToListAsync();
-
-        }
-
-        public async Task<bool> ApprovePreparedDate(Ordering orders)
-        {
-            var order = await _context.Orders.Where(x => x.OrderNoPKey == orders.OrderNoPKey)
-                                             .Where(x => x.IsActive == true)
-                                             .ToListAsync() ;
-
-            foreach(var items in order)
-            {
-                items.IsApproved = true;
-                items.ApprovedDate = DateTime.Now;
-                items.RejectBy = null;
-                items.RejectedDate = null;
-                items.Remarks = null;
-            }
-
-            return true;
-        }
-
-        public async Task<bool> RejectPreparedDate(Ordering orders)
-        {
-            var order = await _context.Orders.Where(x => x.OrderNoPKey == orders.OrderNoPKey)
-                                             .Where(x => x.IsActive == true)
-                                             .ToListAsync();
-            foreach (var items in order)
-            {
-                items.IsReject = true;
-                items.RejectBy = orders.RejectBy;
-                items.IsActive = true;
-                items.Remarks = orders.Remarks;
-                items.RejectedDate = DateTime.Now;
-                items.PreparedDate = null;
-                items.OrderNoPKey = 0;
-               
-            }
-
-            return true;
-        }
 
         public async Task<bool> EditQuantityOrder(Ordering orders)
         {
@@ -310,6 +257,128 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             return true;
         }
+
+        // Preparation
+
+
+
+        public async Task<IReadOnlyList<OrderDto>> GetAllListPreparedDate()
+        {
+            var orders = _context.Orders.Select(x => new OrderDto
+            {
+                Id = x.Id,
+
+                CustomerName = x.CustomerName,
+                Category = x.Category,
+                QuantityOrder = x.QuantityOrdered,
+                OrderDate = x.OrderDate.ToString("MM/dd/yyyy"),
+                DateNeeded = x.DateNeeded.ToString("MM/dd/yyyy"),
+                PreparedDate = x.PreparedDate.ToString(),
+                IsApproved = x.IsApproved != null
+
+            });
+            return await orders.Where(x => x.IsApproved != true)
+                                        .ToListAsync();
+
+        }
+        public async  Task<IReadOnlyList<OrderDto>> GetAllListForApprovalOfSchedule()
+        {
+            var orders = _context.Orders.GroupBy(x => new
+            {
+                x.OrderNoPKey,
+                x.CustomerName,
+                x.Company,
+                x.Department,
+                x.PreparedDate,
+                x.IsApproved,
+                x.IsActive
+
+            }).Where(x => x.Key.IsApproved == null)
+              .Where(x => x.Key.PreparedDate != null)
+              .Where(x => x.Key.IsActive == true)
+              .Select(x => new OrderDto
+              {
+                  OrderNo =x.Key.OrderNoPKey,
+                  CustomerName = x.Key.CustomerName,
+                  Department = x.Key.Department,
+                  Category = x.Key.Company,
+                  TotalOrders = x.Sum(x => x.QuantityOrdered),
+                  PreparedDate = x.Key.PreparedDate.ToString()
+                  
+              });
+
+            return await orders.ToListAsync();
+
+        }
+
+        public async Task<IReadOnlyList<OrderDto>> GetAllOrdersForScheduleApproval(int Id)
+        {
+            var orders = _context.Orders.OrderBy(x => x.PreparedDate)
+                                        .Where(x => x.OrderNo == Id)
+                                        .Where(x => x.IsApproved == false)
+                                        .Select(x => new OrderDto
+                                        {
+
+                                            OrderNo = x.OrderNoPKey,
+                                            OrderDate = x.OrderDate.ToString("MM/dd/yyyy"),
+                                            DateNeeded = x.DateNeeded.ToString("MM/dd/yyyy"),
+                                            CustomerName = x.CustomerName,
+                                            Department = x.Department,
+                                            ItemCode = x.ItemCode,
+                                            ItemDescription = x.ItemdDescription,
+                                            Uom = x.Uom,
+                                            QuantityOrder = x.QuantityOrdered,
+                                            IsApproved = x.IsApproved != null
+
+                                        });
+
+            return await orders.ToListAsync();
+
+
+        }
+
+
+
+        public async Task<bool> ApprovePreparedDate(Ordering orders)
+        {
+            var order = await _context.Orders.Where(x => x.OrderNoPKey == orders.OrderNoPKey)
+                                             .Where(x => x.IsActive == true)
+                                             .ToListAsync();
+
+            foreach (var items in order)
+            {
+                items.IsApproved = true;
+                items.ApprovedDate = DateTime.Now;
+                items.RejectBy = null;
+                items.RejectedDate = null;
+                items.Remarks = null;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> RejectPreparedDate(Ordering orders)
+        {
+            var order = await _context.Orders.Where(x => x.OrderNoPKey == orders.OrderNoPKey)
+                                             .Where(x => x.IsActive == true)
+                                             .ToListAsync();
+            foreach (var items in order)
+            {
+                items.IsReject = true;
+                items.RejectBy = orders.RejectBy;
+                items.IsActive = true;
+                items.Remarks = orders.Remarks;
+                items.RejectedDate = DateTime.Now;
+                items.PreparedDate = null;
+                items.OrderNoPKey = 0;
+
+            }
+
+            return true;
+        }
+
+
+
 
         public async Task<IReadOnlyList<OrderDto>> OrderSummary(string DateFrom, string DateTo)
         {
@@ -394,8 +463,65 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                           });
 
             return await orders.ToListAsync();
+        }
+
+        public async Task<IReadOnlyList<OrderDto>> DetailedListOfOrders( string customer)
+        {
+            var orders = _context.Orders.Where(x => x.CustomerName == customer)
+                                        .Select(x => new OrderDto
+                                        {
+                                            OrderDate = x.OrderDate.ToString("MM/dd/yyyy"),
+                                            DateNeeded = x.DateNeeded.ToString("MM/dd/yyyy"),
+                                            CustomerName = x.CustomerName,
+                                            Department = x.Department,
+                                            ItemCode = x.ItemCode,
+                                            ItemDescription = x.ItemdDescription,
+                                            Uom = x.Uom,
+                                            QuantityOrder  = x.QuantityOrdered
+
+                                        });
+            return await orders.ToListAsync();
 
         }
+        public async Task<IReadOnlyList<OrderDto>> GetAllApprovedOrdersForCalendar()
+        {
+            var orders = _context.Orders.GroupBy(x => new
+            {
+                x.OrderNoPKey,
+                x.CustomerName,
+                x.Company,
+                x.Department,
+                x.PreparedDate,
+                x.IsApproved,
+                x.IsMove,
+                x.IsReject,
+                x.Remarks
+
+            }).Where(x => x.Key.IsApproved == true)
+              .Where(x => x.Key.PreparedDate != null)
+              .Where(x => x.Key.IsMove == false)
+
+              .Select(x => new OrderDto
+              {
+
+                  Id = x.Key.OrderNoPKey,
+                  CustomerName = x.Key.CustomerName,
+                  Company = x.Key.Company,
+                  Category = x.Key.Department,
+                  TotalOrders = x.Sum(x => x.QuantityOrdered),
+                  PreparedDate = x.Key.PreparedDate.ToString(),
+                  IsMove = x.Key.IsMove,
+                  IsReject = x.Key.IsReject != null,
+                  Remarks = x.Key.Remarks
+
+
+              });
+
+            return await orders.ToListAsync();
+
+        }
+
+
 
 
 
