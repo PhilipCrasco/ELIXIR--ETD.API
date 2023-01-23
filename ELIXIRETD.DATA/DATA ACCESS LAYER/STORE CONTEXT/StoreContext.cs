@@ -41,6 +41,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT
 
         public virtual DbSet<Ordering> Orders { get; set; }
         public virtual DbSet<GenerateOrderNo> GenerateOrders { get; set; }
+        public virtual DbSet<MoveOrder> MoveOrders { get; set; }
 
 
 

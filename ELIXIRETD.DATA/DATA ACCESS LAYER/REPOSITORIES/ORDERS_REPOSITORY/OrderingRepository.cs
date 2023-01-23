@@ -3,6 +3,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.INVENTORYDTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.SETUP_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
@@ -476,6 +477,34 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return await orders.ToListAsync();
 
         }
+        public async Task<OrderDto> GetMoveOrderDetailsForMoveOrder(int orderId)
+        {
+            var orders = _context.Orders.Select(x => new OrderDto
+            {
+                Id = x.Id,
+                OrderNo = x.OrderNoPKey,
+                CustomerName = x.CustomerName,
+                Department= x.Department,
+                Company = x.Company,
+                ItemDescription = x.ItemdDescription,
+                Uom = x.Uom,
+                QuantityOrder = x.QuantityOrdered,
+                Category = x.Category,
+                OrderDate = x.OrderDate.ToString("MM/dd/yyyy"),
+                DateNeeded = x.DateNeeded.ToString("MM/dd/yyyy"),
+                PreparedDate = x.PreparedDate.ToString()
+
+            });
+
+            return await orders.Where(x => x.Id == orderId)
+                               .FirstOrDefaultAsync();
+                                           
+        }
+
+
+
+
+
 
         //================================= Validation ==============================================================================
 

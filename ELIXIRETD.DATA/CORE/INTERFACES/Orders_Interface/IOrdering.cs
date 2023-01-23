@@ -21,15 +21,16 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<IReadOnlyList<OrderDto>> DetailedListOfOrders (string customer);
         Task<IReadOnlyList<OrderDto>> GetAllListForApprovalOfSchedule();
         Task<IReadOnlyList<OrderDto>> GetAllOrdersForScheduleApproval(int Id);
-
         Task<IReadOnlyList<OrderDto>> GetAllApprovedOrdersForCalendar();
-
-
         Task<bool> CancelOrders(Ordering orders);
+        Task<OrderDto> GetMoveOrderDetailsForMoveOrder(int orderId);
+        
 
 
 
-     
+
+
+
         Task<bool> ValidateExistOrderandItemCode(int TransactId, string ItemCode);
         Task<bool> ValidateDateNeeded(Ordering orders);
         Task<bool> ValidateCompanyCode(string CompanyCode);
