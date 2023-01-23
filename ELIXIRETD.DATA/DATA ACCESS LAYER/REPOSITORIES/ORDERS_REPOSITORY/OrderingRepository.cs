@@ -4,6 +4,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.X509Certificates;
 
@@ -485,6 +486,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 CustomerName = x.CustomerName,
                 Department= x.Department,
                 Company = x.Company,
+                ItemCode = x.ItemCode,
                 ItemDescription = x.ItemdDescription,
                 Uom = x.Uom,
                 QuantityOrder = x.QuantityOrdered,
@@ -494,6 +496,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 PreparedDate = x.PreparedDate.ToString()
 
             });
+
+            if(orders == null )
+                return null;
 
             return await orders.Where(x => x.Id == orderId)
                                .FirstOrDefaultAsync();
@@ -514,6 +519,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
 
         //================================= Validation ==============================================================================
+
+
+
 
         public async Task<bool> ValidateCompanyCode(string CompanyCode)
         {

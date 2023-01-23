@@ -292,6 +292,9 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         {
             var details = await _unitofwork.Orders.GetMoveOrderDetailsForMoveOrder(order.OrderNoPkey);
 
+            if (details == null)
+                return BadRequest("negats");
+
             order.OrderNoPkey = details.Id;
             order.OrderDate = Convert.ToDateTime(details.OrderDate);
             order.DateNeeded = Convert.ToDateTime(details.DateNeeded);
@@ -306,16 +309,14 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             order.IsActive = true;
             order.IsPrepared = true;
 
+            if (details == null)
+                return BadRequest("negats");
+
             await _unitofwork.Orders.PrepareItemForMoveOrder(order);
             await _unitofwork.CompleteAsync();
 
             return Ok(order);
         }
-
-
-
-
-
 
 
 
