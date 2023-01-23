@@ -21,7 +21,8 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         [Route("AddNewOrders")]
         public async Task<IActionResult> AddNewOrders([FromBody] Ordering[] order)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid != true )
+              return new JsonResult("Something went Wrong!") { StatusCode = 500 };
             {
                 
                 List<Ordering> DuplicateList = new List<Ordering>();
@@ -33,7 +34,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                 List<Ordering> UomNotExist = new List<Ordering>();
                 List<Ordering> ItemCodesExist = new List<Ordering>();
                 List<Ordering> PreviousDateNeeded = new List<Ordering>();
-
 
                 foreach (Ordering items in order)
                 {
@@ -47,12 +47,10 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                     var validateItemCode = await _unitofwork.Orders.ValidateItemCode(items.ItemCode);
                     var validateUom = await _unitofwork.Orders.ValidateUom(items.Uom);
 
-
                     if (validateOrderNoAndItemcode == true)
                     {
                         DuplicateList.Add(items);
                     }
-
                     else if (validateDateNeeded == false)
                     {
                         PreviousDateNeeded.Add(items);
@@ -84,9 +82,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                     }
                     else
                         AvailableImport.Add(items);
-
                     await _unitofwork.Orders.AddNewOrders(items);
-
 
                 }
 
@@ -108,17 +104,16 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                     await _unitofwork.CompleteAsync();
                     return Ok("Successfully Add!");
                 }
-
                 else
                 {
-
                     return BadRequest(resultList);
                 }
             }
-            return new JsonResult("Something went Wrong!") { StatusCode = 500 };
+           
         }
 
-        //Prepared Schedule
+
+        // ===================================== Prepared Schedule ============================================================
 
         [HttpGet]
         [Route("GetAllListofOrdersPagination")]
@@ -137,7 +132,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                 orders.TotalPages,
                 orders.HasNextPage,
                 orders.HasPreviousPage
-
             };
             
             return Ok(orderResult);
@@ -157,25 +151,17 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         public async Task<IActionResult> SchedulePreparedOrderedDate([FromBody] Ordering[] order)
         {
             var generate = new GenerateOrderNo();
-
             generate.IsActive = true;
 
             await _unitofwork.Orders.GenerateNumber(generate);
             await _unitofwork.CompleteAsync();
-
             foreach (Ordering items in order )
             {
                 items.OrderNoPKey = generate.Id;
-
                 await _unitofwork.Orders.SchedulePreparedDate(items);
-
-
             }
-
             await _unitofwork.CompleteAsync();
-
             return new JsonResult("Successfully schedule orders");
-
         }
 
         [HttpPut]
@@ -184,10 +170,8 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         {
             await _unitofwork.Orders.EditQuantityOrder(order);
             await _unitofwork.CompleteAsync();
-
             return new JsonResult("Successfully edit Order Quantity");
         }
-
 
         [HttpPut]
         [Route("CancelOrders")]
@@ -203,8 +187,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return Ok("successfully cancel orders");
         }
 
-
-
         [HttpPut]
         [Route("ReturnCancelledOrders")]
         public async Task<IActionResult> ReturnCancelledOrders([FromBody] Ordering orders)
@@ -218,7 +200,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return Ok("Succesfully Retrun Cancel Orders");
         }
 
-
         [HttpGet]
         [Route("GetAllListOfCancelledOrders")]
         public async Task<IActionResult> GetAllListOfCancelledOrders()
@@ -227,9 +208,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return Ok(orders);
         }
         
-        //Prepared Ordering
-
-
+        //============================= Prepared Ordering ===========================================================================
 
         [HttpPut]
         [Route("GetAllListofPrepared")]
@@ -260,8 +239,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         }
 
-
-
         [HttpPut]
         [Route("ApprovePreparedDate")]
         public async Task<IActionResult> ApprovedpreparedDate (Ordering orders)
@@ -281,8 +258,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
             return new JsonResult("Successfully reject prepared date!");
         }
-
-
 
         [HttpGet]
         [Route("DetailedListOfOrders")]
@@ -309,8 +284,8 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         {
             var orders = await _unitofwork.Orders.GetAllApprovedOrdersForCalendar();
             return Ok(orders);
-
         }
+
 
 
 
