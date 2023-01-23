@@ -3,12 +3,9 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.INVENTORYDTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
-using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.SETUP_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Immutable;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks.Dataflow;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 {
@@ -477,6 +474,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return await orders.ToListAsync();
 
         }
+// =========================================== MoveOrder ==============================================================================
+
         public async Task<OrderDto> GetMoveOrderDetailsForMoveOrder(int orderId)
         {
             var orders = _context.Orders.Select(x => new OrderDto
@@ -500,6 +499,14 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                .FirstOrDefaultAsync();
                                            
         }
+
+        public async Task<bool> PrepareItemForMoveOrder(MoveOrder orders)
+        {
+            await _context.MoveOrders.AddAsync(orders);
+             return true;
+
+        }
+
 
 
 

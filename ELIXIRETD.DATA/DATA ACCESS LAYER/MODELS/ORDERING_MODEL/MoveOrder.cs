@@ -12,6 +12,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL
         public string CustomerName { get; set; }
 
         public string ItemCode { get; set; }
+        public string ItemCategories { get; set; }
         public string Uom { get; set; }
 
         [Column (TypeName ="decimal(18,2)")]
@@ -37,6 +38,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL
         public DateTime? ApproveDateTempo { get; set; }
 
         public bool IsPrepared { get; set; }
+
+        public string PreparedBy { get; set; }
+        public DateTime ? PreparedDate { get; set; }
         public bool? IsCancel { get; set; }
         public string CancelBy { get; set; }
 

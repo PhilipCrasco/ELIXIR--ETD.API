@@ -286,7 +286,32 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return Ok(orders);
         }
 
-        
+        [HttpPost]
+        [Route("PrepareItemForMoveOrder")]
+        public async Task<IActionResult> PrepareItemforMoveOrder([FromBody] MoveOrder order)
+        {
+            var details = await _unitofwork.Orders.GetMoveOrderDetailsForMoveOrder(order.OrderNoPkey);
+
+            order.OrderNoPkey = details.Id;
+            order.OrderDate = Convert.ToDateTime(details.OrderDate);
+            order.DateNeeded = Convert.ToDateTime(details.DateNeeded);
+            order.PreparedDate = Convert.ToDateTime(details.PreparedDate);
+            order.CustomerName= details.CustomerName;
+            order.Department = details.Department;
+            order.Company = details.Company;
+            order.ItemCode = details.ItemCode;
+            order.ItemCategories = details.ItemDescription;
+            order.Uom = details.Uom; 
+            order.Category = details.Category;
+            order.IsActive = true;
+            order.IsPrepared = true;
+
+            await _unitofwork.Orders.PrepareItemForMoveOrder(order);
+            await _unitofwork.CompleteAsync();
+
+            return Ok(order);
+        }
+
 
 
 
