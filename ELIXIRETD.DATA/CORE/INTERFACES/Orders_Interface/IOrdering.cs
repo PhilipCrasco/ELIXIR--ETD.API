@@ -30,6 +30,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
 
         Task<PagedList<OrderDto>> GetAllListForMoveOrderPagination(UserParams userParams);
 
+        Task<IReadOnlyList<OrderDto>> TotalListOfApprovedPreparedDate(string customername);
+
 
 
         //============================ Validation ====================================================================

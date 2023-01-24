@@ -359,10 +359,20 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         [Route("GetAllListOfOrdersForMoveOrder")]
         public async Task<IActionResult> GetAllListOfOrdersForMoveOrder([FromQuery] int id)
         {
-
             var orders = await _unitofwork.Orders.ListOfOrdersForMoveOrder(id);
             return Ok(orders);
         }
+
+        [HttpGet]
+        [Route ("GetAllListOfApprovedPreparedforMoveOrder")]
+        public async Task<IActionResult> GetAllListOfApprovedPreparedforMoveOrder([FromQuery] string customername)
+        {
+            var order = await _unitofwork.Orders.TotalListOfApprovedPreparedDate(customername);
+
+                return Ok(order);
+        }
+
+        
 
 
 

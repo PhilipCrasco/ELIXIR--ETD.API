@@ -475,7 +475,47 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return await orders.ToListAsync();
 
         }
-// =========================================== MoveOrder ==============================================================================
+        // =========================================== MoveOrder ==============================================================================
+
+        public async Task<IReadOnlyList<OrderDto>> TotalListOfApprovedPreparedDate(string customername)
+        {
+            var orders = _context.Orders.GroupBy(x => new
+            {
+                x.OrderNoPKey,
+                x.CustomerName,
+                x.Department,
+                x.Company,
+                x.PreparedDate,
+                x.IsApproved,
+                x.IsMove,
+                x.IsReject,
+                x.Remarks
+            }).Where(x => x.Key.CustomerName == customername)
+              .Where(x => x.Key.IsApproved == true)
+              .Where(x => x.Key.PreparedDate != null)
+              .Where(x => x.Key.IsMove == false)
+
+              .Select(x => new OrderDto
+              {
+                  Id = x.Key.OrderNoPKey,
+                  CustomerName = x.Key.CustomerName,
+                  Department = x.Key.Department,
+                  Category  = x.Key.Company,
+                  TotalOrders = x.Sum(x => x.QuantityOrdered),
+                  PreparedDate = x.Key.PreparedDate.ToString(),
+                  IsMove = x.Key.IsMove,
+                  IsReject = x.Key.IsReject != null,
+                  Remarks = x.Key.Remarks
+                  
+
+              });
+
+            return await orders.ToListAsync();
+
+        }
+
+
+
 
         public async Task<OrderDto> GetMoveOrderDetailsForMoveOrder(int orderId)
         {
@@ -710,6 +750,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-      
+     
+
+
     }
 }
