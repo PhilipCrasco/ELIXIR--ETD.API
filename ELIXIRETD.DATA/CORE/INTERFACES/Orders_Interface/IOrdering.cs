@@ -25,10 +25,12 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<bool> CancelOrders(Ordering orders);
         Task<OrderDto> GetMoveOrderDetailsForMoveOrder(int orderId);
         Task<bool> PrepareItemForMoveOrder(MoveOrder orders);
+        Task<IReadOnlyList<DtoMoveOrder>> ListOfPreparedItemsForMoveOrder(int id);
+        Task<IReadOnlyList<OrderDto>> ListOfOrdersForMoveOrder(int id);
 
 
 
-    //============================ Validation ====================================================================
+        //============================ Validation ====================================================================
         Task<bool> ValidateExistOrderandItemCode(int TransactId, string ItemCode);
         Task<bool> ValidateDateNeeded(Ordering orders);
         Task<bool> ValidateCompanyCode(string CompanyCode);

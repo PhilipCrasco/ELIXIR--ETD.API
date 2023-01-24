@@ -512,6 +512,82 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         }
 
+        public async Task<IReadOnlyList<DtoMoveOrder>> ListOfPreparedItemsForMoveOrder(int id)
+        {
+            var orders = _context.MoveOrders.Where(x => x.OrderNo == id)
+                                            .Where(x => x.IsActive == true)
+                                            .Select(x => new DtoMoveOrder
+                                            {
+                                                Id = x.Id,
+                                                OrderNo = x.OrderNo,
+                                                ItemCode = x.ItemCode,
+                                                ItemDescription = x.ItemDescription,
+                                                Quantity = x.QuantityOrdered,
+                                                IsActive = x.IsActive
+
+                                            });
+
+            return await orders.ToListAsync();
+        }
+
+        public async Task<IReadOnlyList<OrderDto>> ListOfOrdersForMoveOrder(int id)
+        {
+            var moveorders = _context.MoveOrders.Where(x => x.IsActive == true)
+                                                .GroupBy(x => new
+                                                {
+                                                    x.OrderNo,
+                                                    x.OrderNoPkey
+                                                }).Select(x => new MoveOrderItemDto
+                                                {
+                                                    OrderNo = x.Key.OrderNo,
+                                                    OrderPKey = x.Key.OrderNoPkey,
+                                                    QuantityPrepared = x.Sum(x => x.QuantityOrdered),
+
+                                                });
+
+            var orders = _context.Orders
+                   .Where(x => x.OrderNoPKey == id)
+                   .GroupJoin(moveorders, ordering => ordering.Id, moveorders => moveorders.OrderPKey, (ordering, moreorders) => new { ordering, moveorders })
+                   .SelectMany(x => x.moveorders.DefaultIfEmpty(), (x, moveorders) => new { x.ordering, moveorders })
+                   .GroupBy(x => new
+                   {
+                       x.ordering.Id,
+                       x.ordering.OrderNoPKey,
+                       x.ordering.OrderDate,
+                       x.ordering.DateNeeded,
+                       x.ordering.CustomerName,
+                       x.ordering.Department,
+                       x.ordering.Category,
+                       x.ordering.ItemCode,
+                       x.ordering.ItemdDescription,
+                       x.ordering.Uom,
+                       x.ordering.QuantityOrdered,
+                       x.ordering.IsApproved,
+
+                   }).Select(total => new OrderDto
+                   {
+                       Id = total.Key.Id,
+                       OrderNo = total.Key.OrderNoPKey,
+                       OrderDate = total.Key.OrderDate.ToString("MM/dd/yyyy"),
+                       DateNeeded = total.Key.DateNeeded.ToString("MM/dd/yyyy"),
+                       CustomerName = total.Key.CustomerName,
+                       Department = total.Key.Department,
+                       Category = total.Key.Category,
+                       ItemCode = total.Key.ItemCode,
+                       ItemDescription = total.Key.ItemdDescription,
+                       Uom = total.Key.Uom,
+                       QuantityOrder = total.Key.QuantityOrdered,
+                       IsApproved = total.Key.IsApproved != null,
+                       PreparedQuantity = total.Sum(x => x.moveorders.QuantityPrepared)
+
+                   });
+
+            return await orders.ToListAsync();
+
+        }
+
+
+
 
 
 
@@ -612,6 +688,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-       
+      
     }
 }

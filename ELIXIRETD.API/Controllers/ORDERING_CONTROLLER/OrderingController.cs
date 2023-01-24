@@ -286,6 +286,8 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return Ok(orders);
         }
 
+        // ====================================== MoveOrder =========================================================================
+
         [HttpPost]
         [Route("PrepareItemForMoveOrder")]
         public async Task<IActionResult> PrepareItemforMoveOrder([FromBody] MoveOrder order)
@@ -293,7 +295,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             var details = await _unitofwork.Orders.GetMoveOrderDetailsForMoveOrder(order.OrderNoPkey);
 
             if (details == null)
-                return BadRequest("negats");
+                return BadRequest("No Prepare MoveOrder  Available ");
 
             order.OrderNoPkey = details.Id;
             order.OrderDate = Convert.ToDateTime(details.OrderDate);
@@ -303,7 +305,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             order.Department = details.Department;
             order.Company = details.Company;
             order.ItemCode = details.ItemCode;
-            order.ItemCategories = details.ItemDescription;
+            order.ItemDescription = details.ItemDescription;
             order.Uom = details.Uom; 
             order.Category = details.Category;
             order.IsActive = true;
@@ -317,6 +319,32 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
             return Ok(order);
         }
+
+
+        [HttpGet]
+        [Route("ListOfPreparedItemsForMoveOrder")]
+        public async Task<IActionResult> ListOfPreparedItemsForMoveOrder([FromQuery] int id)
+        {
+
+            var orders = await _unitofwork.Orders.ListOfPreparedItemsForMoveOrder(id);
+
+            return Ok(orders);
+
+        }
+
+        [HttpGet]
+        [Route("GetAllListOfOrdersForMovOrder")]
+        public async Task<IActionResult> GetAllListOfOrdersForMovOrder([FromQuery] int id)
+        {
+
+            var orders = await _unitofwork.Orders.ListOfOrdersForMoveOrder(id);
+            return Ok(orders);
+        }
+
+
+
+
+
 
 
 

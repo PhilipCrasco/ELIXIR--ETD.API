@@ -12,7 +12,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL
         public string CustomerName { get; set; }
 
         public string ItemCode { get; set; }
-        public string ItemCategories { get; set; }
+        public string ItemDescription { get; set; }
         public string Uom { get; set; }
 
         [Column (TypeName ="decimal(18,2)")]
