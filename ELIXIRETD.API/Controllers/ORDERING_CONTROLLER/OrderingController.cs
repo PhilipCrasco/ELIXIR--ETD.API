@@ -3,6 +3,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.EXTENSIONS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
+using ELIXIRETD.DATA.SERVICES;
 using System.Net.WebSockets;
 
 namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
@@ -320,6 +321,28 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return Ok(order);
         }
 
+        [HttpGet]
+        [Route("GetAllListForMoveOrderPagination")]
+        public async Task<ActionResult<IEnumerable<OrderDto>>> GetAllListForMoveOrderPagination([FromQuery] UserParams userParams )
+        {
+            var orders = await _unitofwork.Orders.GetAllListForMoveOrderPagination(userParams);
+
+            Response.AddPaginationHeader(orders.CurrentPage, orders.PageSize, orders.TotalCount, orders.TotalPages, orders.HasNextPage, orders.HasPreviousPage);
+
+            var orderResult = new
+            {
+                orders,
+                orders.CurrentPage,
+                orders.PageSize,
+                orders.TotalCount,
+                orders.TotalPages,
+                orders.HasNextPage,
+                orders.HasPreviousPage
+            };
+
+            return Ok(orderResult);
+
+        }
 
         [HttpGet]
         [Route("ListOfPreparedItemsForMoveOrder")]

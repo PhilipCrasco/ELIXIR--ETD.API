@@ -28,6 +28,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<IReadOnlyList<DtoMoveOrder>> ListOfPreparedItemsForMoveOrder(int id);
         Task<IReadOnlyList<OrderDto>> ListOfOrdersForMoveOrder(int id);
 
+        Task<PagedList<OrderDto>> GetAllListForMoveOrderPagination(UserParams userParams);
+
 
 
         //============================ Validation ====================================================================

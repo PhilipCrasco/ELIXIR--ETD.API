@@ -33,6 +33,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL
         public string Reason { get; set; }
 
         public bool IsActive { get; set; } = true;
+
+        
         
     }
 }

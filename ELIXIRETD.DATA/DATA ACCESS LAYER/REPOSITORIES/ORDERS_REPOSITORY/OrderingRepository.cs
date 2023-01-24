@@ -35,7 +35,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
           
         }
 
-        //Schedule Prepare
+        // ========================================== Schedule Prepare ===========================================================
 
         public async Task<PagedList<OrderDto>> GetAllListofOrdersPagination(UserParams userParams)
         {
@@ -230,7 +230,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             return true;
         }
-        // Preparation
+
+        //========================================== Preparation =======================================================================
 
         public async Task<IReadOnlyList<OrderDto>> GetAllListPreparedDate()
         {
@@ -519,6 +520,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                             {
                                                 Id = x.Id,
                                                 OrderNo = x.OrderNo,
+                                                BarCodes = x.warehouseId,
                                                 ItemCode = x.ItemCode,
                                                 ItemDescription = x.ItemDescription,
                                                 Quantity = x.QuantityOrdered,
@@ -587,10 +589,29 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
         }
 
 
+        public async Task<PagedList<OrderDto>> GetAllListForMoveOrderPagination(UserParams userParams)
+        {
+            var orders = _context.Orders
+                                 .GroupBy(x => new
+                                 {
+                                     x.CustomerName,
+                                     x.IsActive,
+                                     x.IsApproved,
+                                     x.IsMove
+                                 }).Where(x => x.Key.IsActive == true)
+                                   .Where(x => x.Key.IsApproved == true)
+                                   .Where(x => x.Key.IsMove == false)
+                                   .Select(x => new OrderDto
+                                   {
+                                       CustomerName = x.Key.CustomerName,
+                                       IsActive = x.Key.IsActive,
+                                       IsApproved = x.Key.IsApproved != null
 
+                                   });
 
+            return await PagedList<OrderDto>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
 
-
+        }
 
 
 
