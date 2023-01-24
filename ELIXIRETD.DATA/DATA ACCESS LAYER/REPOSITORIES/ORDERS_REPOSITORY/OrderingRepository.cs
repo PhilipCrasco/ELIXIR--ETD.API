@@ -413,7 +413,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                     PreparedDate = total.Key.PreparedDate.ToString(),
                     IsApproved = total.Key.IsApproved != null
 
-
                 });
 
 
@@ -543,12 +542,13 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                     OrderPKey = x.Key.OrderNoPkey,
                                                     QuantityPrepared = x.Sum(x => x.QuantityOrdered),
 
+
                                                 });
 
             var orders = _context.Orders
                    .Where(x => x.OrderNoPKey == id)
-                   .GroupJoin(moveorders, ordering => ordering.Id, moveorders => moveorders.OrderPKey, (ordering, moreorders) => new { ordering, moveorders })
-                   .SelectMany(x => x.moveorders.DefaultIfEmpty(), (x, moveorders) => new { x.ordering, moveorders })
+                   .GroupJoin(moveorders, ordering => ordering.Id, moveorder => moveorder.OrderPKey, (ordering, moveorder) => new { ordering, moveorder })
+                   .SelectMany(x => x.moveorder.DefaultIfEmpty(), (x, moveorder) => new { x.ordering, moveorder })
                    .GroupBy(x => new
                    {
                        x.ordering.Id,
@@ -578,13 +578,14 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                        Uom = total.Key.Uom,
                        QuantityOrder = total.Key.QuantityOrdered,
                        IsApproved = total.Key.IsApproved != null,
-                       PreparedQuantity = total.Sum(x => x.moveorders.QuantityPrepared)
+                       PreparedQuantity = total.Sum(x => x.moveorder.QuantityPrepared),
 
                    });
 
             return await orders.ToListAsync();
 
         }
+
 
 
 
