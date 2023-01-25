@@ -32,6 +32,16 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
 
         Task<IReadOnlyList<OrderDto>> TotalListOfApprovedPreparedDate(string customername);
 
+        Task<ItemStocksDto> GetFirstNeeded(string itemCode);
+
+        Task<ItemStocksDto> GetActualItemQuantityInWarehouse(int id, string itemcode);
+
+
+
+
+             
+
+
 
 
         //============================ Validation ====================================================================

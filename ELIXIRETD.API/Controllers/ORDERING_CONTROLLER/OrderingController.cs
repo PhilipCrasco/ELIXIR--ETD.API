@@ -372,7 +372,28 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                 return Ok(order);
         }
 
+        [HttpGet]
+        [Route("GetAvailableStockFromWarehouse")]
+        public async Task <IActionResult> GetAvailableStockFromWarehouse([FromQuery] int id, [FromQuery] string itemcode)
+        {
+            var orders = await _unitofwork.Orders.GetActualItemQuantityInWarehouse(id, itemcode);
+
+            var getFirstrecieve = await _unitofwork.Orders.GetFirstNeeded(itemcode);
+
+            var resultList = new
+            {
+                orders,
+                getFirstrecieve.warehouseId
+
+            };
+
+            return Ok(resultList);
+        }
+
+
         
+
+
 
 
 

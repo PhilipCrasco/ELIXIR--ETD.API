@@ -9,11 +9,14 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO
     public class ItemStocksDto
     {
 
+        public int warehouseId { get; set; }
         public string ItemCode { get; set; }
         public string ItemDescription { get; set; }
-       public DateTime DateReceived { get; set; } 
+       public string DateReceived { get; set; } 
        public decimal ActualGood { get; set; }     
         public decimal Remaining { get; set; }
+
+        public decimal In { get; set; }
         public decimal TotalMoveOrder { get; set; }
     }
 }

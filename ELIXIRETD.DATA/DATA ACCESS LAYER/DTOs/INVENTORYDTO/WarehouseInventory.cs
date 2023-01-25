@@ -5,6 +5,8 @@
         public int WarehouseId { get; set; }
         public string ItemCode { get; set; }
         public decimal ActualGood { get; set; }
+        public string RecievingDate { get; set; }
+
 
     }
 }

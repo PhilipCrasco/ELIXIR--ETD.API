@@ -655,6 +655,101 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
 
 
+        public async Task<ItemStocksDto> GetFirstNeeded(string itemCode)
+        {
+            var getwarehouseIn = _context.WarehouseReceived.Where(x => x.IsActive == true)
+                                                           .GroupBy(x => new
+                                                           {
+                                                               x.Id,
+                                                               x.ItemCode,
+                                                               x.ReceivingDate,
+                                                           }).Select(x => new WarehouseInventory
+                                                           {
+                                                               WarehouseId = x.Key.Id,
+                                                               ItemCode = x.Key.ItemCode,
+                                                               ActualGood = x.Sum(x => x.ActualDelivered),
+                                                               RecievingDate = x.Key.ReceivingDate.ToString()
+                                                           });
+
+            var getMoveOrder = _context.MoveOrders.Where(x => x.IsActive == true)
+                                                   .GroupBy(x => new
+                                                   {
+                                                       x.ItemCode,
+                                                       x.warehouseId
+
+                                                   }).Select(x => new ItemStocksDto
+                                                   {
+                                                       ItemCode = x.Key.ItemCode,
+                                                       Remaining = x.Sum( x => x.QuantityOrdered),
+                                                       warehouseId = x.Key.warehouseId
+
+                                                   });
+
+            var totalremaining = getwarehouseIn
+                              .OrderBy(x => x.RecievingDate)
+                              .GroupJoin(getMoveOrder, warehouse => warehouse.WarehouseId, moveorder => moveorder.warehouseId, (warehouse, moveorder) => new { warehouse, moveorder })
+                              .SelectMany(x => x.moveorder.DefaultIfEmpty(), (x, moveorder) => new { x.warehouse, moveorder })
+                              .GroupBy(x => new
+                              {
+                                  x.warehouse.WarehouseId,
+                                  x.warehouse.ItemCode,
+                                    x.warehouse.RecievingDate
+
+                              })
+                              .Select(x => new ItemStocksDto
+                              {
+                                  warehouseId = x.Key.WarehouseId,
+                                  ItemCode = x.Key.ItemCode,
+                                  DateReceived = x.Key.RecievingDate.ToString(),
+                                  Remaining = x.Sum(x => x.warehouse.ActualGood == null ? 0 : x.warehouse.ActualGood)-
+                                              x.Sum(x => x.moveorder.Remaining == null ? 0 :  x.moveorder.Remaining)
+
+                                
+                              });
+
+            return await totalremaining.Where(x => x.Remaining != 0)
+                                       .Where(x => x.ItemCode == itemCode)
+                                       .FirstOrDefaultAsync();
+                                       
+
+        }
+
+        public async Task<ItemStocksDto> GetActualItemQuantityInWarehouse(int id, string itemcode)
+        {
+            var TotaloutMoveOrder = await _context.MoveOrders.Where(x => x.warehouseId == id)
+                                                             .Where(x => x.IsActive == true)
+                                                             .Where(x => x.ItemCode == itemcode)
+                                                             .SumAsync(x => x.QuantityOrdered);
+
+
+
+            var totalRemaining = _context.WarehouseReceived
+                              .Where(totalin => totalin.Id == id && totalin.ItemCode == itemcode && totalin.IsActive == true)
+                              .GroupBy(x => new
+                              {
+                                  x.Id,
+                                  x.ItemCode,
+                                  x.ItemDescription,
+                                  x.ActualDelivered,
+                                  x.ReceivingDate
+
+                              }).Select(total => new ItemStocksDto
+                              {
+                                  warehouseId = total.Key.Id,
+                                  ItemCode = total.Key.ItemCode,
+                                  ItemDescription = total.Key.ItemDescription,
+                                  In  = total.Key.ActualDelivered,
+                                  Remaining = total.Key.ActualDelivered - TotaloutMoveOrder
+
+                              });
+
+            return await totalRemaining.Where(x => x.Remaining != 0)
+                                       .FirstOrDefaultAsync();
+
+        }
+
+
+
 
         //================================= Validation ==============================================================================
 
@@ -750,8 +845,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-     
-
-
+      
     }
 }

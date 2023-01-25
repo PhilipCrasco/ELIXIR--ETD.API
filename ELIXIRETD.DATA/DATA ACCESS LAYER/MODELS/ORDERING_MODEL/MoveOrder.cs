@@ -6,7 +6,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL
     public class MoveOrder : BaseEntity
     {
         public int OrderNo { get; set; }
-
         public string Company { get; set; }
         public string Department { get; set; }
         public string CustomerName { get; set; }
