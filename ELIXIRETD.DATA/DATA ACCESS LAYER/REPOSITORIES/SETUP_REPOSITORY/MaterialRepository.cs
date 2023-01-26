@@ -302,5 +302,19 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
         {
             return await _context.ItemCategories.AnyAsync(x => x.ItemCategoryName == category);
         }
+
+        public async Task<bool> ValidateDescritionAndUom(Material materials)
+        {
+            var valid = await _context.Materials.Where(x => x.ItemDescription == materials.ItemDescription)
+                                                .Where(x => x.Uom == materials.Uom)
+                                                .FirstOrDefaultAsync();
+
+            if(valid == null)
+            {
+                return false;
+
+            }
+            return true;
+        }
     }
 }

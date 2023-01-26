@@ -4,11 +4,6 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.SETUP_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
 {
@@ -114,7 +109,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
 
             return await PagedList<SupplierDto>.CreateAsync(supplier, userParams.PageNumber, userParams.PageSize);
 
-
         }
 
         public async Task<PagedList<SupplierDto>> GetSupplierWithPaginationOrig(UserParams userParams, bool status, string search)
@@ -140,5 +134,24 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
         {
             return await _context.Suppliers.AnyAsync(x => x.SupplierCode == supplier);
         }
+
+        public async  Task<bool> ValidationDescritandAddress(Supplier supplier)
+        {
+            var valid = await _context.Suppliers.Where(x => x.SupplierName == supplier.SupplierName)
+                                                .Where(x => x.SupplierAddress == supplier.SupplierAddress)
+                                                .Where(x => x.IsActive == true)
+                                                .FirstOrDefaultAsync();
+
+            if(valid == null)
+            {
+                return true;
+            }
+            return false;
+                                                
+        }
+
+
+
+
     }
 }

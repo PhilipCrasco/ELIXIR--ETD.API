@@ -31,7 +31,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                                  CustomerName = x.CustomerName,
                                                  CustomerTypeId = x.CustomerTypeId, 
                                                  CustomerType = x.CustomerTypeP.CustomerName, 
-                                                 MobileNumber = x.MobileNumber, 
+                                                 //MobileNumber = x.MobileNumber, 
                                                  CompanyName = x.CompanyName, 
                                                  Address = x.Address, 
                                                  AddedBy = x.AddedBy,
@@ -54,7 +54,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                               CustomerName = x.CustomerName,
                                               CustomerTypeId = x.CustomerTypeId,
                                               CustomerType = x.CustomerTypeP.CustomerName,
-                                              MobileNumber = x.MobileNumber,
+                                              //MobileNumber = x.MobileNumber,
                                               CompanyName = x.CompanyName,
                                               Address = x.Address,
                                               AddedBy = x.AddedBy,
@@ -79,7 +79,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
             existingCustomer.CustomerName = customer.CustomerName;
             existingCustomer.CustomerTypeId = customer.CustomerTypeId;
             existingCustomer.Address = customer.Address;
-            existingCustomer.MobileNumber = customer.MobileNumber; 
+            //existingCustomer.MobileNumber = customer.MobileNumber; 
             existingCustomer.CompanyName = customer.CompanyName;
 
             return true;
@@ -117,7 +117,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                           CustomerName = x.CustomerName,
                                           CustomerTypeId = x.CustomerTypeId,
                                           CustomerType = x.CustomerTypeP.CustomerName,
-                                          MobileNumber = x.MobileNumber,
+                                          //MobileNumber = x.MobileNumber,
                                           CompanyName = x.CompanyName,
                                           Address = x.Address,
                                           AddedBy = x.AddedBy,
@@ -140,7 +140,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                           CustomerName = x.CustomerName,
                                           CustomerTypeId = x.CustomerTypeId,
                                           CustomerType = x.CustomerTypeP.CustomerName,
-                                          MobileNumber = x.MobileNumber,
+                                          //MobileNumber = x.MobileNumber,
                                           CompanyName = x.CompanyName,
                                           Address = x.Address,
                                           AddedBy = x.AddedBy,

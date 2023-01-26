@@ -25,6 +25,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.SETUP_INTERFACE
         Task<bool> ValidateUOMId(int id);
         Task<bool> ItemCodeExist(string itemcode);
         Task<bool> ItemCategoryExist(string category);
+        Task<bool> ValidateDescritionAndUom(Material materials);
+
 
         Task<IReadOnlyList<ItemCategoryDto>> GetAllActiveItemCategory();
         Task<IReadOnlyList<ItemCategoryDto>> GetAllInActiveItemCategory();

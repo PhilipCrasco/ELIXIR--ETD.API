@@ -5,6 +5,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.SETUP_MODEL;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
 
 namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
 {
@@ -44,6 +45,11 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
             if (await _unitOfWork.Suppliers.SupplierCodeExist(supplier.SupplierCode))
                 return BadRequest("Supplier code already exist, please try something else!");
 
+            var validation = await _unitOfWork.Suppliers.ValidationDescritandAddress(supplier);
+
+            if (validation == false)
+                return BadRequest("Supplier Name and Address was already exist");
+
 
             await _unitOfWork.Suppliers.AddSupplier(supplier);
             await _unitOfWork.CompleteAsync();
@@ -56,8 +62,16 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
         [Route("UpdateSupplier")]
         public async Task<IActionResult> UpdateSupplier([FromBody] Supplier supplier)
         {
+            var validation = await _unitOfWork.Suppliers.ValidationDescritandAddress(supplier);
+
+            if (validation == false)
+                return BadRequest("Supplier Name and Address was already exist");
+
+
             await _unitOfWork.Suppliers.UpdateSupplier(supplier);
             await _unitOfWork.CompleteAsync();
+
+
 
             return Ok(supplier);
         }

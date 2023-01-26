@@ -47,6 +47,11 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
 
                 var itemCategoryId = await _unitOfWork.Materials.ValidateItemCategoryId(material.ItemCategoryId);
                 var uomId = await _unitOfWork.Materials.ValidateUOMId(material.UomId);
+            var validDescriptionAndUom = await _unitOfWork.Materials.ValidateDescritionAndUom(material);
+
+
+            if (validDescriptionAndUom == false)
+                return BadRequest("Item Description and Uom already exist");
 
                 if (itemCategoryId == false)
                     return BadRequest("Item Category doesn't exist, Please add data first!");
@@ -56,6 +61,8 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
 
                 if (await _unitOfWork.Materials.ItemCodeExist(material.ItemCode))
                     return BadRequest("Item Code already Exist!, Please try something else!");
+
+
 
                 await _unitOfWork.Materials.AddMaterial(material);
                 await _unitOfWork.CompleteAsync();
@@ -70,6 +77,12 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
         {
             var itemCategoryId = await _unitOfWork.Materials.ValidateItemCategoryId(material.ItemCategoryId);
             var uomId = await _unitOfWork.Materials.ValidateUOMId(material.UomId);
+
+            var validDescriptionAndUom = await _unitOfWork.Materials.ValidateDescritionAndUom(material);
+
+
+            if (validDescriptionAndUom == false)
+                return BadRequest("Item Description and Uom already exist");
 
             if (itemCategoryId == false)
                 return BadRequest("Item Category doesn't exist, Please add data first!");
@@ -99,6 +112,7 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
         [Route("ActivateMaterial")]
         public async Task<IActionResult> ActivateRawMaterial([FromBody] Material rawmaterial)
         {
+
 
             await _unitOfWork.Materials.ActivateMaterial(rawmaterial);
             await _unitOfWork.CompleteAsync();
