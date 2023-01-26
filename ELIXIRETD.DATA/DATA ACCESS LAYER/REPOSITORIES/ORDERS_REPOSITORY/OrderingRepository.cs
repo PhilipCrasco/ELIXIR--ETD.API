@@ -836,6 +836,30 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         }
 
+       // ======================================== Move Order Approval ==============================================================
+
+        public async Task<bool> ApprovalForMoveOrders(MoveOrder moveorder)
+        {
+            var existing = await _context.MoveOrders.Where(x => x.OrderNo == moveorder.OrderNo)
+                                                    .ToListAsync();
+
+            if (existing == null)
+                return false;
+
+            foreach ( var items in existing)
+            {
+                items.ApprovedDate = DateTime.Now;
+                items.ApprovedDate = DateTime.Now;
+                items.IsApprove = true;
+            }
+
+            return true;
+        }
+
+
+
+
+
 
 
         //================================= Validation ==============================================================================
@@ -932,6 +956,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-       
+        
     }
 }
