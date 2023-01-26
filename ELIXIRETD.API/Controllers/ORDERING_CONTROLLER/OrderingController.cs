@@ -2,6 +2,7 @@
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.EXTENSIONS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.IMPORT_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.SERVICES;
 using System.Net.WebSockets;
@@ -35,56 +36,62 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                 List<Ordering> UomNotExist = new List<Ordering>();
                 List<Ordering> ItemCodesExist = new List<Ordering>();
                 List<Ordering> PreviousDateNeeded = new List<Ordering>();
-
                 foreach (Ordering items in order)
                 {
 
-                    var validateOrderNoAndItemcode = await _unitofwork.Orders.ValidateExistOrderandItemCode(items.TrasactId, items.ItemCode);
-                    var validateDateNeeded = await _unitofwork.Orders.ValidateDateNeeded(items);
-                    var validateCompanyCode = await _unitofwork.Orders.ValidateCompanyCode(items.Company);
-                    var validateCustomerName = await _unitofwork.Orders.ValidateCustomerName(items.CustomerName);
-                    var validateLocation = await _unitofwork.Orders.ValidateLocation(items.Location);
-                    var validateDepartment = await _unitofwork.Orders.ValidateCustomerType(items.Department);
-                    var validateItemCode = await _unitofwork.Orders.ValidateItemCode(items.ItemCode);
-                    var validateUom = await _unitofwork.Orders.ValidateUom(items.Uom);
-
-                    if (validateOrderNoAndItemcode == true)
+                    if (order.Count(x => x.TrasactId == items.TrasactId && x.ItemCode == items.ItemCode) > 1)
                     {
                         DuplicateList.Add(items);
                     }
-                    else if (validateDateNeeded == false)
-                    {
-                        PreviousDateNeeded.Add(items);
-                    }
-                    else if (validateCompanyCode == false)
-                    {
-                        CompanyCodeNotExist.Add(items);
-                    }
-                    else if (validateCustomerName == false)
-                    {
-                        CustomerNameNotExist.Add(items);
-                    }
-                    else if(validateLocation == false)
-                    {
-                        LocationNotExist.Add(items);
-                    }
-                    else if (validateDepartment == false)
-                    {
-                        DepartmentNotExist.Add(items);
-                    }
-                    else if (validateItemCode == false)
-                    {
-                        ItemCodesExist.Add(items);
-                    }
-                   
-                    else if (validateUom == false)
-                    {
-                        UomNotExist.Add(items);
-                    }
                     else
-                        AvailableImport.Add(items);
-                    await _unitofwork.Orders.AddNewOrders(items);
+                    {
+                        var validateOrderNoAndItemcode = await _unitofwork.Orders.ValidateExistOrderandItemCode(items.TrasactId, items.ItemCode);
+                        var validateDateNeeded = await _unitofwork.Orders.ValidateDateNeeded(items);
+                        var validateCompanyCode = await _unitofwork.Orders.ValidateCompanyCode(items.Company);
+                        var validateCustomerName = await _unitofwork.Orders.ValidateCustomerName(items.CustomerName);
+                        var validateLocation = await _unitofwork.Orders.ValidateLocation(items.Location);
+                        var validateDepartment = await _unitofwork.Orders.ValidateCustomerType(items.Department);
+                        var validateItemCode = await _unitofwork.Orders.ValidateItemCode(items.ItemCode);
+                        var validateUom = await _unitofwork.Orders.ValidateUom(items.Uom);
 
+                        if (validateOrderNoAndItemcode == true)
+                        {
+                            DuplicateList.Add(items);
+                        }
+                        else if (validateDateNeeded == false)
+                        {
+                            PreviousDateNeeded.Add(items);
+                        }
+                        else if (validateCompanyCode == false)
+                        {
+                            CompanyCodeNotExist.Add(items);
+                        }
+                        else if (validateCustomerName == false)
+                        {
+                            CustomerNameNotExist.Add(items);
+                        }
+                        else if (validateLocation == false)
+                        {
+                            LocationNotExist.Add(items);
+                        }
+                        else if (validateDepartment == false)
+                        {
+                            DepartmentNotExist.Add(items);
+                        }
+                        else if (validateItemCode == false)
+                        {
+                            ItemCodesExist.Add(items);
+                        }
+
+                        else if (validateUom == false)
+                        {
+                            UomNotExist.Add(items);
+                        }
+                        else
+                            AvailableImport.Add(items);
+                        await _unitofwork.Orders.AddNewOrders(items);
+
+                    }
                 }
 
                 var resultList = new

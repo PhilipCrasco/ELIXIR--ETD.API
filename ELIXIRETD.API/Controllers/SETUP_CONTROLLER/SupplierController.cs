@@ -3,9 +3,6 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.SETUP_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.EXTENSIONS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.SETUP_MODEL;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Runtime.InteropServices;
 
 namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
 {
@@ -70,8 +67,6 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
 
             await _unitOfWork.Suppliers.UpdateSupplier(supplier);
             await _unitOfWork.CompleteAsync();
-
-
 
             return Ok(supplier);
         }
