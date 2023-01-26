@@ -28,40 +28,52 @@ namespace ELIXIRETD.API.Controllers.IMPORT_CONTROLLER
                 List<PoSummary> itemcodeNotExist = new List<PoSummary>(); 
                 List<PoSummary> uomCodeNotExist = new List<PoSummary>();
 
+
+
                 foreach (PoSummary items in posummary)
                 {
 
-                    var validateSupplier = await _unitOfWork.Imports.CheckSupplier(items.VendorName);
-                    var validateItemCode = await _unitOfWork.Imports.CheckItemCode(items.ItemCode);
-                    var validatePoandItem = await _unitOfWork.Imports.ValidatePOAndItemcodeManual(items.PO_Number, items.ItemCode);
-                    var validateUom = await _unitOfWork.Imports.CheckUomCode(items.Uom);
-
-                    if (validatePoandItem == true)
+                    if (posummary.Count(x => x.PO_Number == items.PO_Number && x.ItemCode == items.ItemCode) > 1)
                     {
                         duplicateList.Add(items);
                     }
-
-                    else if (validateSupplier == false)
-                    {
-                        supplierNotExist.Add(items);
-                    }
-
-                    else if (validateUom == false)
-                    {
-                        uomCodeNotExist.Add(items);
-                    }
-
-                    else if (validateItemCode == false)
-                    {
-                        itemcodeNotExist.Add(items);
-                    }
-
                     else
-                        availableImport.Add(items);
+                    {
 
-                    await _unitOfWork.Imports.AddNewPORequest(items);
+                        var validateSupplier = await _unitOfWork.Imports.CheckSupplier(items.VendorName);
+                        var validateItemCode = await _unitOfWork.Imports.CheckItemCode(items.ItemCode);
+                        var validatePoandItem = await _unitOfWork.Imports.ValidatePOAndItemcodeManual(items.PO_Number, items.ItemCode);
+                        var validateUom = await _unitOfWork.Imports.CheckUomCode(items.Uom);
 
+
+                        if (validatePoandItem == true)
+                        {
+                            duplicateList.Add(items);
+                        }
+
+                        else if (validateSupplier == false)
+                        {
+                            supplierNotExist.Add(items);
+                        }
+
+                        else if (validateUom == false)
+                        {
+                            uomCodeNotExist.Add(items);
+                        }
+
+                        else if (validateItemCode == false)
+                        {
+                            itemcodeNotExist.Add(items);
+                        }
+
+                        else
+                            availableImport.Add(items);
+
+                        await _unitOfWork.Imports.AddNewPORequest(items);
+                    }
+                    
                 }
+
 
                 var resultList = new
                 {
