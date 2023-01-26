@@ -1,7 +1,5 @@
 ﻿using ELIXIRETD.DATA.CORE.ICONFIGURATION;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.IMPORT_MODEL;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ELIXIRETD.API.Controllers.IMPORT_CONTROLLER
 {

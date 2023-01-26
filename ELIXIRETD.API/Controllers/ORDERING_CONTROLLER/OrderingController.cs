@@ -390,8 +390,17 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return Ok(resultList);
         }
 
+        [HttpGet]
+        [Route("GetAllOutOfStockByItemCodeAndOrderDate")]
+        public async Task<IActionResult> GetAllOutOfStockByItemCodeAndOrderDate([FromQuery] string itemcode, [FromQuery] string orderdate)
+        {
 
-        
+            var orders = await _unitofwork.Orders.GetAllOutOfStockByItemCodeAndOrderDate(itemcode, orderdate);
+
+            return Ok(orders);
+
+        }
+
 
 
 

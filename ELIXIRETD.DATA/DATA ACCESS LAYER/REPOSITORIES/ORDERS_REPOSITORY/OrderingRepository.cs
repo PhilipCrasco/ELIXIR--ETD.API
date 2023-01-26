@@ -4,9 +4,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography.X509Certificates;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 {
@@ -320,7 +318,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 items.RejectedDate = null;
                 items.Remarks = null;
             }
-
             return true;
         }
 
@@ -438,6 +435,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return await orders.ToListAsync();
 
         }
+
         public async Task<IReadOnlyList<OrderDto>> GetAllApprovedOrdersForCalendar()
         {
             var orders = _context.Orders.GroupBy(x => new
@@ -513,8 +511,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return await orders.ToListAsync();
 
         }
-
-
 
 
         public async Task<OrderDto> GetMoveOrderDetailsForMoveOrder(int orderId)
@@ -748,6 +744,97 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         }
 
+        public async Task<IReadOnlyList<OrderDto>> GetAllOutOfStockByItemCodeAndOrderDate(string itemcode, string orderdate)
+        {
+            var totalRemaining = _context.WarehouseReceived
+                .OrderBy(x => x.ReceivingDate)
+                .GroupBy(x => new
+                {
+                    x.Id,
+                    x.ItemCode,
+                    x.ItemDescription,
+                    x.ActualDelivered,
+                    x.ReceivingDate
+
+                }).Select(total => new ItemStocksDto
+                {
+                    warehouseId = total.Key.Id,
+                    ItemCode = total.Key.ItemCode,
+                    ItemDescription = total.Key.ItemDescription,
+                    DateReceived = total.Key.ReceivingDate.ToString("MM/dd/yyyy"),
+                    In = total.Key.ActualDelivered,
+                    Remaining = total.Key.ActualDelivered
+
+                });
+
+
+           var totalOrders  = _context.Orders
+                     .GroupBy( x => new
+                     {
+                         x.ItemCode,
+                         x.IsPrepared,
+                         x.IsActive
+
+                     }).Select(x => new OrderDto
+                     {
+
+                         ItemCode = x.Key.ItemCode,
+                         TotalOrders = x.Sum(x => x.QuantityOrdered),
+
+
+                     }).Where(x => x.IsPrepared == false);
+
+
+            var orders = _context.Orders
+                  .Where(ordering => ordering.ItemCode == itemcode && ordering.OrderDate == DateTime.Parse(orderdate))
+                  .GroupJoin(totalRemaining, ordering => ordering.ItemCode, warehouse => warehouse.ItemCode, (ordering, warehouse) => new { ordering, warehouse })
+                  .SelectMany(x => x.warehouse.DefaultIfEmpty(), (x, warehouse) => new { x.ordering, warehouse })
+                  .GroupBy(x => new
+                  {
+                      x.ordering.Id,
+                      x.ordering.OrderDate,
+                      x.ordering.DateNeeded,
+                      x.ordering.CustomerName,
+                      x.ordering.Department,
+                      x.ordering.Company,
+                      x.ordering.Category,
+                      x.ordering.ItemCode,
+                      x.ordering.ItemdDescription,
+                      x.ordering.Uom,
+                      x.ordering.QuantityOrdered,
+                      x.ordering.IsActive,
+                      x.ordering.IsPrepared,
+                      x.ordering.PreparedDate,
+                      x.ordering.IsApproved
+
+
+
+                  }).Select(total => new OrderDto
+                  {
+
+                      Id = total.Key.Id,
+                      OrderDate = total.Key.OrderDate.ToString("MM/dd/yyyy"),
+                      DateNeeded = total.Key.DateNeeded.ToString("MM/dd/yyyy"),
+                      CustomerName = total.Key.CustomerName,
+                      Department = total.Key.Department,
+                      Category = total.Key.Category,
+                      ItemCode = total.Key.ItemCode,
+                      ItemDescription = total.Key.ItemdDescription,
+                      Uom = total.Key.Uom,
+                      QuantityOrder = total.Key.QuantityOrdered,
+                      IsActive = total.Key.IsActive,
+                      IsPrepared = total.Key.IsPrepared,
+                      StockOnHand = total.Sum(x => x.warehouse.Remaining),
+                      Difference = total.Sum(x => x.warehouse.Remaining) - total.Key.QuantityOrdered,
+                      PreparedDate = total.Key.PreparedDate.ToString(),
+                      IsApproved = total.Key.IsApproved !=null
+
+                  });
+
+            return await orders.ToListAsync();
+
+
+        }
 
 
 
@@ -845,6 +932,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-      
+       
     }
 }

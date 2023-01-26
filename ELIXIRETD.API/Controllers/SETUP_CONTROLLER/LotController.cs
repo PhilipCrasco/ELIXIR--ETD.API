@@ -68,6 +68,11 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
             if (categoryId == false)
                 return BadRequest("Lot category doesn't exist, please add data first!");
 
+            var validate = await _unitOfWork.Lots.ValidateLotNameAndSection(lotname);
+
+            if (validate == true)
+                return BadRequest("Lotname and section already exist!");
+
             await _unitOfWork.Lots.UpdateLotName(lotname);
             await _unitOfWork.CompleteAsync();
 
@@ -273,6 +278,13 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
 
             return Ok(categoryResult);
         }
+
+
+        
+
+
+
+
 
 
     }
