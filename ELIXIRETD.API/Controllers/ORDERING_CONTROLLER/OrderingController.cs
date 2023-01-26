@@ -409,6 +409,16 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         //============================================= Move Order Preparation ===================================================
 
+        [HttpGet]
+        [Route("ViewMoveOrderForApproval")]
+        public async Task<IActionResult> ViewMoveOrderForApproval([FromQuery] int id)
+        {
+            var orders = await _unitofwork.Orders.ViewMoveOrderForApproval(id);
+            return Ok(orders);
+        }
+
+
+
         [HttpPut]
         [Route("ApproveListOfMoveOrder")]
         public async Task<IActionResult> ApprovalListofMoveOrder([FromBody] MoveOrder moveOrder)
@@ -419,18 +429,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return new JsonResult("Successfully Approved List for move order!");
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

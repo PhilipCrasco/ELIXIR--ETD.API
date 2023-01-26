@@ -9,6 +9,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO
     public class DtoMoveOrder
     {
         public int Id { get; set; }
+        public int BarcodeNo { get; set; }
+
         public int OrderNo { get; set; }
         public string CustomerName { get; set; }
         public string Department { get; set; }

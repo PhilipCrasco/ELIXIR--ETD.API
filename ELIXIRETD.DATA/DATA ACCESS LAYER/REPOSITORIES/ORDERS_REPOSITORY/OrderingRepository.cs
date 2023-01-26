@@ -836,7 +836,30 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         }
 
-       // ======================================== Move Order Approval ==============================================================
+        // ======================================== Move Order Approval ==============================================================
+
+        public async Task<IReadOnlyList<DtoMoveOrder>> ViewMoveOrderForApproval(int id)
+        {
+            var orders = _context.MoveOrders.Where(x => x.IsActive == true)
+                                            .Select(x => new DtoMoveOrder
+                                            {
+                                                Id = x.Id,
+                                                OrderNo = x.OrderNo,
+                                                BarcodeNo = x.warehouseId,
+                                                ItemCode = x.ItemCode,
+                                                ItemDescription = x.ItemDescription,
+                                                Uom = x.Uom,
+                                                CustomerName = x.CustomerName,
+                                                ApprovedDate = x.ApprovedDate.ToString(),
+                                                Quantity = x.QuantityOrdered,
+                                                BatchNo = x.BatchNo
+
+                                            });
+
+            return await orders.Where(x => x.OrderNo == id )
+                                  .ToListAsync();
+
+        }
 
         public async Task<bool> ApprovalForMoveOrders(MoveOrder moveorder)
         {
@@ -956,6 +979,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-        
+      
     }
 }
