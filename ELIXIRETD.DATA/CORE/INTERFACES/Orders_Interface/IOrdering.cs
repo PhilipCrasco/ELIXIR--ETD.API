@@ -55,6 +55,7 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task <bool> CancelControlInMoveOrder (Ordering orders);
         Task<bool> ReturnMoveOrderForApproval(MoveOrder moveorder);
         Task<bool> RejectApproveMoveOrder(MoveOrder moveOrder);
+        Task<bool> RejectForMoveOrder(MoveOrder moveOrder);
 
 
 

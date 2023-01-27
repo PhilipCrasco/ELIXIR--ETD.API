@@ -1200,6 +1200,44 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
+        public async Task<bool> RejectForMoveOrder(MoveOrder moveOrder)
+        {
+            var existing = await _context.MoveOrders.Where(x => x.OrderNo == moveOrder.OrderNo)
+                                                      .ToListAsync();
+
+
+            var existingOrders = await _context.Orders.Where(x => x.OrderNoPKey == moveOrder.OrderNo)
+                                                      .ToListAsync();
+
+            if (existing == null)
+                return false;
+
+            foreach(var items in existing)
+            {
+                items.RejectBy = moveOrder.RejectBy;
+                items.RejectedDate = DateTime.Now;
+                items.RejectedDateTempo = DateTime.Now;
+                items.Remarks = moveOrder.Remarks;
+                items.IsReject = true;
+                items.IsActive = false;
+                items.IsPrepared = false;
+                items.IsApproveReject = null;
+
+            }
+
+            foreach (var items in existingOrders)
+            {
+                items.IsMove = false;
+                items.IsReject = true;
+                items.RejectBy = moveOrder.RejectBy;
+                items.Remarks = moveOrder.Remarks;
+            }
+
+            return true;
+        }
+
+
+
 
 
         //================================= Validation =============================================================================
@@ -1293,6 +1331,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-     
+       
     }
 }
