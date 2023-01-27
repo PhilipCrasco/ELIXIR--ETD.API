@@ -612,6 +612,27 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return new JsonResult("Successfully reject list for move order!");
         }
 
+        [HttpGet]
+        [Route("RejectedMoveOrderPagination")]
+        public async Task<ActionResult<IEnumerable<DtoMoveOrder>>> RejectedMoveOrderPagination([FromQuery] UserParams userParams)
+        {
+            var moveorder = await _unitofwork.Orders.RejectedMoveOrderPagination(userParams);
+
+            Response.AddPaginationHeader(moveorder.CurrentPage, moveorder.PageSize, moveorder.TotalCount, moveorder.TotalPages, moveorder.HasNextPage, moveorder.HasPreviousPage);
+
+            var moveorderResult = new
+            {
+                moveorder,
+                moveorder.CurrentPage,
+                moveorder.PageSize,
+                moveorder.TotalCount,
+                moveorder.TotalPages,
+                moveorder.HasNextPage,
+                moveorder.HasPreviousPage
+            };
+
+            return Ok(moveorderResult);
+        }
 
 
 
