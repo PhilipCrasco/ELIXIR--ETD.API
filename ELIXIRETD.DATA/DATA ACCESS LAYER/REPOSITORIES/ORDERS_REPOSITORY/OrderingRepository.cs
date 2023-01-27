@@ -1147,7 +1147,36 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             
         }
 
+        public async Task<bool> ReturnMoveOrderForApproval(MoveOrder moveorder)
+        {
+            var existing = await _context.MoveOrders.Where(x => x.OrderNo == moveorder.OrderNo)
+                                                    .ToListAsync();
 
+            var existingorders = await _context.Orders.Where(x => x.OrderNoPKey == moveorder.OrderNoPkey)
+                                                      .ToListAsync();
+
+            foreach(var items in existing)
+            {
+                items.RejectBy = null;
+                items.RejectedDate = null;
+                items.Remarks = moveorder.Remarks;
+                items.IsReject = null;
+                items.IsActive = true;
+                items.IsPrepared = true;
+                items.IsApprove = null;
+                items.IsApproveReject = null;
+            }
+
+            foreach (var items in existingorders)
+            {
+                items.IsMove = true;
+                items.IsReject = null;
+                items.RejectBy = null;
+                items.Remarks = moveorder.Remarks;
+            }
+
+            return true;
+        }
 
 
 
@@ -1243,6 +1272,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-      
+       
     }
 }
