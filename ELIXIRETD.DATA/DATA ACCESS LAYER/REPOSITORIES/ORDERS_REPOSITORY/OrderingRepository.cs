@@ -879,16 +879,48 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
+        public async Task<PagedList<DtoMoveOrder>> ForApprovalMoveOrderPagination(UserParams userParams)
+        {
+            var order = _context.MoveOrders.Where(x => x.IsApproveReject == null)
+                                           .GroupBy(x => new
+                                           {
+
+                                               x.OrderNo,
+                                               x.CustomerName,
+                                               x.Department,
+                                               x.Company,
+                                               x.OrderDate,
+                                               x.IsApprove,
+                                               x.PreparedDate,
+                                               x.ApprovedDate,
+                                               x.IsPrepared,
+                                               x.BatchNo
+
+                                           }).Where(x => x.Key.IsApprove != true)
+                                              .Where(x => x.Key.IsPrepared == true)
+
+                                              .Select(x => new DtoMoveOrder
+                                              {
+
+                                                  OrderNo = x.Key.OrderNo,
+                                                  CustomerName = x.Key.CustomerName,
+                                                  Department = x.Key.Department,
+                                                  Category = x.Key.Company,
+                                                  Quantity = x.Sum(x => x.QuantityOrdered),
+                                                  OrderDate = x.Key.OrderDate.ToString(),
+                                                  PreparedDate = x.Key.PreparedDate.ToString(),
+                                                  BatchNo = x.Key.BatchNo
+                                              });
+
+            return await PagedList<DtoMoveOrder>.CreateAsync(order, userParams.PageNumber, userParams.PageSize);
 
 
 
+        }
 
 
 
-        //================================= Validation ==============================================================================
-
-
-
+        //================================= Validation =============================================================================
 
         public async Task<bool> ValidateCompanyCode(string CompanyCode)
         {
@@ -979,6 +1011,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-      
+     
     }
 }

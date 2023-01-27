@@ -41,6 +41,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<bool> ApprovalForMoveOrders(MoveOrder moveorder);
         Task<IReadOnlyList<DtoMoveOrder>> ViewMoveOrderForApproval(int id);
 
+        Task<PagedList<DtoMoveOrder>> ForApprovalMoveOrderPagination(UserParams userParams);
+
 
 
 
