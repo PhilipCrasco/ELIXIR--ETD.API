@@ -52,6 +52,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
 
         Task<bool> CancelMoveOrder(MoveOrder moveOrder);
         Task<bool> UpdatePrintStatus(MoveOrder moveorder);
+        Task <bool> CancelControlInMoveOrder (Ordering orders);
+
 
 
 

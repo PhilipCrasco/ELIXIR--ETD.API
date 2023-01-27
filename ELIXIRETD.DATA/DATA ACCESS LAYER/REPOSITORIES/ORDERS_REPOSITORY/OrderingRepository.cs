@@ -1122,7 +1122,30 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         }
 
+        public async Task<bool> CancelControlInMoveOrder(Ordering orders)
+        {
+            var cancelorder = await _context.Orders.Where(x => x.OrderNoPKey == orders.OrderNoPKey)
+                                                   .ToListAsync();
 
+            var existMOveOrders = await _context.MoveOrders.Where(x => x.OrderNo == orders.OrderNoPKey)
+                                                            .ToListAsync();
+
+            foreach(var items in existMOveOrders)
+            {
+                items.IsApprove = null;
+                items.ApprovedDate = null;
+            }
+
+            if(existMOveOrders != null)
+            {
+                foreach(var items in existMOveOrders)
+                {
+                    items.IsActive = false;
+                }
+            }
+            return true;
+            
+        }
 
 
 
@@ -1220,6 +1243,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-       
+      
     }
 }

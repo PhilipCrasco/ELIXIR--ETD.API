@@ -294,7 +294,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return Ok(orders);
         }
 
-        // ====================================== MoveOrder =========================================================================
+        // =============================================== MoveOrder =========================================================================
 
         [HttpPost]
         [Route("PrepareItemForMoveOrder")]
@@ -421,6 +421,17 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             await _unitofwork.CompleteAsync();
             return Ok(order);
 
+        }
+
+        [HttpPut]
+        [Route("UpdatePrintStatus")]
+        public async Task<IActionResult> UpdatePrintStatus([FromBody] MoveOrder moveorder)
+        {
+
+            await _unitofwork.Orders.UpdatePrintStatus(moveorder);
+            await _unitofwork.CompleteAsync();
+
+            return Ok(moveorder);
         }
 
 
@@ -558,15 +569,18 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         }
 
         [HttpPut]
-        [Route("UpdatePrintStatus")]
-        public async Task<IActionResult> UpdatePrintStatus([FromBody] MoveOrder moveorder)
+        [Route("CancelOrdersInMoveOrder")]
+        public async Task<IActionResult> CancelOrdersInMoveOrder([FromBody] Ordering order)
         {
 
-            await _unitofwork.Orders.UpdatePrintStatus(moveorder);
+            await _unitofwork.Orders.CancelControlInMoveOrder(order);
+
             await _unitofwork.CompleteAsync();
 
-            return Ok(moveorder);
+            return Ok("Successfully cancel orders");
+
         }
+
 
 
 
