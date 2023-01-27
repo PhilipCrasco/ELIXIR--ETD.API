@@ -44,6 +44,9 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<PagedList<DtoMoveOrder>> ForApprovalMoveOrderPagination(UserParams userParams);
         Task<PagedList<DtoMoveOrder>> ForApprovalMoveOrderPaginationOrig(UserParams userParams, string search);
 
+        Task<PagedList<DtoMoveOrder>> ApprovedMoveOrderPagination (UserParams userParams);
+
+
 
 
 

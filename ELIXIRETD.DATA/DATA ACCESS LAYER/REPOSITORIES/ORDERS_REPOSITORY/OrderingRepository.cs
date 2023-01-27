@@ -6,6 +6,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
+using System.Net.Mime;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 {
@@ -950,6 +951,49 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             return await PagedList<DtoMoveOrder>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
         }
+
+        public async Task<PagedList<DtoMoveOrder>> ApprovedMoveOrderPagination(UserParams userParams)
+        {
+            var orders = _context.MoveOrders
+                     .GroupBy(x => new
+                     {
+                         x.OrderNo,
+                         x.CustomerName,
+                         x.Department,
+                         x.Company,
+                         x.PreparedDate,
+                         x.IsApprove,
+                         x.IsPrepared,
+                         x.IsReject,
+                         x.ApproveDateTempo,
+                         x.IsPrint,
+                         x.IsTransact,
+                         x.BatchNo
+
+                     }).Where(x => x.Key.IsApprove == true)
+              .Where(x => x.Key.IsReject != true)
+
+              .Select(x => new DtoMoveOrder
+              {
+
+                  OrderNo = x.Key.OrderNo,
+                  CustomerName = x.Key.CustomerName,
+                  Department    = x.Key.Department,
+                  Category = x.Key.Company,
+                  Quantity = x.Sum(x => x.QuantityOrdered),
+                  PreparedDate = x.Key.PreparedDate.ToString(),
+                  IsApprove = x.Key.IsApprove != null,
+                  IsPrepared = x.Key.IsPrepared,
+                  ApprovedDate = x.Key.ApproveDateTempo.ToString(),
+                  IsPrint = x.Key.IsPrint != null,
+                  IsTransact = x.Key.IsTransact,
+                  BatchNo = x.Key.BatchNo
+
+              });
+
+            return await PagedList<DtoMoveOrder>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
+        }
+
 
 
 
