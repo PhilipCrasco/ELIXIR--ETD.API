@@ -5,6 +5,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 {
@@ -913,10 +914,45 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                               });
 
             return await PagedList<DtoMoveOrder>.CreateAsync(order, userParams.PageNumber, userParams.PageSize);
-
-
-
         }
+
+        public async Task<PagedList<DtoMoveOrder>> ForApprovalMoveOrderPaginationOrig(UserParams userParams, string search)
+        {
+            var orders = _context.MoveOrders.Where(x => x.IsApproveReject == null)
+                                            .GroupBy(x => new
+                                            {
+                                                x.OrderNo,
+                                                x.CustomerName,
+                                                x.Department,
+                                                x.Company,
+                                                x.OrderDate,
+                                                x.PreparedDate,
+                                                x.IsApprove,
+                                                x.IsPrepared,
+                                                x.BatchNo
+
+                                            }).Where(x => x.Key.IsPrepared != true)
+                                            .Where(x => x.Key.IsPrepared == true)
+
+                                            .Select(x => new DtoMoveOrder
+                                            {
+                                                OrderNo = x.Key.OrderNo,
+                                                CustomerName = x.Key.CustomerName,
+                                                Department = x.Key.Department,
+                                                Category = x.Key.Company,
+                                                Quantity = x.Sum(x => x.QuantityOrdered),
+                                                OrderDate = x.Key.OrderDate.ToString(),
+                                                PreparedDate = x.Key.PreparedDate.ToString(),
+                                                BatchNo = x.Key.BatchNo
+
+                                            }).Where(x => Convert.ToString(x.OrderDate).ToLower()
+                                              .Contains(search.Trim().ToLower()));
+
+            return await PagedList<DtoMoveOrder>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
+        }
+
+
+
 
 
 
@@ -1011,6 +1047,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-     
+      
     }
 }

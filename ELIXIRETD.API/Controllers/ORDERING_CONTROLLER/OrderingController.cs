@@ -397,6 +397,8 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return Ok(resultList);
         }
 
+
+
         [HttpGet]
         [Route("GetAllOutOfStockByItemCodeAndOrderDate")]
         public async Task<IActionResult> GetAllOutOfStockByItemCodeAndOrderDate([FromQuery] string itemcode, [FromQuery] string orderdate)
@@ -450,7 +452,32 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             };
 
             return Ok(moveorderResult);
+        }
 
+        [HttpGet]
+        [Route("GetAllForApprovalMoveOrderPaginationOrig")]
+        public async Task<ActionResult<IEnumerable<DtoMoveOrder>>> GetallForApprovalMoveOrderPaginationOrig([FromQuery] UserParams userParams , [FromQuery] string search)
+        {
+            if (search == null)
+                return await GEtAllForApprovalMoveOrderPagination(userParams);
+
+            var moveorder = await _unitofwork.Orders.ForApprovalMoveOrderPaginationOrig(userParams, search);
+
+            Response.AddPaginationHeader(moveorder.CurrentPage, moveorder.PageSize, moveorder.TotalCount, moveorder.TotalPages, moveorder.HasNextPage, moveorder.HasPreviousPage);
+
+            var moveorderResult = new
+            {
+                moveorder,
+                moveorder.CurrentPage,
+                moveorder.PageSize,
+                moveorder.TotalCount,
+                moveorder.TotalPages,
+                moveorder.HasNextPage,
+                moveorder.HasPreviousPage
+
+            };
+
+            return Ok(moveorderResult);
         }
 
 
