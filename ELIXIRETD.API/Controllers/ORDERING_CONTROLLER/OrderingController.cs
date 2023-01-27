@@ -593,8 +593,8 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         }
 
         [HttpPut]
-        [Route("RejectApproveMoveOrder")]
-        public async Task<IActionResult> RejectApproveMoveOrder([FromBody] MoveOrder moveorder)
+        [Route("RejectApproveListOfMoveOrder")]
+        public async Task<IActionResult> RejectApproveListOfMoveOrder([FromBody] MoveOrder moveorder)
         {
             await _unitofwork.Orders.RejectApproveMoveOrder(moveorder);
             await _unitofwork.CompleteAsync();
