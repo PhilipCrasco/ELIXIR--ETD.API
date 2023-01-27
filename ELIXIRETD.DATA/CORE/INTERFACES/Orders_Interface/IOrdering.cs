@@ -51,6 +51,7 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<DtoMoveOrder> GetAllApprovedMoveOrder(int id);
 
         Task<bool> CancelMoveOrder(MoveOrder moveOrder);
+        Task<bool> UpdatePrintStatus(MoveOrder moveorder);
 
 
 

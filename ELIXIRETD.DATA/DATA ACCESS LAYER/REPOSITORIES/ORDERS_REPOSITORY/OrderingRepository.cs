@@ -1106,7 +1106,21 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return await orders.FirstOrDefaultAsync();
 
         }
+        public async Task<bool> UpdatePrintStatus(MoveOrder moveorder)
+        {
+            var existing = await _context.MoveOrders.Where(x => x.OrderNo == moveorder.OrderNo)
+                                                     .ToListAsync();
 
+            if (existing == null)
+                return false;
+
+            foreach( var items in existing)
+            {
+                items.IsPrint = true;
+            }
+            return true;
+
+        }
 
 
 
