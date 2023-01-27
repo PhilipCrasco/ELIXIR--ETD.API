@@ -503,7 +503,32 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         }
 
+        [HttpGet]
+        [Route("ApprovedMoveOrderPaginationOrig")]
+        public async Task<ActionResult<IEnumerable<DtoMoveOrder>>> ApprovedMoveOrderPaginationOrig([FromQuery] UserParams userParams, [FromQuery] string search)
+        {
 
+            if (search == null)
+
+                return await ApprovedMoveOrderPagination(userParams);
+
+            var moveorder = await _unitofwork.Orders.ApprovedMoveOrderPaginationOrig(userParams, search);
+
+            Response.AddPaginationHeader(moveorder.CurrentPage, moveorder.PageSize, moveorder.TotalCount, moveorder.TotalPages, moveorder.HasNextPage, moveorder.HasPreviousPage);
+
+            var moveorderResult = new
+            {
+                moveorder,
+                moveorder.CurrentPage,
+                moveorder.PageSize,
+                moveorder.TotalCount,
+                moveorder.TotalPages,
+                moveorder.HasNextPage,
+                moveorder.HasPreviousPage
+            };
+
+            return Ok(moveorderResult);
+        }
 
 
 
