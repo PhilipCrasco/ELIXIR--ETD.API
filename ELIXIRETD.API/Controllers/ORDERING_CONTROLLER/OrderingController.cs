@@ -409,6 +409,23 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         }
 
+        [HttpPut]
+        [Route(" CancelPreparedItems")]
+        public async Task<IActionResult> CancelPreparedItems([FromBody] MoveOrder moveorder)
+        {
+            var order = await _unitofwork.Orders.CancelMoveOrder(moveorder);
+
+            if (order == false)
+                return BadRequest("No existing Prepared Items");
+
+            await _unitofwork.CompleteAsync();
+            return Ok(order);
+
+        }
+
+
+
+
         //============================================= Move Order Preparation ===================================================
 
         [HttpGet]
@@ -528,6 +545,16 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             };
 
             return Ok(moveorderResult);
+        }
+
+        [HttpGet]
+        [Route("GetAllApprovedMoveOrder")]
+        public async Task<IActionResult>GetAllApprovedMoveOrder([FromQuery] int id)
+        {
+            var orders = await _unitofwork.Orders.GetAllApprovedMoveOrder(id);
+
+
+            return Ok(orders);
         }
 
 

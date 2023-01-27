@@ -838,6 +838,26 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         }
 
+        public async Task<bool> CancelMoveOrder(MoveOrder moveOrder)
+        {
+            var existing = await _context.MoveOrders.Where(x => x.Id == moveOrder.Id)
+                                                    .FirstOrDefaultAsync();
+
+            if (existing == null)
+            {
+                return false;
+            }
+
+            existing.IsActive = false;
+            existing.CancelledDate = DateTime.Now;
+
+            return true;
+
+        }
+
+
+
+
         // ======================================== Move Order Approval ==============================================================
 
         public async Task<IReadOnlyList<DtoMoveOrder>> ViewMoveOrderForApproval(int id)
@@ -1036,7 +1056,56 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             return await PagedList<DtoMoveOrder>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
         }
+        public async Task<DtoMoveOrder> GetAllApprovedMoveOrder(int id)
+        {
+            var orders = _context.MoveOrders.Where(x => x.OrderNoPkey == id)
+                                            .GroupBy(x => new
+                                            {
+                                                x.OrderNo,
+                                                x.warehouseId,
+                                                x.ItemCode,
+                                                x.ItemDescription,
+                                                x.Uom,
+                                                x.CustomerName,
+                                                x.Department,
+                                                x.Company,
+                                                x.OrderDate,
+                                                x.PreparedDate,
+                                                x.IsApprove,
+                                                x.IsPrepared,
+                                                x.IsReject,
+                                                x.ApproveDateTempo,
+                                                x.IsPrint,
+                                                x.IsTransact,
 
+
+                                            }).Where(x => x.Key.IsApprove == true)
+                                             .Where(x => x.Key.IsReject != true)
+
+                                             .Select(x => new DtoMoveOrder
+                                             {
+                                                 OrderNo = x.Key.OrderNo,
+                                                 BarcodeNo = x.Key.warehouseId,
+                                                 ItemCode = x.Key.ItemCode,
+                                                 ItemDescription = x.Key.ItemDescription,
+                                                 Uom = x.Key.Uom,
+                                                 CustomerName = x.Key.CustomerName,
+                                                 Department = x.Key.Department,
+                                                 Category = x.Key.Company,
+                                                 Quantity = x.Sum(x => x.QuantityOrdered),
+                                                 OrderDate = x.Key.OrderDate.ToString(),
+                                                 PreparedDate = x.Key.PreparedDate.ToString(),
+                                                 IsApprove = x.Key.IsApprove != null,
+                                                 IsPrepared = x.Key.IsPrepared,
+                                                 ApprovedDate = x.Key.ApproveDateTempo.ToString(),
+                                                 IsPrint = x.Key.IsPrint !=null,
+                                                 IsTransact = x.Key.IsTransact 
+
+                                             });
+
+            return await orders.FirstOrDefaultAsync();
+
+        }
 
 
 
@@ -1137,6 +1206,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-      
+       
     }
 }

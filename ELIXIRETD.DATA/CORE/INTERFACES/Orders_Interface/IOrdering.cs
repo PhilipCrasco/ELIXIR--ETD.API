@@ -48,6 +48,11 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         
         Task<PagedList<DtoMoveOrder>> ApprovedMoveOrderPaginationOrig (UserParams userParams, string search);
 
+        Task<DtoMoveOrder> GetAllApprovedMoveOrder(int id);
+
+        Task<bool> CancelMoveOrder(MoveOrder moveOrder);
+
+
 
 
 
