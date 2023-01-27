@@ -5,8 +5,6 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Immutable;
-using System.Net.Mime;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 {
@@ -1178,6 +1176,29 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
+        public async  Task<bool> RejectApproveMoveOrder(MoveOrder moveOrder)
+        {
+            var existing = await _context.MoveOrders.Where(x => x.OrderNo == moveOrder.OrderNo)
+                                                    .ToListAsync();
+
+            if (existing == null)
+                return false;
+
+            foreach( var items in existing)
+            {
+                items.RejectBy = moveOrder.RejectBy;
+                items.RejectedDate = DateTime.Now;
+                items.RejectedDateTempo = DateTime.Now;
+                items.Remarks = moveOrder.Remarks;
+                items.IsReject = null;
+                items.IsApproveReject = true;
+                items.IsActive = false;
+                items.IsPrepared = true;
+                items.IsApprove = false;
+
+            }
+            return true;
+        }
 
 
 
@@ -1272,6 +1293,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-       
+     
     }
 }
