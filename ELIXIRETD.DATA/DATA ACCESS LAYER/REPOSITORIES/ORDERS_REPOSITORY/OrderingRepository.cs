@@ -1350,10 +1350,39 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             return await orders.ToListAsync();
 
+        }
 
+        public async Task<IReadOnlyList<DtoMoveOrder>> ListOfMoveOrdersForTransact(int orderid)
+        {
+            var orders = _context.MoveOrders.Where(x => x.IsActive == true)
+                                           .Where(x => x.IsApprove == true)
 
+                                           .Select(x => new DtoMoveOrder
+                                           {
+                                               OrderNoPKey = x.OrderNoPkey,
+                                               OrderNo = x.OrderNo,
+                                               BarcodeNo = x.warehouseId,
+                                               OrderDate = x.OrderDate.ToString(),
+                                               PreparedDate = x.PreparedDate.ToString(),
+                                               DateNeeed = x.DateNeeded.ToString(),
+                                               Department = x.Department,
+                                               CustomerName = x.CustomerName,
+                                               Company = x.Company,
+                                               Category = x.Category,
+                                               ItemCode = x.ItemCode,
+                                               ItemDescription = x.ItemDescription,
+                                               Uom = x.Uom,
+                                               Quantity = x.QuantityOrdered,
+                                               IsPrepared = x.IsPrepared,
+                                               IsApprove = x.IsApprove != null
+
+                                           });
+         return await orders.Where(x => x.OrderNo == orderid)
+                            .ToListAsync();
 
         }
+
+
 
 
 

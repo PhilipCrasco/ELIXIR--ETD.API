@@ -675,6 +675,16 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         }
 
+        [HttpGet]
+        [Route("ListOfMoveOrdersForTransact")]
+        public async Task<IActionResult> ListOfMoveOrdersForTransact([FromQuery] int orderid)
+        {
+
+            var orders = await _unitofwork.Orders.ListOfMoveOrdersForTransact(orderid);
+
+            return Ok(orders);
+
+        }
 
 
 
