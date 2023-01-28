@@ -1,6 +1,7 @@
 ﻿using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
+using System.Threading.Tasks;
 
 namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
 {
@@ -58,7 +59,9 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<bool> RejectForMoveOrder(MoveOrder moveOrder);
 
         Task<PagedList<DtoMoveOrder>> RejectedMoveOrderPagination(UserParams userParams);
-        
+        Task<PagedList<DtoMoveOrder>> RejectedMoveOrderPaginationOrig(UserParams userParams, string search);
+
+
 
 
 

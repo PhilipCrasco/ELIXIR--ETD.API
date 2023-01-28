@@ -1275,9 +1275,47 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         }
 
+        public async Task<PagedList<DtoMoveOrder>> RejectedMoveOrderPaginationOrig(UserParams userParams, string search)
+        {
+            var orders = _context.MoveOrders.Where(x => x.IsApproveReject == true)
+                                            .GroupBy( x => new
+                                            {
+                                                  x.OrderNo,
+                                                  x.CustomerName,
+                                                  x.Department,
+                                                  x.Company,
+                                                  x.OrderDate,
+                                                  x.PreparedDate,
+                                                  x.IsApprove,
+                                                  x.IsReject,
+                                                  x.RejectedDateTempo,
+                                                  x.Remarks,
+                                                  x.BatchNo
+
+
+                                            }).Select(x => new DtoMoveOrder
+                                            {
+                                                OrderNo = x.Key.OrderNo,
+                                                CustomerName = x.Key.CustomerName,
+                                                Department = x.Key.Department,
+                                                Category = x.Key.Company,
+                                                Quantity = x.Sum(x => x.QuantityOrdered),
+                                                OrderDate = x.Key.OrderDate.ToString(),
+                                                PreparedDate = x.Key.PreparedDate.ToString(),
+                                                IsReject = x.Key.IsReject != null,
+                                                RejectedDate = x.Key.RejectedDateTempo.Value.ToString("MM/dd/yyyy"),
+                                                Remarks = x.Key.Remarks,
+                                                BatchNo = x.Key.BatchNo
 
 
 
+                                            }).Where(x => Convert.ToString(x.OrderNo).ToLower()
+                                              .Contains(search.Trim().ToLower()));
+
+            return await PagedList<DtoMoveOrder>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
+        }
+
+         
 
 
 
@@ -1373,6 +1411,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-       
+      
     }
 }
