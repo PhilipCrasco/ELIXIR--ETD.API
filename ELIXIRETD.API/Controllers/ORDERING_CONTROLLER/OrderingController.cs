@@ -662,6 +662,27 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return Ok(moveorderResult);
         }
 
+        //==================================== Transact move Order ==================================================
+
+        [HttpGet]
+        [Route("GetTotalListForMoveOrder")]
+        public async Task<IActionResult> GetTotalListForMoveOrder([FromQuery] bool status)
+        {
+
+            var orders = await _unitofwork.Orders.TotalListForTransactMoveOrder(status);
+
+            return Ok(orders);
+
+        }
+
+
+
+
+
+
+
+
+
 
     }
 }

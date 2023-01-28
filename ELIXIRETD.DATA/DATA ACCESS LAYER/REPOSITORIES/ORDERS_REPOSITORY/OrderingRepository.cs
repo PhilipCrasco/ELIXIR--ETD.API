@@ -1315,7 +1315,46 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return await PagedList<DtoMoveOrder>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
         }
 
-         
+        // =========================================== Transact Order ============================================================
+
+        public async Task<IReadOnlyList<OrderDto>> TotalListForTransactMoveOrder(bool status)
+        {
+            var orders = _context.MoveOrders.Where(x => x.IsActive == true)
+                                            .Where(x => x.IsTransact == status)
+                                            .GroupBy(x => new
+                                            {
+                                                x.OrderNo,
+                                                x.CustomerName,
+                                                x.Department,
+                                                x.Company,
+                                                x.DateNeeded,
+                                                x.PreparedDate,
+                                                x.IsApprove,
+                                                x.IsTransact
+
+                                            }).Where(x => x.Key.IsApprove == true)
+
+                                            .Select(x => new OrderDto
+                                            {
+                                                OrderNo = x.Key.OrderNo,
+                                                CustomerName = x.Key.CustomerName,
+                                                Department = x.Key.Department,
+                                                Company = x.Key.Company,
+                                                Category = x.Key.Company,
+                                                TotalOrders = x.Sum(x => x.QuantityOrdered),
+                                                DateNeeded = x.Key.DateNeeded.ToString("MM/dd/yyyy"),
+                                                PreparedDate = x.Key.PreparedDate.ToString(),
+                                                IsApproved = x.Key.IsApprove != null
+
+                                            });
+
+            return await orders.ToListAsync();
+
+
+
+
+        }
+
 
 
 
@@ -1411,6 +1450,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-      
+       
     }
 }

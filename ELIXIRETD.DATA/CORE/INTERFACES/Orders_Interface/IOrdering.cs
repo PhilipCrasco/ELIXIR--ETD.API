@@ -61,6 +61,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<PagedList<DtoMoveOrder>> RejectedMoveOrderPagination(UserParams userParams);
         Task<PagedList<DtoMoveOrder>> RejectedMoveOrderPaginationOrig(UserParams userParams, string search);
 
+        Task<IReadOnlyList<OrderDto>> TotalListForTransactMoveOrder(bool status);
+
 
 
 
