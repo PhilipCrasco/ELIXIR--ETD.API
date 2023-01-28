@@ -1382,7 +1382,22 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         }
 
+        public async Task<bool> TransanctListOfMoveOrders(TransactMoveOrder transact)
+        {
+            var existing = await _context.MoveOrders.Where(x => x.OrderNo == transact.OrderNo)
+                                                   .ToListAsync();
 
+            await _context.TransactOrder.AddAsync(transact);
+
+
+            foreach (var items in existing)
+            {
+                items.IsTransact = true;
+            }
+
+            return true;
+
+        }
 
 
 

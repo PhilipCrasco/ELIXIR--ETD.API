@@ -687,6 +687,26 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         }
 
 
+        [HttpPost]
+        [Route("TransactListOfMoveOrders")]
+        public async Task<IActionResult> TransactListOfMoveOrders([FromBody] TransactMoveOrder[] transact)
+        {
+
+            foreach (TransactMoveOrder items in transact)
+            {
+
+                items.IsActive = true;
+                items.IsTransact = true;
+                items.PreparedDate = DateTime.Now;
+
+                await _unitofwork.Orders.TransanctListOfMoveOrders(items);
+            }
+
+            await _unitofwork.CompleteAsync();
+
+            return Ok(transact);
+
+        }
 
 
 

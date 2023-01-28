@@ -65,6 +65,10 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
 
         Task<IReadOnlyList<DtoMoveOrder>> ListOfMoveOrdersForTransact(int orderid);
 
+        Task<bool> TransanctListOfMoveOrders(TransactMoveOrder transact);
+
+
+
 
 
 
