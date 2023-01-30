@@ -22,6 +22,7 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.USER_INTERFACE
         Task<bool> ActivateModule(Module module);
         Task<PagedList<ModuleDto>> GetAllModulessWithPagination(bool status, UserParams userParams);
         Task<PagedList<ModuleDto>> GetModulesByStatusWithPaginationOrig(UserParams userParams, bool status, string search);
+        Task<bool> ValidateMenu (int untag);
 
 
 

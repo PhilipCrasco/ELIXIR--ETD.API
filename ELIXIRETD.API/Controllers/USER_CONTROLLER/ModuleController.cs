@@ -198,11 +198,14 @@ namespace ELIXIRETD.API.Controllers.USER_CONTROLLER
         [Route("InActiveMenu")]
         public async Task<IActionResult> InActiveMenu([FromBody] MainMenu menu)
         {
+
+
             await _unitOfWork.Modules.InActiveMainMenu(menu);
             await _unitOfWork.CompleteAsync();
 
             return new JsonResult("Successfully InActive Menu!");
         }
+
 
         [HttpPut]
         [Route("ActivateMainMenu")]

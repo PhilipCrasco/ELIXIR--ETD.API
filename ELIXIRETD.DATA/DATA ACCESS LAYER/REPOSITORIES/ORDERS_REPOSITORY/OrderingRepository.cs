@@ -153,7 +153,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             if (existingOrder == null)
                 return false;
 
-
+                
             existingOrder.PreparedDate = orders.PreparedDate;
             existingOrder.OrderNoPKey = orders.OrderNoPKey;
 
@@ -196,7 +196,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
         {
             var cancelled = _context.Orders.Where(x => x.CancelDate != null)
                                            .Where(x => x.IsActive == false)
-                                           .Where(x => x.IsCancelBy != null)
+                                           
                                            .Select(x => new OrderDto
                                            {
                                                Id = x.Id,
