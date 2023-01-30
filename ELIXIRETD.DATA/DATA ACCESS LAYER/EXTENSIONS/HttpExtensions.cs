@@ -1,11 +1,6 @@
 ﻿using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.EXTENSIONS
 {

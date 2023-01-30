@@ -114,7 +114,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                     x.ordering.QuantityOrdered,
                     x.ordering.IsActive,
                     x.ordering.IsPrepared,
-                    Reserve = x.warehouse.Reserve != null ? x.warehouse.Reserve : 0
+                    Reserve = x.warehouse.Reserve == null ? 0 : x.warehouse.Reserve
 
                 }).Select(total => new OrderDto
                 {
@@ -172,6 +172,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             return true;
         }
+
 
         public async Task<bool> CancelOrders(Ordering orders)
         {
