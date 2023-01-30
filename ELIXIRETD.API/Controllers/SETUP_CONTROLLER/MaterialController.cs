@@ -47,10 +47,10 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
 
                 var itemCategoryId = await _unitOfWork.Materials.ValidateItemCategoryId(material.ItemCategoryId);
                 var uomId = await _unitOfWork.Materials.ValidateUOMId(material.UomId);
-            var validDescriptionAndUom = await _unitOfWork.Materials.ValidateDescritionAndUom(material);
+                var validDescriptionAndUom = await _unitOfWork.Materials.ValidateDescritionAndUom(material);
 
 
-            if (validDescriptionAndUom == false)
+            if (validDescriptionAndUom == true)
                 return BadRequest("Item Description and Uom already exist");
 
                 if (itemCategoryId == false)

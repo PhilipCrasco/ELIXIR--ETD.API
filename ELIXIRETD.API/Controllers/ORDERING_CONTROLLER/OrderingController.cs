@@ -36,13 +36,13 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                 foreach (Ordering items in order)
                 {
 
-                    if (order.Count(x => x.TrasactId == items.TrasactId && x.ItemCode == items.ItemCode) > 1)
+                    if (order.Count(x => x.TrasactId == items.TrasactId && x.ItemCode == items.ItemCode && x.CustomerName == items.CustomerName) > 1)
                     {
                         DuplicateList.Add(items);
                     }
                     else
                     {
-                        var validateOrderNoAndItemcode = await _unitofwork.Orders.ValidateExistOrderandItemCode(items.TrasactId, items.ItemCode);
+                        var validateOrderNoAndItemcode = await _unitofwork.Orders.ValidateExistOrderandItemCode(items.TrasactId, items.ItemCode , items.CustomerName);
                         var validateDateNeeded = await _unitofwork.Orders.ValidateDateNeeded(items);
                         var validateCompanyCode = await _unitofwork.Orders.ValidateCompanyCode(items.Company);
                         var validateCustomerName = await _unitofwork.Orders.ValidateCustomerName(items.CustomerName);

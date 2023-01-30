@@ -44,7 +44,7 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
 
             var validation = await _unitOfWork.Suppliers.ValidationDescritandAddress(supplier);
 
-            if (validation == false)
+            if (validation == true)
                 return BadRequest("Supplier Name and Address was already exist");
 
 
@@ -61,7 +61,7 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
         {
             var validation = await _unitOfWork.Suppliers.ValidationDescritandAddress(supplier);
 
-            if (validation == false)
+            if (validation == true)
                 return BadRequest("Supplier Name and Address was already exist");
 
 

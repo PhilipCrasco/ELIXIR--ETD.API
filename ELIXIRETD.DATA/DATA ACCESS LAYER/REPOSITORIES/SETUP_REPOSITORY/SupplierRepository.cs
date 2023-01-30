@@ -144,9 +144,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
 
             if(valid == null)
             {
-                return true;
+                return false;
             }
-            return false;
+            return true;
                                                 
         }
 
