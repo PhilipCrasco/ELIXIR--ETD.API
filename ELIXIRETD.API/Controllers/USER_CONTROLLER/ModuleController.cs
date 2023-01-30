@@ -199,6 +199,12 @@ namespace ELIXIRETD.API.Controllers.USER_CONTROLLER
         public async Task<IActionResult> InActiveMenu([FromBody] MainMenu menu)
         {
 
+            var valid = await _unitOfWork.Modules.ValidateMenu(menu);
+
+            if (valid == true)
+                return BadRequest("Existed Already");
+
+      
 
             await _unitOfWork.Modules.InActiveMainMenu(menu);
             await _unitOfWork.CompleteAsync();

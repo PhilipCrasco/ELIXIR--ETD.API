@@ -277,9 +277,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
             return await PagedList<ModuleDto>.CreateAsync(module, userParams.PageNumber, userParams.PageSize);
         }
 
-        public async Task<bool> ValidateMenu(int untag)
+        public async Task<bool> ValidateMenu(MainMenu module)
         {
-            var valid = await _context.RoleModules.Where(x => x.ModuleId == untag)
+            var valid = await _context.RoleModules.Where(x => x.ModuleId == module.Id)
                                                    .Where(x => x.IsActive == true)
                                                    .FirstOrDefaultAsync();
             if(valid == null)
