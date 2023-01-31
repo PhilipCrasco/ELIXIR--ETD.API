@@ -26,8 +26,10 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                                   Id = x.Id, 
                                                   ItemCode = x.ItemCode, 
                                                   ItemDescription = x.ItemDescription, 
-                                                  ItemCategory = x.SubCategory.SubCategoryName,
-                                                  ItemCategoryId = x.SubCategId, 
+                                                 SubCategoryId = x.SubCategId,
+                                                 SubCategoryName = x.SubCategory.SubCategoryName,
+                                                 ItemCategoryId = x.SubCategory.ItemCategId,
+                                                 ItemCategoryName = x.SubCategory.ItemCategory.ItemCategoryName,
                                                   BufferLevel = x.BufferLevel,
                                                   Uom = x.Uom.UomCode,
                                                   UomId = x.UomId,
@@ -47,8 +49,10 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                                  Id = x.Id,
                                                  ItemCode = x.ItemCode,
                                                  ItemDescription = x.ItemDescription,
-                                                 ItemCategory = x.SubCategory.SubCategoryName,
-                                                 ItemCategoryId = x.SubCategId,
+                                                 SubCategoryId = x.SubCategId,
+                                                 SubCategoryName = x.SubCategory.SubCategoryName,
+                                                 ItemCategoryId = x.SubCategory.ItemCategId,
+                                                 ItemCategoryName = x.SubCategory.ItemCategory.ItemCategoryName,
                                                  BufferLevel = x.BufferLevel,
                                                  Uom = x.Uom.UomCode,
                                                  UomId = x.UomId,
@@ -77,6 +81,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
 
             exisitngMaterial.ItemDescription = materials.ItemDescription;
             exisitngMaterial.SubCategId = materials.SubCategId;
+
             exisitngMaterial.UomId = materials.UomId;
             exisitngMaterial.BufferLevel = materials.BufferLevel;
 
@@ -112,18 +117,20 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                               .OrderBy(x => x.ItemCode)
                                               .Select(x => new MaterialDto
                                              {
-                                                 Id = x.Id,
-                                                 ItemCode = x.ItemCode,
-                                                 ItemDescription = x.ItemDescription,
-                                                 ItemCategory = x.SubCategory.SubCategoryName,
-                                                 ItemCategoryId = x.SubCategId,
-                                                 BufferLevel = x.BufferLevel,
-                                                 Uom = x.Uom.UomCode,
-                                                 UomId = x.UomId,
-                                                 DateAdded = x.DateAdded.ToString("MM/dd/yyyy"),
-                                                 AddedBy = x.AddedBy,
-                                                 IsActive = x.IsActive
-                                             });
+                                                  Id = x.Id,
+                                                  ItemCode = x.ItemCode,
+                                                  ItemDescription = x.ItemDescription,
+                                                  SubCategoryId = x.SubCategId,
+                                                  SubCategoryName = x.SubCategory.SubCategoryName,
+                                                  ItemCategoryId = x.SubCategory.ItemCategId,
+                                                  ItemCategoryName = x.SubCategory.ItemCategory.ItemCategoryName,
+                                                  BufferLevel = x.BufferLevel,
+                                                  Uom = x.Uom.UomCode,
+                                                  UomId = x.UomId,
+                                                  DateAdded = x.DateAdded.ToString("MM/dd/yyyy"),
+                                                  AddedBy = x.AddedBy,
+                                                  IsActive = x.IsActive
+                                              });
 
             return await PagedList<MaterialDto>.CreateAsync(materials, userParams.PageNumber, userParams.PageSize);
         }
@@ -137,8 +144,10 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                                 Id = x.Id,
                                                 ItemCode = x.ItemCode,
                                                 ItemDescription = x.ItemDescription,
-                                                ItemCategory = x.SubCategory.SubCategoryName,
-                                                ItemCategoryId = x.SubCategId,
+                                                SubCategoryId = x.SubCategId,
+                                                SubCategoryName = x.SubCategory.SubCategoryName,
+                                                ItemCategoryId = x.SubCategory.ItemCategId,
+                                                ItemCategoryName = x.SubCategory.ItemCategory.ItemCategoryName,
                                                 BufferLevel = x.BufferLevel,
                                                 Uom = x.Uom.UomCode,
                                                 UomId = x.UomId,
@@ -474,6 +483,15 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                                                                            
         }
 
-       
+        public async Task<bool> ExistingItemAndSubCateg(Material materials)
+        {
+            var valid = await _context.Materials.Where(x => x.ItemCode == materials.ItemCode)
+                                                .Where(x => x.SubCategId== materials.SubCategId)
+                                                .FirstOrDefaultAsync();
+
+            if (valid == null)
+                return false;
+            return true;
+        }
     }
 }

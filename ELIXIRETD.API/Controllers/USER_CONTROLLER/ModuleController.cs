@@ -89,7 +89,7 @@ namespace ELIXIRETD.API.Controllers.USER_CONTROLLER
             var valid = await _unitOfWork.Modules.ValidateMenu(module.Id);
 
             if (valid == true)
-                return BadRequest("Existing Data");
+                return BadRequest("Module was in use!");
 
 
             await _unitOfWork.Modules.InActiveModule(module);
@@ -221,7 +221,7 @@ namespace ELIXIRETD.API.Controllers.USER_CONTROLLER
             var valid = await _unitOfWork.Modules.ValidateMenu(menu.Id);
 
             if (valid == true)
-                return BadRequest("Existed Already");
+                return BadRequest("Main menu was in use!");
 
             await _unitOfWork.Modules.InActiveMainMenu(menu);
             await _unitOfWork.CompleteAsync();
