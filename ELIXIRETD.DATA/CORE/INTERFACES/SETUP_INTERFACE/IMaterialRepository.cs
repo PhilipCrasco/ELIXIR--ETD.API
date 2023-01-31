@@ -29,7 +29,7 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.SETUP_INTERFACE
         Task<bool> ExistingSubCateg(string subcateg);
 
 
-        Task<bool> ExistItemCategNameandSubCateg(ItemCategory category);
+ 
         Task<bool> ValidationSubCategory(int Subcategory);
         Task<IReadOnlyList<ItemCategoryDto>> GetAllActiveItemCategory();
         Task<IReadOnlyList<ItemCategoryDto>> GetAllInActiveItemCategory();
@@ -46,10 +46,7 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.SETUP_INTERFACE
         Task<IReadOnlyList<SubCategoryDto>> GetAllActiveSubCategory();
         Task<IReadOnlyList<SubCategoryDto>> GetInActiveSubCategory();
         Task<bool> AddNewSubCategory(SubCategory category);
-        Task<bool>UpdateSubCategory(SubCategory category);
-
-        Task<bool> ActiveSubCategory(SubCategory category);
-        Task<bool> InActiveSubCategory(SubCategory category);
+      
        
 
 
