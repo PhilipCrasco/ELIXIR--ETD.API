@@ -277,9 +277,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
             return await PagedList<ModuleDto>.CreateAsync(module, userParams.PageNumber, userParams.PageSize);
         }
 
-        public async Task<bool> ValidateMenu(MainMenu module)
+        public async Task<bool> ValidateMenu(int module)
         {
-            var valid = await _context.RoleModules.Where(x => x.ModuleId == module.Id)
+            var valid = await _context.RoleModules.Where(x => x.ModuleId == module)
                                                    .Where(x => x.IsActive == true)
                                                    .FirstOrDefaultAsync();
             if(valid == null)
@@ -287,9 +287,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
                 return false;
             }
             return true;
-
-                
-                                                  
+            
         }
     }
 }

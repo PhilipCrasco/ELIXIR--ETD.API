@@ -43,11 +43,11 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT
         public virtual DbSet<GenerateOrderNo> GenerateOrders { get; set; }
         public virtual DbSet<MoveOrder> MoveOrders { get; set; }
         public virtual DbSet<TransactMoveOrder> TransactOrder { get; set; }
+        public virtual DbSet<SubCategory> SubCategories { get; set; }
 
 
 
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+       protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())

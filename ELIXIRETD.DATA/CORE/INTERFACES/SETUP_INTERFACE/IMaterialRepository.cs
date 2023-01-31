@@ -26,8 +26,11 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.SETUP_INTERFACE
         Task<bool> ItemCodeExist(string itemcode);
         Task<bool> ItemCategoryExist(string category);
         Task<bool> ValidateDescritionAndUom(Material materials);
+        Task<bool> ExistingSubCateg(string subcateg);
 
 
+        Task<bool> ExistItemCategNameandSubCateg(ItemCategory category);
+        Task<bool> ValidationSubCategory(int Subcategory);
         Task<IReadOnlyList<ItemCategoryDto>> GetAllActiveItemCategory();
         Task<IReadOnlyList<ItemCategoryDto>> GetAllInActiveItemCategory();
         Task<bool> AddNewItemCategory(ItemCategory category);
@@ -36,6 +39,20 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.SETUP_INTERFACE
         Task<bool> ActivateItemCategory(ItemCategory category);
         Task<PagedList<ItemCategoryDto>> GetAllItemCategoryWithPagination(bool status, UserParams userParams);
         Task<PagedList<ItemCategoryDto>> GetItemCategoryWithPaginationOrig(UserParams userParams, bool status, string search);
+
+
+       //====================================================== Sub Category =========================================================
+
+        Task<IReadOnlyList<SubCategoryDto>> GetAllActiveSubCategory();
+        Task<IReadOnlyList<SubCategoryDto>> GetInActiveSubCategory();
+        Task<bool> AddNewSubCategory(SubCategory category);
+        Task<bool>UpdateSubCategory(SubCategory category);
+
+        Task<bool> ActiveSubCategory(SubCategory category);
+        Task<bool> InActiveSubCategory(SubCategory category);
+       
+
+
 
 
 

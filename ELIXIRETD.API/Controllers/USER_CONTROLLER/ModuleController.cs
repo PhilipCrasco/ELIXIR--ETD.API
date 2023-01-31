@@ -64,7 +64,17 @@ namespace ELIXIRETD.API.Controllers.USER_CONTROLLER
         [Route("UpdateModule")]
         public async Task<IActionResult> UpdateModuleById([FromBody] Module module)
         {
-         
+            var getMainMenuId = await _unitOfWork.Modules.CheckMainMenu(module.MainMenuId);
+
+            if (getMainMenuId == false)
+                return BadRequest("MainMenu doesn't exist, Please input data first!");
+
+            if (await _unitOfWork.Modules.SubMenuNameExist(module.SubMenuName))
+                return BadRequest("SubMenu Already Exist!, Please try something else!");
+
+            if (await _unitOfWork.Modules.ModuleNameExist(module.ModuleName))
+                return BadRequest("ModuleName Already Exist!, Please try something else!");
+
             await _unitOfWork.Modules.UpdateModule(module);
             await _unitOfWork.CompleteAsync();
 
@@ -75,6 +85,12 @@ namespace ELIXIRETD.API.Controllers.USER_CONTROLLER
         [Route("InActiveModule")]
         public async Task<IActionResult> InActiveModule([FromBody] Module module)
         {
+
+            var valid = await _unitOfWork.Modules.ValidateMenu(module.Id);
+
+            if (valid == true)
+                return BadRequest("Existing Data");
+
 
             await _unitOfWork.Modules.InActiveModule(module);
             await _unitOfWork.CompleteAsync();
@@ -186,7 +202,10 @@ namespace ELIXIRETD.API.Controllers.USER_CONTROLLER
         [Route("UpdateMenu")]
         public async Task<IActionResult> UpdateMenu([FromBody] MainMenu menu)
         {
-         
+
+            if (await _unitOfWork.Modules.MenuAlreadyExist(menu.ModuleName))
+                return BadRequest("Menu Already Exist!, Please try something else!");
+
             await _unitOfWork.Modules.UpdateMainMenu(menu);
             await _unitOfWork.CompleteAsync();
 
@@ -199,12 +218,10 @@ namespace ELIXIRETD.API.Controllers.USER_CONTROLLER
         public async Task<IActionResult> InActiveMenu([FromBody] MainMenu menu)
         {
 
-            var valid = await _unitOfWork.Modules.ValidateMenu(menu);
+            var valid = await _unitOfWork.Modules.ValidateMenu(menu.Id);
 
             if (valid == true)
                 return BadRequest("Existed Already");
-
-      
 
             await _unitOfWork.Modules.InActiveMainMenu(menu);
             await _unitOfWork.CompleteAsync();

@@ -6,16 +6,14 @@ using System.Threading.Tasks;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.SETUP_DTO
 {
-    public class ItemCategoryDto
+    public class SubCategoryDto
     {
-
         public int Id { get; set; }
-        public string ItemCategoryName { get; set; }
-        public int CategoryId { get; set; }
-        public string SubCategoryName { get; set; }
-        public string DateAdded { get; set; }
+        public string SubcategoryName { get; set; }
         public string AddedBy { get; set; }
+        public string DateAdded { get; set; }
         public bool IsActive { get; set; }
+
 
     }
 }

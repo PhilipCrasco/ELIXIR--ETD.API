@@ -197,6 +197,15 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
         [Route("AddNewItemCategories")]
         public async Task<IActionResult> CreateNewIteCategories(ItemCategory category)
         {
+            var validSubCategory = await _unitOfWork.Materials.ValidationSubCategory(category.categoryId);
+            var ExistingCategAndSub = await _unitOfWork.Materials.ExistItemCategNameandSubCateg(category);
+
+            if (ExistingCategAndSub == true)
+                return BadRequest("Item Category and Sub Category was Already Exist! Please try something else");
+
+            if (validSubCategory == false)
+                return BadRequest("Sub Category not Existing! Please Try Again");
+
                 if (await _unitOfWork.Materials.ItemCategoryExist(category.ItemCategoryName))
                     return BadRequest("Item Category already Exist!, Please try something else!");
 
@@ -211,7 +220,15 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
         [Route("UpdateItemCategories")]
         public async Task<IActionResult> UpdateItemCategories([FromBody] ItemCategory category)
         {
-        
+            var validSubCategory = await _unitOfWork.Materials.ValidationSubCategory(category.categoryId);
+            var ExistingCategAndSub = await _unitOfWork.Materials.ExistItemCategNameandSubCateg(category);
+
+            if (ExistingCategAndSub == true)
+                return BadRequest("Item Category and Sub Category was Already Exist! Please try something else");
+
+            if (validSubCategory == false)
+                return BadRequest("Sub Category not Existing! Please Try Again!");
+
             if (await _unitOfWork.Materials.ItemCategoryExist(category.ItemCategoryName))
                 return BadRequest("Item Category already Exist!, Please try something else!");
 
@@ -295,6 +312,39 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
             return Ok(categoryResult);
         }
 
+        // ============================================== Sub Category =================================================================
+
+        [HttpGet]
+        [Route("GetAllActiveSubCategory")]
+        public async Task<IActionResult> GetallActiveSubCategory ()
+        {
+            var category = await _unitOfWork.Materials.GetAllActiveSubCategory();
+
+            return Ok(category);
+        }
+
+        [HttpGet]
+        [Route("GetAllInActiveSubCategory")]
+        public async Task<IActionResult> GetAllInActiveSubCategory()
+        {
+            var category = await _unitOfWork.Materials.GetInActiveSubCategory();
+
+            return Ok(category);
+        }
+
+        [HttpPost]
+        [Route("AddNewSubCategory")]
+        public async Task<IActionResult> AddnewSubCategory(SubCategory category)
+        {
+            if( await _unitOfWork.Materials.ExistingSubCateg(category.SubCategoryName))
+                return BadRequest("Sub Category was already exist! Please try Again!");
+
+            await _unitOfWork.Materials.AddNewSubCategory(category);
+            await _unitOfWork.CompleteAsync();
+            return Ok(category);
+        }
+
+        
 
     }
 }
