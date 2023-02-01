@@ -4,12 +4,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.USER_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xaml.Permissions;
+using System.Net.WebSockets;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
 {
@@ -295,6 +290,33 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
 
         }
 
-   
+
+        public async Task<bool> ValidateUserRolesModule(User user)
+        {
+
+            var roleModule = await _context.RoleModules.Where(x => x.RoleId == user.UserRoleId)
+                                                        .FirstOrDefaultAsync();
+
+            if (roleModule == null)
+            {
+                roleModule = new UserRoleModules
+                {
+                    RoleId = user.UserRoleId,
+                    ModuleId = 0
+                };
+                _context.RoleModules.Add(roleModule);
+                return true;
+
+            }
+            else
+            {
+                if (roleModule.ModuleId == 0)
+                    return true;
+                else
+                    return false;
+            }
+            
+           
+        }
     }
 }

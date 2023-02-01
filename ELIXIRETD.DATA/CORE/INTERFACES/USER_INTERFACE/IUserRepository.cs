@@ -30,6 +30,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.USER_INTERFACE
         Task<bool> ValidateDepartmentId(int id);
         Task<bool> ValidateUserExist(string username);
         Task<bool> ValidateDepartmentCodeExist(string code);
+        Task<bool>ValidateUserRolesModule(User user);
+
 
 
 
