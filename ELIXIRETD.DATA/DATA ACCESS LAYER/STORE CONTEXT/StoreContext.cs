@@ -1,5 +1,6 @@
 ﻿using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.IMPORT_MODEL;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.SETUP_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.USER_MODEL;
@@ -44,7 +45,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT
         public virtual DbSet<MoveOrder> MoveOrders { get; set; }
         public virtual DbSet<TransactMoveOrder> TransactOrder { get; set; }
         public virtual DbSet<SubCategory> SubCategories { get; set; }
-
+        public virtual DbSet<MiscellaneousIssue> MiscellaneousIssues { get; set; }
 
 
        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -51,6 +51,7 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
 
             if (validateItemcodeandSubCateg == true)
                 return BadRequest("Item code And Sub category already existing! Please try again!");
+
             if (validDescriptionAndUom == true)
                 return BadRequest("Item Description and Uom already exist");
 

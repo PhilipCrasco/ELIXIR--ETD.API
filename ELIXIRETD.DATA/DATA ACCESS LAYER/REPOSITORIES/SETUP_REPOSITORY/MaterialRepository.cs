@@ -456,13 +456,12 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
         public async Task<bool> ValidateDescritionAndUom(Material materials)
         {
             var valid = await _context.Materials.Where(x => x.ItemDescription == materials.ItemDescription)
-                                                .Where(x => x.Uom == materials.Uom)
+                                                .Where(x => x.UomId == materials.UomId)
                                                 .FirstOrDefaultAsync();
 
             if(valid == null)
             {
                 return false;
-
             }
             return true;
         }

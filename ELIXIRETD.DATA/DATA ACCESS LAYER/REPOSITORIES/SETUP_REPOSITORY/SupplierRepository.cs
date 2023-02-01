@@ -139,7 +139,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
         {
             var valid = await _context.Suppliers.Where(x => x.SupplierName == supplier.SupplierName)
                                                 .Where(x => x.SupplierAddress == supplier.SupplierAddress)
-                                                .Where(x => x.IsActive == true)
                                                 .FirstOrDefaultAsync();
 
             if(valid == null)
