@@ -83,7 +83,7 @@ namespace ELIXIRETD.API.Controllers.USER_CONTROLLER
         [Route("InActiveModule")]
         public async Task<IActionResult> InActiveModule([FromBody] Module module)
         {
-
+            
             var valid = await _unitOfWork.Modules.ValidateMenu(module.Id);
 
             if (valid == true)

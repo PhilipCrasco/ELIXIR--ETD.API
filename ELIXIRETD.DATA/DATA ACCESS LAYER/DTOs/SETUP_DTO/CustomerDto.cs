@@ -14,7 +14,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.SETUP_DTO
         public string CustomerType { get; set; }
         public int CustomerTypeId { get; set; }
         public string CompanyName { get; set; }
-        public string MobileNumber { get; set; }
+       
         public string Address { get; set; }
         public string DateAdded { get; set; }
         public string AddedBy { get; set; }

@@ -493,5 +493,27 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                 return false;
             return true;
         }
+
+        public async Task<bool> ValidateSubcategAndcategor(int category)
+        {
+            var valid = await _context.SubCategories.Where(x => x.ItemCategId == category)
+                                                     .Where(x => x.IsActive == true)
+                                                     .FirstOrDefaultAsync();
+            if(valid == null) 
+                return false;
+            return true;
+        }
+
+        public async Task<bool> ValidateSubCategand(int category)
+        {
+            var validsub = await _context.Materials.Where(x => x.SubCategId == category)
+                                                   .Where(x => x.IsActive == true)
+                                                     .FirstOrDefaultAsync();
+
+            if (validsub == null) 
+                return false;
+            return true;
+
+        }
     }
 }

@@ -28,6 +28,9 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.SETUP_INTERFACE
         Task<bool> ValidateDescritionAndUom(Material materials);
         Task<bool> ExistingSubCateg(string subcateg);
         Task<bool> ExistingItemAndSubCateg(Material materials);
+        Task<bool> ValidateSubcategAndcategor(int category);
+        Task<bool> ValidateSubCategand(int category);
+
 
 
         Task<bool> ExistSubCategoryAndItemCateg(SubCategory category);

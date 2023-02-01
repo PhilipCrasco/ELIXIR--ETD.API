@@ -231,6 +231,10 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
         [Route("InActiveItemCategory")]
         public async Task<IActionResult> InActiveItemCategory([FromBody] ItemCategory category)
         {
+            var validateifUse = await _unitOfWork.Materials.ValidateSubcategAndcategor(category.Id);
+
+            if (validateifUse == true)
+                return BadRequest("Item category was in use!");
 
             await _unitOfWork.Materials.InActiveItemCategory(category);
             await _unitOfWork.CompleteAsync();
@@ -380,6 +384,10 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
         public async Task<IActionResult> InActiveSubcategory(SubCategory category)
         {
             var valid = await _unitOfWork.Materials.InActiveSubCategory(category);
+            var validmaterial = await _unitOfWork.Materials.ValidateSubCategand(category.Id);
+
+            if (validmaterial == true)
+                return BadRequest("Sub category was in Use!");
 
             if (valid == false)
                 return BadRequest("No Item category existing! Please try another input!");
