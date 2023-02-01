@@ -225,21 +225,27 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
 
         public async Task<IReadOnlyList<RoleWithModuleDto>> GetRoleModuleWithId(int id)
         {
-            var rolemodules = from rolemodule in _context.RoleModules
-                              join role in _context.Roles on rolemodule.RoleId equals role.Id
-                              join module in _context.Modules on rolemodule.ModuleId equals module.Id
-                              select new RoleWithModuleDto
+            var rolemodules = _context.RoleModules
+                              .Join(_context.Roles, rolemoduless => rolemoduless.RoleId, role => role.Id, (rolemodoless, role) => new { rolemodoless, role })
+                              .Join(_context.Modules, rolemoduless => rolemoduless.rolemodoless.ModuleId, module => module.Id, (rolemoduless, module) => new { rolemoduless, module })
+                              .Select(x => new RoleWithModuleDto
+                              //from rolemodule in _context.RoleModules
+                              //join role in _context.Roles on rolemodule.RoleId equals role.Id
+                              //join module in _context.Modules on rolemodule.ModuleId equals module.Id
+                              //select new RoleWithModuleDto
                               {
-                                  RoleName = role.RoleName,
-                                  MainMenu = module.MainMenu.ModuleName,
-                                  MainMenuId = module.MainMenuId,
-                                  MenuPath = module.MainMenu.MenuPath,
-                                  SubMenu = module.SubMenuName,
-                                  ModuleName = module.ModuleName,
-                                  Id = module.Id,
-                                  IsActive = rolemodule.IsActive,
-                                  RoleId = rolemodule.RoleId
-                              };
+
+
+                                  RoleName = x.rolemoduless.role.RoleName,
+                                  MainMenu = x.module.MainMenu.ModuleName,
+                                  MainMenuId = x.module.MainMenuId,
+                                  MenuPath = x.module.MainMenu.MenuPath,
+                                  SubMenu = x.module.SubMenuName,
+                                  ModuleName = x.module.ModuleName,
+                                  Id = x.module.Id,
+                                  IsActive = x.rolemoduless.rolemodoless.IsActive,
+                                  RoleId = x.rolemoduless.rolemodoless.RoleId
+                              });
 
             return await rolemodules.Where(x => x.RoleId == id)
                                     .Where(x => x.IsActive == true)
