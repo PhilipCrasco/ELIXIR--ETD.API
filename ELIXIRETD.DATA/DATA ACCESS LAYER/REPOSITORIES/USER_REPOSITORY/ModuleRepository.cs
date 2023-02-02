@@ -283,9 +283,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
                                                    .Where(x => x.IsActive == true)
                                                    .FirstOrDefaultAsync();
             if(valid == null)
-            {
                 return false;
-            }
             return true;
             
         }

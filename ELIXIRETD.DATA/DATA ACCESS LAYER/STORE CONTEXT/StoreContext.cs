@@ -46,7 +46,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT
         public virtual DbSet<TransactMoveOrder> TransactOrder { get; set; }
         public virtual DbSet<SubCategory> SubCategories { get; set; }
         public virtual DbSet<MiscellaneousIssue> MiscellaneousIssues { get; set; }
+        public virtual DbSet<MiscellaneousIssueDetails> MiscellaneousIssueDetail { get; set; }
 
+        public virtual DbSet<MiscellaneousReceipt> MiscellaneousReceipts { get; set; }
 
        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -58,6 +60,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT
             var connectionString = configuration.GetConnectionString("DevConnection");
             optionsBuilder.UseSqlServer(connectionString);
         }
+
+
 
     }
 }

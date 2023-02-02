@@ -70,7 +70,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
                                             .FirstOrDefaultAsync();
 
             roles.IsActive = true;
-
             return true;
 
         }
@@ -235,7 +234,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
                               //select new RoleWithModuleDto
                               {
 
-
                                   RoleName = x.rolemoduless.role.RoleName,
                                   MainMenu = x.module.MainMenu.ModuleName,
                                   MainMenuId = x.module.MainMenuId,
@@ -250,6 +248,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
             return await rolemodules.Where(x => x.RoleId == id)
                                     .Where(x => x.IsActive == true)
                                     .ToListAsync();
+            
         }
     }
 }
