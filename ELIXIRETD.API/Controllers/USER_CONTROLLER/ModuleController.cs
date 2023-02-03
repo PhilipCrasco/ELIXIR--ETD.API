@@ -217,6 +217,10 @@ namespace ELIXIRETD.API.Controllers.USER_CONTROLLER
         {
 
             var valid = await _unitOfWork.Modules.ValidateMenu(menu.Id);
+            var validmainmenu = await _unitOfWork.Modules.validatemoduleMainMenu(menu.Id);
+
+            if(validmainmenu == true)
+                return BadRequest("Main menu was in use!");
 
             if (valid == true)
                 return BadRequest("Main menu was in use!");
