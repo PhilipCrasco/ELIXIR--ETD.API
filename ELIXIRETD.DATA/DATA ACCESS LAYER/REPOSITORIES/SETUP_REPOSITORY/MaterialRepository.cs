@@ -20,23 +20,25 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
 
         public async Task<IReadOnlyList<MaterialDto>> GetAllActiveMaterials()
         {
-            var materials = _context.Materials.Where(x => x.IsActive == true)
-                                              .Select(x => new MaterialDto
-                                              {
-                                                  Id = x.Id, 
-                                                  ItemCode = x.ItemCode, 
-                                                  ItemDescription = x.ItemDescription, 
-                                                 SubCategoryId = x.SubCategId,
-                                                 SubCategoryName = x.SubCategory.SubCategoryName,
-                                                 ItemCategoryId = x.SubCategory.ItemCategId,
-                                                 ItemCategoryName = x.SubCategory.ItemCategory.ItemCategoryName,
-                                                  BufferLevel = x.BufferLevel,
-                                                  Uom = x.Uom.UomCode,
-                                                  UomId = x.UomId,
-                                                  DateAdded = x.DateAdded.ToString("MM/dd/yyyy"),
-                                                  AddedBy = x.AddedBy,
-                                                  IsActive = x.IsActive
-                                              });
+            var materials = _context.Materials
+                           .Where(x => x.IsActive == true)
+                           .OrderBy(x => x.ItemCode)
+                           .ThenBy(x => x.ItemDescription)
+                           .ThenBy(x => x.Uom.UomCode)
+                           .ThenBy(x => x.SubCategory.SubCategoryName)
+                           .ThenBy(x => x.SubCategory.ItemCategory.ItemCategoryName)
+                           .GroupBy(x => x.ItemCode)
+                           .Select(group => new MaterialDto
+                            {
+                               ItemCode = group.Key,
+                               ItemDescription = group.First().ItemDescription,
+                               SubCategoryName = group.First().SubCategory.SubCategoryName,
+                               ItemCategoryName = group.First().SubCategory.ItemCategory.ItemCategoryName,
+                               Uom = group.First().Uom.UomCode,
+                               DateAdded = group.First().DateAdded.ToString("MM/dd/yyyy"),
+                               AddedBy = group.First().AddedBy,
+                               IsActive = group.First().IsActive
+                           });
 
             return await materials.ToListAsync();
         }
