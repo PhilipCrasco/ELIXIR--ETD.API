@@ -288,7 +288,17 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
             
         }
 
+        public async Task<bool> validatemoduleMainMenu(int module)
+        {
+            var valid = await _context.Modules.Where(x => x.MainMenuId == module)
+                                              .Where(x => x.IsActive == true)
+                                              .FirstOrDefaultAsync();
+
+            if (valid == null)
+                return false;
+            return true;
 
 
+        }
     }
 }

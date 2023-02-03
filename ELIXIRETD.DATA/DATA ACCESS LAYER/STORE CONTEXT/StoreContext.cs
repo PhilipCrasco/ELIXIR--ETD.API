@@ -7,11 +7,6 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.USER_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT
 {
@@ -39,6 +34,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<PoSummary> PoSummaries { get; set; }
         public virtual DbSet<Warehouse_Receiving> WarehouseReceived { get; set; }
+        public virtual DbSet<Warehouse_Reject> WarehouseReject { get; set; }
 
         public virtual DbSet<Ordering> Orders { get; set; }
         public virtual DbSet<GenerateOrderNo> GenerateOrders { get; set; }

@@ -2,7 +2,7 @@
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL
 {
-    public class MiscellaneousReceipt
+    public class MiscellaneousReceipt : BaseEntity
     {
         public string supplier { get; set; }
         public string SupplierCode { get; set; }
