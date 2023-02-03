@@ -449,6 +449,16 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
         }
 
 
+        [HttpGet]
+        [Route("GetAllSubcategories")]
+        public async Task<IActionResult> GetAllsubcategories (string category)
+        {
+           var categ = await _unitOfWork.Materials.GetAllListofSubcategorymaterial(category);
+
+            return Ok(categ);
+
+        }
+
 
 
 

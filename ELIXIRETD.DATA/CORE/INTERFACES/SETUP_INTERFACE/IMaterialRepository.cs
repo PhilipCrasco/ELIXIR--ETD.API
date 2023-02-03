@@ -60,6 +60,10 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.SETUP_INTERFACE
         Task<PagedList<SubCategoryDto>> GetSubCategoryPaginationOrig(UserParams userParams, bool status, string search);
 
 
+        Task<IReadOnlyList<SubCategoryDto>> GetAllListofSubcategorymaterial(string category);
+
+
+
 
 
 

@@ -5,7 +5,7 @@
         public string ItemCode { get; set; }
         public string ItemDescription { get; set; }
         public SubCategory SubCategory { get; set; }
-        public int SubCategId { get; set; }
+        public int SubCategoryId { get; set; }
         public Uom Uom { get; set; }
         public int UomId { get; set; }
         public int BufferLevel { get; set; }

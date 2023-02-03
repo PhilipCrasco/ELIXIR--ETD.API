@@ -645,8 +645,7 @@ namespace ELIXIRETD.DATA.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ItemCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ItemDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SubCategoryId = table.Column<int>(type: "int", nullable: true),
-                    SubCategId = table.Column<int>(type: "int", nullable: false),
+                    SubCategoryId = table.Column<int>(type: "int", nullable: false),
                     UomId = table.Column<int>(type: "int", nullable: false),
                     BufferLevel = table.Column<int>(type: "int", nullable: false),
                     DateAdded = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -660,7 +659,8 @@ namespace ELIXIRETD.DATA.Migrations
                         name: "FK_Materials_SubCategories_SubCategoryId",
                         column: x => x.SubCategoryId,
                         principalTable: "SubCategories",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Materials_Uoms_UomId",
                         column: x => x.UomId,
