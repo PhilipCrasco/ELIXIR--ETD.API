@@ -352,7 +352,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
             if (update == null)
                 return false;
 
-            update.IsActive = category.IsActive = false;
+            update.IsActive = false;
 
             return true;
         }
