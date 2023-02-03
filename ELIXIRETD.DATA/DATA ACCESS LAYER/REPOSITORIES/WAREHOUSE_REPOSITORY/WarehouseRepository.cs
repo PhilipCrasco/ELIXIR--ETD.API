@@ -100,27 +100,31 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
 
         public async Task<PagedList<WarehouseReceivingDto>> GetAllPoSummaryWithPagination(UserParams userParams)
         {
-            var poSummary = (from posummary in _context.PoSummaries
-                             where posummary.IsActive == true
-                             join warehouse in _context.WarehouseReceived
-                             on posummary.Id equals warehouse.PoSummaryId into leftJ
-                             from receive in leftJ.DefaultIfEmpty()
-
-                             select new WarehouseReceivingDto
+            var poSummary = _context.PoSummaries
+                           .Where(posummary => posummary.IsActive == true)
+                           .GroupJoin(_context.WarehouseReceived, posummary => posummary.Id , warehouse => warehouse.Id, (posummary , warehouse) => new {posummary,warehouse} )
+                           .SelectMany(x => x.warehouse.DefaultIfEmpty() , (x , warehouse) => new {x.posummary, warehouse})
+                           .Select( x => new WarehouseReceivingDto
+                
+                              //(from posummary in _context.PoSummaries
+            //                 where posummary.IsActive == true
+            //                 join warehouse in _context.WarehouseReceived
+            //                 on posummary.Id equals warehouse.PoSummaryId into leftJ
+            //                 from receive in leftJ.DefaultIfEmpty()
                              {
-                                 Id = posummary.Id,
-                                 PoNumber = posummary.PO_Number,
-                                 PoDate = posummary.PO_Date,
-                                 PrNumber = posummary.PR_Number,
-                                 PrDate = posummary.PR_Date,
-                                 ItemCode = posummary.ItemCode,
-                                 ItemDescription = posummary.ItemDescription,
-                                 Supplier = posummary.VendorName,
-                                 Uom = posummary.Uom,
-                                 QuantityOrdered = posummary.Ordered,
-                                 IsActive = posummary.IsActive,
+                                 Id = x.posummary.Id,
+                                 PoNumber = x.posummary.PO_Number,
+                                 PoDate = x.posummary.PO_Date,
+                                 PrNumber = x.posummary.PR_Number,
+                                 PrDate = x.posummary.PR_Date,
+                                 ItemCode = x.posummary.ItemCode,
+                                 ItemDescription = x.posummary.ItemDescription,
+                                 Supplier = x.posummary.VendorName,
+                                 Uom = x.posummary.Uom,
+                                 QuantityOrdered = x.posummary.Ordered,
+                                 IsActive =  x.posummary.IsActive,
                                  ActualRemaining = 0,
-                                 ActualGood = receive != null && receive.IsActive != false ? receive.ActualDelivered : 0,
+                                 ActualGood = x.warehouse != null && x.warehouse.IsActive != false ? x.warehouse.ActualDelivered : 0,
 
                              }).GroupBy(x => new
                              {
