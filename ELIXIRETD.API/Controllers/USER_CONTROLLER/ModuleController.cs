@@ -236,7 +236,7 @@ namespace ELIXIRETD.API.Controllers.USER_CONTROLLER
             await _unitOfWork.Modules.ActivateMainMenu(menu);
             await _unitOfWork.CompleteAsync();
 
-            return new JsonResult("Successfully InActive Menu!");
+            return new JsonResult("Successfully Active Menu!");
         }
 
 
