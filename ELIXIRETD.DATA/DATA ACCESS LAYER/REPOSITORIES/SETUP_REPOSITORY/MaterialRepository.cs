@@ -349,6 +349,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
         {
 
             var update = await _context.SubCategories.Where(x => x.Id == category.Id)
+                                                     .Where(x => x.IsActive == true)
                                                   .FirstOrDefaultAsync();
 
             if (update == null)
