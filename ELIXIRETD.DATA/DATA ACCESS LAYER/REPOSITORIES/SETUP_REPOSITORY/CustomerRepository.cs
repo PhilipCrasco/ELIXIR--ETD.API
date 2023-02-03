@@ -79,7 +79,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
             existingCustomer.CustomerName = customer.CustomerName;
             existingCustomer.CustomerTypeId = customer.CustomerTypeId;
             existingCustomer.Address = customer.Address;
-            //existingCustomer.MobileNumber = customer.MobileNumber; 
             existingCustomer.CompanyName = customer.CompanyName;
 
             return true;

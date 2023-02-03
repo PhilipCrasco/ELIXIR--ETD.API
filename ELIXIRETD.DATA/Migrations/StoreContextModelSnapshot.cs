@@ -826,9 +826,6 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<int>("ItemCategId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ItemCategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("SubCategoryName")
                         .HasColumnType("nvarchar(max)");
 
