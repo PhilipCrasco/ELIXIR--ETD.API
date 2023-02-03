@@ -329,7 +329,7 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
         [Route("AddNewSubCategory")]
         public async Task<IActionResult> AddnewSubCategory(SubCategory category)
         {
-            var validateItemCateg = await _unitOfWork.Materials.ValidateItemCategory(category.ItemCategId);
+            var validateItemCateg = await _unitOfWork.Materials.ValidateItemCategory(category.ItemCategoryId);
             var existingSubCategandItemCateg = await _unitOfWork.Materials.ExistSubCategoryAndItemCateg(category);
 
             if (existingSubCategandItemCateg == true)
@@ -348,7 +348,7 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
         public async Task<IActionResult> UpdateSubCategory (SubCategory category)
         {
             var valid = await _unitOfWork.Materials.UpdateSubCategory(category);
-            var validateItemCateg = await _unitOfWork.Materials.ValidateItemCategory(category.ItemCategId);
+            var validateItemCateg = await _unitOfWork.Materials.ValidateItemCategory(category.ItemCategoryId);
             var existingSubCategandItemCateg = await _unitOfWork.Materials.ExistSubCategoryAndItemCateg(category);
 
             if (valid == false)

@@ -48,6 +48,7 @@ namespace ELIXIRETD.API.Controllers.USER_CONTROLLER
 
             if (getDepId == false)
                 return BadRequest("Department doesn't exist, Please input data first!");
+
             if (validateuserRolemodules == true)
                 return BadRequest("No Rolemodules has been tag!");
 

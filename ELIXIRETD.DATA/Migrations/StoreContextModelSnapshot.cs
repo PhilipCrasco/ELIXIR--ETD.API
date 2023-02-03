@@ -823,10 +823,7 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("ItemCategId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ItemCategoryId")
+                    b.Property<int>("ItemCategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("SubCategoryName")
@@ -1251,7 +1248,9 @@ namespace ELIXIRETD.DATA.Migrations
                 {
                     b.HasOne("ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.SETUP_MODEL.ItemCategory", "ItemCategory")
                         .WithMany()
-                        .HasForeignKey("ItemCategoryId");
+                        .HasForeignKey("ItemCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ItemCategory");
                 });
