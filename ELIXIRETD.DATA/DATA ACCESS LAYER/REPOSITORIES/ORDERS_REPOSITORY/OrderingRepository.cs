@@ -207,7 +207,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                DateNeeded= x.DateNeeded.ToString("MM/dd/yyyy"),
                                                PreparedDate = x.PreparedDate.ToString(),
                                                CancelDate = x.CancelDate.ToString(),
-                                               CancelBy = x.IsCancelBy
+                                               CancelBy = x.IsCancelBy,
+                                              IsActive = x.IsActive == true
 
                                            });
             return await cancelled.ToListAsync();

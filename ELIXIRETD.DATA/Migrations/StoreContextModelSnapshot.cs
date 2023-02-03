@@ -36,6 +36,9 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<decimal>("Billed")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("CancelBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("DateCancelled")
                         .HasColumnType("datetime2");
 
@@ -46,6 +49,9 @@ namespace ELIXIRETD.DATA.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsCancelled")
                         .HasColumnType("bit");
 
                     b.Property<string>("ItemCode")
@@ -124,6 +130,89 @@ namespace ELIXIRETD.DATA.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MiscellaneousIssues");
+                });
+
+            modelBuilder.Entity("ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL.MiscellaneousIssueDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Customer")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsTransact")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("IssuePKey")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ItemCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PreparedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PreparedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Uom")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WareHouseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MiscellaneousIssueDetail");
+                });
+
+            modelBuilder.Entity("ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL.MiscellaneousReceipt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PreparedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PreparedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SupplierCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalQuantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("supplier")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MiscellaneousReceipts");
                 });
 
             modelBuilder.Entity("ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL.GenerateOrderNo", b =>
@@ -734,10 +823,7 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<int>("ItemCategId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ItemCategoryId")
+                    b.Property<int>("ItemCategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("SubCategoryName")
@@ -1021,7 +1107,19 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<decimal>("ActualDelivered")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("ActualGood")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("ActualReceivingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("ConfirmRejectByWarehouse")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsWarehouseReceived")
                         .HasColumnType("bit");
 
                     b.Property<string>("ItemCode")
@@ -1051,6 +1149,9 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<string>("Supplier")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("TotalReject")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("TransactionType")
                         .HasColumnType("nvarchar(max)");
 
@@ -1060,6 +1161,37 @@ namespace ELIXIRETD.DATA.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("WarehouseReceived");
+                });
+
+            modelBuilder.Entity("ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL.Warehouse_Reject", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("RejectedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RejectedDate")
+                        .HasColumnType("Date");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WarehouseReceivingId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WarehouseReject");
                 });
 
             modelBuilder.Entity("ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.SETUP_MODEL.Customer", b =>
@@ -1116,7 +1248,9 @@ namespace ELIXIRETD.DATA.Migrations
                 {
                     b.HasOne("ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.SETUP_MODEL.ItemCategory", "ItemCategory")
                         .WithMany()
-                        .HasForeignKey("ItemCategoryId");
+                        .HasForeignKey("ItemCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ItemCategory");
                 });

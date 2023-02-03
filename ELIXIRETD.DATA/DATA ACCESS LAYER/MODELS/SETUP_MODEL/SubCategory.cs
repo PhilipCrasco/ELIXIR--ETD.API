@@ -6,9 +6,9 @@
         public DateTime DateAdded { get; set; } = DateTime.Now;
 
         public ItemCategory ItemCategory { get; set; }
-        public int ItemCategId { get; set; }
+        public int ItemCategoryId { get; set; }
         public string AddedBy { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
     }
 }
