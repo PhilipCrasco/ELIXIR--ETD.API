@@ -53,7 +53,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                                  ItemDescription = x.ItemDescription,
                                                  SubCategoryId = x.SubCategId,
                                                  SubCategoryName = x.SubCategory.SubCategoryName,
-                                                 ItemCategoryId = x.SubCategory.ItemCategId,
+                                                 ItemCategoryId = x.SubCategory.ItemCategoryId,
                                                  ItemCategoryName = x.SubCategory.ItemCategory.ItemCategoryName,
                                                  BufferLevel = x.BufferLevel,
                                                  Uom = x.Uom.UomCode,
@@ -124,7 +124,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                                   ItemDescription = x.ItemDescription,
                                                   SubCategoryId = x.SubCategId,
                                                   SubCategoryName = x.SubCategory.SubCategoryName,
-                                                  ItemCategoryId = x.SubCategory.ItemCategId,
+                                                  ItemCategoryId = x.SubCategory.ItemCategoryId,
                                                   ItemCategoryName = x.SubCategory.ItemCategory.ItemCategoryName,
                                                   BufferLevel = x.BufferLevel,
                                                   Uom = x.Uom.UomCode,
@@ -148,7 +148,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                                 ItemDescription = x.ItemDescription,
                                                 SubCategoryId = x.SubCategId,
                                                 SubCategoryName = x.SubCategory.SubCategoryName,
-                                                ItemCategoryId = x.SubCategory.ItemCategId,
+                                                ItemCategoryId = x.SubCategory.ItemCategoryId,
                                                 ItemCategoryName = x.SubCategory.ItemCategory.ItemCategoryName,
                                                 BufferLevel = x.BufferLevel,
                                                 Uom = x.Uom.UomCode,
@@ -285,7 +285,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                                  {
                                                      Id = x.Id,
                                                      SubcategoryName = x.SubCategoryName,
-                                                     CategoryId = x.ItemCategId,
+                                                     CategoryId = x.ItemCategoryId,
                                                      CategoryName = x.ItemCategory.ItemCategoryName,
                                                      AddedBy = x.AddedBy,
                                                      DateAdded = x.DateAdded.ToString("MM/dd/yyyy"),
@@ -301,7 +301,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                                  {
                                                      Id = x.Id,
                                                      SubcategoryName = x.SubCategoryName,
-                                                     CategoryId = x.ItemCategId,
+                                                     CategoryId = x.ItemCategoryId,
                                                      CategoryName = x.ItemCategory.ItemCategoryName,
                                                      AddedBy = x.AddedBy,
                                                      DateAdded = x.DateAdded.ToString("MM/dd/yyyy"),
@@ -326,7 +326,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                 return false;
 
             update.SubCategoryName = category.SubCategoryName;
-            update.ItemCategId = category.ItemCategId;
+            update.ItemCategoryId = category.ItemCategoryId;
 
             return true;
 
@@ -367,7 +367,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                                     {
                                                         Id = x.Id,
                                                         SubcategoryName = x.SubCategoryName,
-                                                        CategoryId = x.ItemCategId,
+                                                        CategoryId = x.ItemCategoryId,
                                                         CategoryName = x.ItemCategory.ItemCategoryName,
                                                         AddedBy = x.AddedBy,
                                                         DateAdded = x.DateAdded.ToString("MM/dd/yyyy"),
@@ -387,7 +387,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                                                      {
                                                          Id = x.Id,
                                                          SubcategoryName = x.SubCategoryName,
-                                                         CategoryId = x.ItemCategId,
+                                                         CategoryId = x.ItemCategoryId,
                                                          CategoryName = x.ItemCategory.ItemCategoryName,
                                                          AddedBy = x.AddedBy,
                                                          DateAdded = x.DateAdded.ToString("MM/dd/yyyy"),
@@ -476,7 +476,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
         public async Task<bool> ExistSubCategoryAndItemCateg(SubCategory category)
         {
             var exist = await _context.SubCategories.Where(x => x.SubCategoryName == category.SubCategoryName)
-                                                    .Where(x => x.ItemCategId == category.ItemCategId)
+                                                    .Where(x => x.ItemCategoryId == category.ItemCategoryId)
                                                     .FirstOrDefaultAsync();
             if (exist == null)
                 return false;
@@ -497,7 +497,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
 
         public async Task<bool> ValidateSubcategAndcategor(int category)
         {
-            var valid = await _context.SubCategories.Where(x => x.ItemCategId == category)
+            var valid = await _context.SubCategories.Where(x => x.ItemCategoryId == category)
                                                      .Where(x => x.IsActive == true)
                                                      .FirstOrDefaultAsync();
             if(valid == null) 
