@@ -517,42 +517,73 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
 
         public async Task<IReadOnlyList<SubCategoryDto>> GetAllListofSubcategorymaterial(string category)
         {
-
             var subcategory = _context.SubCategories
-                             .OrderBy(x => x.SubCategoryName)
-                             .Where(x => x.SubCategoryName == category)
-                             .Select(x => new SubCategoryDto
-                             {
+                                 .OrderBy(x => x.SubCategoryName)
+                                 .Where(x => x.SubCategoryName == category)
+                                 .Select(x => x.ItemCategoryId)
+                                 .Distinct();
 
-                                 SubcategoryName = x.SubCategoryName
+            var itemCategories = await _context.ItemCategories
+                                   .Where(x => subcategory.Contains(x.Id))
+                                   .OrderBy(x => x.ItemCategoryName)
+                                   .Select(x => new SubCategoryDto
+                                   {
+                                       Id = x.Id,
+                                       CategoryName = x.ItemCategoryName
+                                   })
+                                   .ToListAsync();
 
-                             }).Distinct();
-
-            var itemcategory = await GetAllListofItemcategorymaterial(category);
-
-            var combinedResult = subcategory.Concat(itemcategory)
-                                            .OrderBy(x => x.SubcategoryName)
-                                            .DistinctBy(x => x.SubcategoryName);
-
-            return await subcategory.ToListAsync();
-
+            return itemCategories;
         }
 
-        public async Task<IReadOnlyList<SubCategoryDto>> GetAllListofItemcategorymaterial(string category)
+        public async Task<IReadOnlyList<SubCategoryDto>> GetAllListofItemcategorymaterial(int category)
         {
-            var itemcategory = _context.SubCategories
-                           .OrderBy(x => x.ItemCategory.ItemCategoryName)
-                           .Where(x => x.ItemCategory.ItemCategoryName == category)
-                           .Select(x => new SubCategoryDto
-                           {
-                               Id = x.Id,
-                               CategoryName = x.ItemCategory.ItemCategoryName 
-                               
-                           }).DistinctBy(x => x.CategoryName);
+            var itemcategory = await _context.SubCategories
+                                   .Where(x => x.ItemCategoryId == category)
+                                   .OrderBy(x => x.SubCategoryName)
+                                   .Select(x => new SubCategoryDto
+                                   {
+                                       Id = x.Id,
+                                       SubcategoryName = x.SubCategoryName
+                                   })
+                                   .ToListAsync();
 
-            return await itemcategory.ToListAsync();
-
-
+            return itemcategory;
         }
+
+        //public async Task<IReadOnlyList<SubCategoryDto>> GetAllListofSubcategorymaterial(string category )
+        //{
+
+        //    var subcategory = _context.SubCategories
+        //                     .OrderBy(x => x.SubCategoryName)
+        //                     .Where(x => x.SubCategoryName == category)
+        //                     .Select(x => new SubCategoryDto
+        //                     {
+
+        //                         SubcategoryName = x.SubCategoryName
+
+        //                     }).Distinct();
+
+        //    return await subcategory.ToListAsync();
+
+
+        //}
+
+        //public async Task<IReadOnlyList<SubCategoryDto>> GetAllListofItemcategorymaterial(int category)
+        //{
+        //    var itemcategory = _context.SubCategories
+        //                   .OrderBy(x => x.ItemCategory.ItemCategoryName)
+        //                   .Where(x => x.Id == category)
+        //                   .Select(x => new SubCategoryDto
+        //                   {
+        //                       Id = x.Id,
+        //                       CategoryName = x.ItemCategory.ItemCategoryName
+
+        //                   }).Distinct();
+
+        //    return await itemcategory.ToListAsync();
+
+
+        //}
     }
 }
