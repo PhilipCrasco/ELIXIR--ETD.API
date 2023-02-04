@@ -63,6 +63,11 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.SETUP_INTERFACE
         Task<IReadOnlyList<SubCategoryDto>> GetAllListofSubcategorymaterial(string category);
 
 
+        Task<IReadOnlyList<SubCategoryDto>> GetAllListofItemcategorymaterial(string category);
+
+
+
+
 
 
 

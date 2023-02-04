@@ -20,26 +20,23 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
 
         public async Task<IReadOnlyList<MaterialDto>> GetAllActiveMaterials()
         {
-            var materials = _context.Materials
-                           .Where(x => x.IsActive == true)
-                           .OrderBy(x => x.ItemCode)
-                           .ThenBy(x => x.ItemDescription)
-                           .ThenBy(x => x.Uom.UomCode)
-                           .ThenBy(x => x.SubCategory.SubCategoryName)
-                           .ThenBy(x => x.SubCategory.ItemCategory.ItemCategoryName)
-                           .GroupBy(x => x.ItemCode)
-                           .Select(group => new MaterialDto
-                            {
-                               ItemCode = group.Key,
-                               Id = group.First().Id,
-                               ItemDescription = group.First().ItemDescription,
-                               SubCategoryName = group.First().SubCategory.SubCategoryName,
-                               ItemCategoryName = group.First().SubCategory.ItemCategory.ItemCategoryName,
-                               Uom = group.First().Uom.UomCode,
-                               DateAdded = group.First().DateAdded.ToString("MM/dd/yyyy"),
-                               AddedBy = group.First().AddedBy,
-                               IsActive = group.First().IsActive
-                           });
+            var materials = _context.Materials.Where(x => x.IsActive == true)
+                                            .Select(x => new MaterialDto
+                                            {
+                                                Id = x.Id,
+                                                ItemCode = x.ItemCode,
+                                                ItemDescription = x.ItemDescription,
+                                                SubCategoryId = x.SubCategoryId,
+                                                SubCategoryName = x.SubCategory.SubCategoryName,
+                                                ItemCategoryId = x.SubCategory.ItemCategoryId,
+                                                ItemCategoryName = x.SubCategory.ItemCategory.ItemCategoryName,
+                                                BufferLevel = x.BufferLevel,
+                                                Uom = x.Uom.UomCode,
+                                                UomId = x.UomId,
+                                                DateAdded = x.DateAdded.ToString("MM/dd/yyyy"),
+                                                AddedBy = x.AddedBy,
+                                                IsActive = x.IsActive
+                                            });
 
             return await materials.ToListAsync();
         }
@@ -527,12 +524,33 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                              .Select(x => new SubCategoryDto
                              {
 
-                             
-                                SubcategoryName = x.SubCategoryName
+                                 SubcategoryName = x.SubCategoryName
 
-                             }). Distinct();
+                             }).Distinct();
+
+            var itemcategory = await GetAllListofItemcategorymaterial(category);
+
+            var combinedResult = subcategory.Concat(itemcategory)
+                                            .OrderBy(x => x.SubcategoryName)
+                                            .DistinctBy(x => x.SubcategoryName);
 
             return await subcategory.ToListAsync();
+
+        }
+
+        public async Task<IReadOnlyList<SubCategoryDto>> GetAllListofItemcategorymaterial(string category)
+        {
+            var itemcategory = _context.SubCategories
+                           .OrderBy(x => x.ItemCategory.ItemCategoryName)
+                           .Where(x => x.ItemCategory.ItemCategoryName == category)
+                           .Select(x => new SubCategoryDto
+                           {
+                               Id = x.Id,
+                               CategoryName = x.ItemCategory.ItemCategoryName 
+                               
+                           }).DistinctBy(x => x.CategoryName);
+
+            return await itemcategory.ToListAsync();
 
 
         }
