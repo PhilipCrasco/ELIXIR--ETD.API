@@ -58,6 +58,7 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.SETUP_INTERFACE
         Task<bool> InActiveSubCategory(SubCategory category);
         Task<PagedList<SubCategoryDto>> GetAllSubCategoryPagination(bool status, UserParams userParams);
         Task<PagedList<SubCategoryDto>> GetSubCategoryPaginationOrig(UserParams userParams, bool status, string search);
+        
 
 
         Task<IReadOnlyList<SubCategoryDto>> GetAllListofSubcategorymaterial(string category);

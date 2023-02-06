@@ -12,6 +12,8 @@
         public DateTime DateAdded { get; set; } = DateTime.Now;
         public string AddedBy { get; set; }
         public bool IsActive { get; set; } = true;
+        public string ItemCategoryName { get; set; }
+
 
 
     }
