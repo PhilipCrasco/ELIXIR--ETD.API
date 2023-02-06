@@ -450,7 +450,7 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
 
 
         [HttpGet]
-        [Route("GetAllSubcategories")]
+        [Route("GetAllSubcategoriesmaterial")]
         public async Task<IActionResult> GetAllsubcategories (string category)
         {
            var categ = await _unitOfWork.Materials.GetAllListofSubcategorymaterial(category);
@@ -460,14 +460,14 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
         }
 
         [HttpGet]
-        [Route("GetAllItemcategories")]
-        public async Task<IActionResult> GetAllItemcategories(int category)
+        [Route("GetallActiveSubcategoryDropDown")]
+        public async Task<IActionResult> GetallActiveSubcategoryDropDowns()
         {
-            var categ = await _unitOfWork.Materials.GetAllListofItemcategorymaterial(category);
+            var categ = await _unitOfWork.Materials.GetallActiveSubcategoryDropDown();
 
             return Ok(categ);
-
         }
+
 
 
 
