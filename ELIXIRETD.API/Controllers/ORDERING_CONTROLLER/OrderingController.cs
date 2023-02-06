@@ -153,21 +153,42 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         [HttpPut]
         [Route("SchedulePreparedOrderedDate")]
-        public async Task<IActionResult> SchedulePreparedOrderedDate([FromBody] Ordering[] order)
+        public async Task<IActionResult> SchedulePreparedOrderedDate([FromBody] Ordering[] orders)
         {
+            if (orders == null || !orders.Any())
+            {
+                return BadRequest("Orders not provided.");
+            }
+
             var generate = new GenerateOrderNo();
             generate.IsActive = true;
 
-            await _unitofwork.Orders.GenerateNumber(generate);
-            await _unitofwork.CompleteAsync();
-            foreach (Ordering items in order )
+            if (!await _unitofwork.Orders.GenerateNumber(generate))
             {
-                items.OrderNoPKey = generate.Id;
-                await _unitofwork.Orders.SchedulePreparedDate(items);
+                return BadRequest("Failed to generate order number.");
             }
+
             await _unitofwork.CompleteAsync();
-            return new JsonResult("Successfully schedule orders");
+
+            foreach (Ordering order in orders)
+            {
+                if (!await _unitofwork.Orders.ValidateDateNeeded(order))
+                {
+                    return BadRequest("Date needed must be in the future.");
+                }
+
+                order.OrderNoPKey = generate.Id;
+
+                if (!await _unitofwork.Orders.SchedulePreparedDate(order))
+                {
+                    return BadRequest("Failed to schedule prepared date.");
+                }
+            }
+
+            await _unitofwork.CompleteAsync();
+            return new JsonResult("Orders scheduled successfully.");
         }
+       
 
         [HttpPut]
         [Route("EditOrderQuantity")]

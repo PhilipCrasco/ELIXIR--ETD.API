@@ -534,16 +534,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
             //                       .ToListAsync();
 
 
-            //   .select(
-            //{
-            //    Id = sub.Id, 
-            //    SubCategoryName = sub.SubCategoryName, 
-            //    CategoryId = cat.Id,
-            //    CategoryName = cat.CategoryName
-            //
-            //).where(x => x.CategoryName == category )
-
-            //return itemCategories;
 
             var itemcategories = _context.SubCategories
                              .Join(_context.ItemCategories, sub => sub.Id, item => item.Id, (sub, item) => new { sub, item })
@@ -573,39 +563,5 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                    return await subcategory.ToListAsync();
         }
 
-        //public async Task<IReadOnlyList<SubCategoryDto>> GetAllListofSubcategorymaterial(string category )
-        //{
-
-        //    var subcategory = _context.SubCategories
-        //                     .OrderBy(x => x.SubCategoryName)
-        //                     .Where(x => x.SubCategoryName == category)
-        //                     .Select(x => new SubCategoryDto
-        //                     {
-
-        //                         SubcategoryName = x.SubCategoryName
-
-        //                     }).Distinct();
-
-        //    return await subcategory.ToListAsync();
-
-
-        //}
-
-        //public async Task<IReadOnlyList<SubCategoryDto>> GetAllListofItemcategorymaterial(int category)
-        //{
-        //    var itemcategory = _context.SubCategories
-        //                   .OrderBy(x => x.ItemCategory.ItemCategoryName)
-        //                   .Where(x => x.Id == category)
-        //                   .Select(x => new SubCategoryDto
-        //                   {
-        //                       Id = x.Id,
-        //                       CategoryName = x.ItemCategory.ItemCategoryName
-
-        //                   }).Distinct();
-
-        //    return await itemcategory.ToListAsync();
-
-
-        //}
     }
 }
