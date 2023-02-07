@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ELIXIRETD.DATA.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20230203063522_removeitemcategoryid")]
-    partial class removeitemcategoryid
+    [Migration("20230207004035_createinitial")]
+    partial class createinitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -753,6 +753,9 @@ namespace ELIXIRETD.DATA.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ItemCategoryName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ItemCode")
                         .HasColumnType("nvarchar(max)");

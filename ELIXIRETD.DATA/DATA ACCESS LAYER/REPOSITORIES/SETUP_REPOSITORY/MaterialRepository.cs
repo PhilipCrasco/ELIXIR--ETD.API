@@ -546,7 +546,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
                              })
                              .Where(x => x.SubcategoryName == category.ToLower())
                                .ToListAsync();
-                                
+
 
             return itemcategories;
         }

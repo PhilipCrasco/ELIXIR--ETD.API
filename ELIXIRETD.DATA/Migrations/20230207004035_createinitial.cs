@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ELIXIRETD.DATA.Migrations
 {
-    public partial class removeitemcategoryid : Migration
+    public partial class createinitial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -650,7 +650,8 @@ namespace ELIXIRETD.DATA.Migrations
                     BufferLevel = table.Column<int>(type: "int", nullable: false),
                     DateAdded = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AddedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    ItemCategoryName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
