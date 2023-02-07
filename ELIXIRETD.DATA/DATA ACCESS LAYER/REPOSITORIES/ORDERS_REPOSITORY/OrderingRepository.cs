@@ -238,7 +238,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
 
 
-        public async  Task<IReadOnlyList<OrderDto>> GetAllListForApprovalOfSchedule()
+        public async  Task<IReadOnlyList<GetallApproveDto>> GetAllListForApprovalOfSchedule()
         {
             var orders = _context.Orders.GroupBy(x => new
             {
@@ -253,7 +253,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             }).Where(x => x.Key.IsApproved == null)
               .Where(x => x.Key.PreparedDate != null)
               .Where(x => x.Key.IsActive == true)
-              .Select(x => new OrderDto
+              .Select(x => new GetallApproveDto
               {
                   OrderNo =x.Key.OrderNoPKey,
                   CustomerName = x.Key.CustomerName,

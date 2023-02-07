@@ -235,7 +235,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return Ok(orders);
         }
         
-        //============================= Prepared Ordering ===========================================================================
+        //============================= Prepared Ordering ===============================================================================
 
 
         [HttpGet]
@@ -288,7 +288,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         [HttpGet]
         [Route("OrderSummary")]
-
         public async Task<IActionResult> Ordersummary([FromQuery] string DateFrom , [FromQuery] string DateTo)
         {
             var orders = await _unitofwork.Orders.OrderSummary(DateFrom, DateTo);
