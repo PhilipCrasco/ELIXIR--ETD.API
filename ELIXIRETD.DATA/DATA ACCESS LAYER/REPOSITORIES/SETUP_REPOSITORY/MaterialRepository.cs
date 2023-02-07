@@ -534,21 +534,19 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
 
 
 
-            var itemcategories = await _context.SubCategories
-                             .Join(_context.ItemCategories, sub => sub.Id, item => item.Id, (sub, item) => new { sub, item })
+            var itemcategories = _context.SubCategories
+                              .Where(x => x.SubCategoryName == category.ToLower())
+                              .Where(x => x.IsActive == true)
                              .Select(result => new SubCategoryDto
                              {
-                                 Id = result.sub.Id,
-                                 SubcategoryName = result.sub.SubCategoryName,
-                                 CategoryId = result.item.Id,
-                                 CategoryName = result.item.ItemCategoryName
-
-                             })
-                             .Where(x => x.SubcategoryName == category.ToLower())
-                               .ToListAsync();
-
-
-            return itemcategories;
+                                 SubCategoryId = result.Id,
+                                 SubcategoryName = result.SubCategoryName,
+                                 CategoryId = result.ItemCategoryId,
+                                 CategoryName = result.ItemCategory.ItemCategoryName
+                             });
+                             
+                           
+            return await itemcategories.ToListAsync();
         }
 
         public async Task<IReadOnlyList<SubCategoryDto>> GetallActiveSubcategoryDropDown()
