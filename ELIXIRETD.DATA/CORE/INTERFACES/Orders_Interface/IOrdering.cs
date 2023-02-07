@@ -67,6 +67,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
 
         Task<bool> TransanctListOfMoveOrders(TransactMoveOrder transact);
 
+        Task<bool> ValidatePrepareDate(Ordering orders);
+
 
 
 

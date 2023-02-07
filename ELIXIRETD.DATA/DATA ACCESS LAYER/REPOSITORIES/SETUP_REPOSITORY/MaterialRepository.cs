@@ -515,38 +515,19 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
 
         public async Task<IReadOnlyList<SubCategoryDto>> GetAllListofSubcategorymaterial(string category)
         {
-            //var subcategory = _context.SubCategories
-            //                     .OrderBy(x => x.SubCategoryName)
-            //                     .Where(x => x.SubCategoryName == category)
-            //                     .Select(x => x.ItemCategoryId)
-            //                     .Distinct();
 
-            //var itemCategories = await _context.ItemCategories
-            //                       .Where(x => subcategory.Contains(x.Id))
-            //                       .OrderBy(x => x.ItemCategoryName)
-            //                       .Select(x => new SubCategoryDto
-            //                       {
-            //                           Id = x.Id,
-            //                           CategoryName = x.ItemCategoryName
-
-            //                       })
-            //                       .ToListAsync();
+            var sub = _context.SubCategories.Where(x => x.IsActive == true)
+                                            .Where(x => x.SubCategoryName == category)
+                                            .Select(x => new SubCategoryDto
+                                              {
+                                                  SubCategoryId = x.Id,
+                                                  SubcategoryName = x.SubCategoryName,
+                                                  CategoryName = x.ItemCategory.ItemCategoryName,
+                                                  CategoryId = x.ItemCategoryId
+                                              });
 
 
-
-            var itemcategories = _context.SubCategories
-                              .Where(x => x.SubCategoryName == category.ToLower())
-                              .Where(x => x.IsActive == true)
-                             .Select(result => new SubCategoryDto
-                             {
-                                 SubCategoryId = result.Id,
-                                 SubcategoryName = result.SubCategoryName,
-                                 CategoryId = result.ItemCategoryId,
-                                 CategoryName = result.ItemCategory.ItemCategoryName
-                             });
-                             
-                           
-            return await itemcategories.ToListAsync();
+            return await sub.ToListAsync();
         }
 
         public async Task<IReadOnlyList<SubCategoryDto>> GetallActiveSubcategoryDropDown()

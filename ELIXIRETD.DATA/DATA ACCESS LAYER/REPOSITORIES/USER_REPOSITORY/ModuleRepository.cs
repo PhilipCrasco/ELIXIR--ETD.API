@@ -180,7 +180,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
                                              MainMenu = x.ModuleName,
                                              DateAdded = x.DateAdded.ToString("MM/dd/yyyy"),
                                              AddedBy = x.AddedBy,
-                                             MenuPath = x.MenuPath
+                                             MenuPath = x.MenuPath,
+                                             IsActive= x.IsActive
                                          });
 
             return await module.ToListAsync();
@@ -196,7 +197,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
                                            MainMenu = x.ModuleName,
                                            DateAdded = x.DateAdded.ToString("MM/dd/yyyy"),
                                            AddedBy = x.AddedBy,
-                                           MenuPath = x.MenuPath
+                                           MenuPath = x.MenuPath,
+                                            IsActive = x.IsActive
                                        });
 
             return await module.ToListAsync();
@@ -255,7 +257,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
                                            MainMenu = x.ModuleName,
                                            DateAdded = x.DateAdded.ToString("MM/dd/yyyy"),
                                            AddedBy = x.AddedBy,
-                                           MenuPath = x.MenuPath
+                                           MenuPath = x.MenuPath,
+                                            IsActive = x.IsActive
                                        });
 
             return await PagedList<ModuleDto>.CreateAsync(module, userParams.PageNumber, userParams.PageSize);
@@ -270,7 +273,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
                                            MainMenu = x.ModuleName,
                                            DateAdded = x.DateAdded.ToString("MM/dd/yyyy"),
                                            AddedBy = x.AddedBy,
-                                           MenuPath = x.MenuPath
+                                           MenuPath = x.MenuPath,
+                                            IsActive = x.IsActive
                                        }).Where(x => x.MainMenu.ToLower()
                                         .Contains(search.Trim().ToLower()));
 

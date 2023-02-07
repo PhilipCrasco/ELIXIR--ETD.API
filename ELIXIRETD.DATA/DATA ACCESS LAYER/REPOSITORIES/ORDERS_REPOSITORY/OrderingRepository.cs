@@ -4,7 +4,9 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 {
@@ -64,6 +66,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                               .GroupBy(x => new
                 {
                     x.ItemCode,
+
                 }).Select(x => new WarehouseInventory
                 {
                     ItemCode = x.Key.ItemCode,
@@ -71,7 +74,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 });
 
             var getOrderingReserve = _context.Orders.Where(x => x.IsActive == true)
-                                                    .Where(x => x.PreparedDate != null)
+                                                    //.Where(x => x.PreparedDate != null)
             .GroupBy(x => new
             {
                 x.ItemCode,
@@ -287,7 +290,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
         {
             var orders = _context.Orders.OrderBy(x => x.PreparedDate)
                                         .Where(x => x.OrderNo == Id)
-                                        .Where(x => x.IsApproved == false)
+                                        .Where(x => x.IsApproved == null)
                                         .Select(x => new OrderDto
                                         {
                                             OrderNo = x.OrderNoPKey,
@@ -343,6 +346,18 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         public async Task<IReadOnlyList<OrderDto>> OrderSummary(string DateFrom, string DateTo)
         {
+
+            CultureInfo usCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentCulture = usCulture;
+
+            if (DateTime.ParseExact(DateFrom, "MM/dd/yyyy", usCulture) > DateTime.ParseExact(DateTo, "MM/dd/yyyy", usCulture))
+            {
+                return new List<OrderDto>();
+            }
+
+            var dateFrom = DateTime.ParseExact(DateFrom, "MM/dd/yyyy", usCulture);
+            var dateTo = DateTime.ParseExact(DateTo, "MM/dd/yyyy", usCulture);
+
 
             var Totalramaining = _context.WarehouseReceived.GroupBy(x => new
             {
@@ -414,7 +429,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                     IsApproved = total.Key.IsApproved != null
 
                 });
-
 
             return await orders.ToListAsync();
         }
@@ -1497,6 +1511,16 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-       
+        public async Task<bool> ValidatePrepareDate(Ordering orders)
+        {
+            var dateNow = DateTime.Now;
+
+            if (Convert.ToDateTime(orders.PreparedDate).Date < dateNow.Date)
+                return false;
+            return true;
+
+        }
+
+
     }
 }

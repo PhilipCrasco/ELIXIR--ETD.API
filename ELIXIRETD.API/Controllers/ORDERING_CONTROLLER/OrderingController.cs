@@ -172,7 +172,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
             foreach (Ordering order in orders)
             {
-                if (!await _unitofwork.Orders.ValidateDateNeeded(order))
+                if (!await _unitofwork.Orders.ValidatePrepareDate(order))
                 {
                     return BadRequest("Date needed must be in the future.");
                 }
@@ -301,6 +301,12 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         public async Task<IActionResult> Ordersummary([FromQuery] string DateFrom , [FromQuery] string DateTo)
         {
             var orders = await _unitofwork.Orders.OrderSummary(DateFrom, DateTo);
+
+            if (DateTime.Parse(DateFrom) > DateTime.Parse(DateTo))
+            {
+                return BadRequest("DateFrom cannot be greater than DateTo.");
+            }
+
             return Ok(orders);
 
         }
