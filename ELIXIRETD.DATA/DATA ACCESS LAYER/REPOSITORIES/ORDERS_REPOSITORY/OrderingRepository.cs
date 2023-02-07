@@ -236,25 +236,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         //========================================== Preparation =======================================================================
 
-        public async Task<IReadOnlyList<OrderDto>> GetAllListPreparedDate()
-        {
-            var orders = _context.Orders.Select(x => new OrderDto
-            {
-                Id = x.Id,
 
-                CustomerName = x.CustomerName,
-                Category = x.Category,
-                QuantityOrder = x.QuantityOrdered,
-                OrderDate = x.OrderDate.ToString("MM/dd/yyyy"),
-                DateNeeded = x.DateNeeded.ToString("MM/dd/yyyy"),
-                PreparedDate = x.PreparedDate.ToString(),
-                IsApproved = x.IsApproved != null
-
-            });
-            return await orders.Where(x => x.IsApproved != true)
-                                        .ToListAsync();
-
-        }
 
         public async  Task<IReadOnlyList<OrderDto>> GetAllListForApprovalOfSchedule()
         {
@@ -289,7 +271,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
         public async Task<IReadOnlyList<OrderDto>> GetAllOrdersForScheduleApproval(int Id)
         {
             var orders = _context.Orders.OrderBy(x => x.PreparedDate)
-                                        .Where(x => x.OrderNo == Id)
+                                        .Where(x => x.OrderNoPKey == Id)
                                         .Where(x => x.IsApproved == null)
                                         .Select(x => new OrderDto
                                         {

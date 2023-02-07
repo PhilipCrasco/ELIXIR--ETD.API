@@ -237,15 +237,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         
         //============================= Prepared Ordering ===========================================================================
 
-        [HttpPut]
-        [Route("GetAllListofPrepared")]
-        public async Task<IActionResult> GetAlllistofPreparedSched ()
-        {
-            await _unitofwork.Orders.GetAllListPreparedDate();
-            await _unitofwork.CompleteAsync();
-
-            return new JsonResult("Sucessfully schedules ordered");
-        }
 
         [HttpGet]
         [Route("GetAllListForApprovalOfSchedule")]

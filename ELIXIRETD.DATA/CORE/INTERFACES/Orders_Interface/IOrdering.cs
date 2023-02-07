@@ -14,7 +14,6 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<bool> SchedulePreparedDate(Ordering orders);
         Task<bool> GenerateNumber(GenerateOrderNo generate);
         Task<bool> EditQuantityOrder(Ordering orders);
-        Task<IReadOnlyList<OrderDto>> GetAllListPreparedDate();
         Task <bool> ApprovePreparedDate(Ordering orders);
         Task<bool> RejectPreparedDate(Ordering orders);
         Task<IReadOnlyList<OrderDto>> GetAllListOfCancelOrders();
