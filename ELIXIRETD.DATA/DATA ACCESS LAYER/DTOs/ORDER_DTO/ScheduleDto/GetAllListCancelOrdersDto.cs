@@ -3,6 +3,8 @@
     public class GetAllListCancelOrdersDto
     {
         public int Id { get; set; }
+
+        public string CustomerName { get; set; }
         public string Category { get; set; }
         public decimal QuantityOrder { get; set; }
         public string OrderDate { get; set; }
@@ -17,5 +19,5 @@
 
 
 
-    }
+    
 }

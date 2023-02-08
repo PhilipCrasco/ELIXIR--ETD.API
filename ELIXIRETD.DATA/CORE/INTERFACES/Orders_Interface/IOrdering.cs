@@ -1,4 +1,5 @@
 ﻿using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.PreperationDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using System.Threading.Tasks;
@@ -10,17 +11,17 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<bool> AddNewOrders(Ordering Orders);
         Task<PagedList<GetAllListofOrdersPaginationDto>> GetAllListofOrdersPagination(UserParams userParams);
         Task<IReadOnlyList<GetAllListofOrdersDto>> GetAllListofOrders(string Customer);
-        Task<IReadOnlyList<OrderDto>> OrderSummary(string DateFrom, string DateTo);
+        Task<IReadOnlyList<OrderSummaryDto>> OrderSummary(string DateFrom, string DateTo);
         Task<bool> SchedulePreparedDate(Ordering orders);
         Task<bool> GenerateNumber(GenerateOrderNo generate);
         Task<bool> EditQuantityOrder(Ordering orders);
         Task <bool> ApprovePreparedDate(Ordering orders);
         Task<bool> RejectPreparedDate(Ordering orders);
-        Task<IReadOnlyList<OrderDto>> GetAllListOfCancelOrders();
+        Task<IReadOnlyList<GetAllListCancelOrdersDto>> GetAllListOfCancelOrders();
         Task<bool> ReturnCancelOrdersInList( Ordering orders);
-        Task<IReadOnlyList<OrderDto>> DetailedListOfOrders (string customer);
+        Task<IReadOnlyList<DetailedListofOrdersDto>> DetailedListOfOrders (string customer);
         Task<IReadOnlyList<GetallApproveDto>> GetAllListForApprovalOfSchedule();
-        Task<IReadOnlyList<OrderDto>> GetAllOrdersForScheduleApproval(int Id);
+        Task<IReadOnlyList<GetallOrderfroScheduleApproveDto>> GetAllOrdersForScheduleApproval(int Id);
         Task<IReadOnlyList<OrderDto>> GetAllApprovedOrdersForCalendar();
         Task<bool> CancelOrders(Ordering orders);
         Task<OrderDto> GetMoveOrderDetailsForMoveOrder(int orderId);
