@@ -122,7 +122,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         [HttpGet]
         [Route("GetAllListofOrdersPagination")]
-        public async Task<ActionResult<IEnumerable<OrderDto>>> GetAlllistofOrdersPagination([FromQuery] UserParams userParams)
+        public async Task<ActionResult<IEnumerable<GetAllListofOrdersPaginationDto>>> GetAlllistofOrdersPagination([FromQuery] UserParams userParams)
         {
             var orders = await _unitofwork.Orders.GetAllListofOrdersPagination(userParams);
 

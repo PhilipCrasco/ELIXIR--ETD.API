@@ -4,7 +4,6 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
@@ -37,7 +36,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         // ========================================== Schedule Prepare ===========================================================
 
-        public async Task<PagedList<OrderDto>> GetAllListofOrdersPagination(UserParams userParams)
+        public async Task<PagedList<GetAllListofOrdersPaginationDto>> GetAllListofOrdersPagination(UserParams userParams)
         {
             var orders = _context.Orders.OrderBy(x => x.OrderDate)
                                         .GroupBy(x => new
@@ -48,17 +47,17 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                         }).Where(x => x.Key.IsActive == true)
                                           .Where(x => x.Key.PreparedDate == null)
 
-                                          .Select(x => new OrderDto
+                                          .Select(x => new GetAllListofOrdersPaginationDto
                                           {
                                               CustomerName = x.Key.CustomerName,
                                               IsActive = x.Key.IsActive
                                           });
 
-            return await PagedList<OrderDto>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
+            return await PagedList<GetAllListofOrdersPaginationDto>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
         }
 
 
-        public async Task<IReadOnlyList<OrderDto>> GetAllListofOrders(string Customer)
+        public async Task<IReadOnlyList<GetAllListofOrdersDto>> GetAllListofOrders(string Customer)
         {
             var datenow = DateTime.Now;
 
@@ -119,7 +118,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                     x.ordering.IsPrepared,
                     Reserve = x.warehouse.Reserve == null ? 0 : x.warehouse.Reserve
 
-                }).Select(total => new OrderDto
+                }).Select(total => new GetAllListofOrdersDto
                 {
                     Id = total.Key.Id,
                     OrderDate = total.Key.OrderDate.ToString("MM/dd/yyyy"),
@@ -255,7 +254,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
               .Where(x => x.Key.IsActive == true)
               .Select(x => new GetallApproveDto
               {
-                  OrderNo =x.Key.OrderNoPKey,
+                  OrderNoPKey =x.Key.OrderNoPKey,
                   CustomerName = x.Key.CustomerName,
                   Department = x.Key.Department,
                   Category = x.Key.Company,

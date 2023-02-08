@@ -8,8 +8,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
     public interface IOrdering
     {
         Task<bool> AddNewOrders(Ordering Orders);
-        Task<PagedList<OrderDto>> GetAllListofOrdersPagination(UserParams userParams);
-        Task<IReadOnlyList<OrderDto>> GetAllListofOrders(string Customer);
+        Task<PagedList<GetAllListofOrdersPaginationDto>> GetAllListofOrdersPagination(UserParams userParams);
+        Task<IReadOnlyList<GetAllListofOrdersDto>> GetAllListofOrders(string Customer);
         Task<IReadOnlyList<OrderDto>> OrderSummary(string DateFrom, string DateTo);
         Task<bool> SchedulePreparedDate(Ordering orders);
         Task<bool> GenerateNumber(GenerateOrderNo generate);
