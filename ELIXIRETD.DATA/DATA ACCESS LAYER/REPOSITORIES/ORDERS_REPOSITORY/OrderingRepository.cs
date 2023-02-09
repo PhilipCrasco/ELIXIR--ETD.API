@@ -1050,7 +1050,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             return await PagedList<ApprovedMoveOrderPaginationDto>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
         }
-        public async Task<DtoMoveOrder> GetAllApprovedMoveOrder(int id)
+        public async Task<GetAllApprovedMoveOrderDto> GetAllApprovedMoveOrder(int id)
         {
             var orders = _context.MoveOrders.Where(x => x.OrderNoPkey == id)
                                             .GroupBy(x => new
@@ -1076,7 +1076,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                             }).Where(x => x.Key.IsApprove == true)
                                              .Where(x => x.Key.IsReject != true)
 
-                                             .Select(x => new DtoMoveOrder
+                                             .Select(x => new GetAllApprovedMoveOrderDto
                                              {
                                                  OrderNo = x.Key.OrderNo,
                                                  BarcodeNo = x.Key.warehouseId,
