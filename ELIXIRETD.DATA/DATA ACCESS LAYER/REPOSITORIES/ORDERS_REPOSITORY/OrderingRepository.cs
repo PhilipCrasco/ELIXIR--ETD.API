@@ -895,7 +895,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-        public async Task<PagedList<DtoMoveOrder>> ForApprovalMoveOrderPagination(UserParams userParams)
+        public async Task<PagedList<ForApprovalMoveOrderPaginationDto>> ForApprovalMoveOrderPagination(UserParams userParams)
         {
             var order = _context.MoveOrders.Where(x => x.IsApproveReject == null)
                                            .GroupBy(x => new
@@ -915,7 +915,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                            }).Where(x => x.Key.IsApprove != true)
                                               .Where(x => x.Key.IsPrepared == true)
 
-                                              .Select(x => new DtoMoveOrder
+                                              .Select(x => new ForApprovalMoveOrderPaginationDto
                                               {
 
                                                   OrderNo = x.Key.OrderNo,
@@ -925,13 +925,13 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                   Quantity = x.Sum(x => x.QuantityOrdered),
                                                   OrderDate = x.Key.OrderDate.ToString(),
                                                   PreparedDate = x.Key.PreparedDate.ToString(),
-                                                  BatchNo = x.Key.BatchNo
+                                                 
                                               });
 
-            return await PagedList<DtoMoveOrder>.CreateAsync(order, userParams.PageNumber, userParams.PageSize);
+            return await PagedList<ForApprovalMoveOrderPaginationDto>.CreateAsync(order, userParams.PageNumber, userParams.PageSize);
         }
 
-        public async Task<PagedList<DtoMoveOrder>> ForApprovalMoveOrderPaginationOrig(UserParams userParams, string search)
+        public async Task<PagedList<ForApprovalMoveOrderPaginationDto>> ForApprovalMoveOrderPaginationOrig(UserParams userParams, string search)
         {
             var orders = _context.MoveOrders.Where(x => x.IsApproveReject == null)
                                             .GroupBy(x => new
@@ -949,7 +949,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                             }).Where(x => x.Key.IsPrepared != true)
                                             .Where(x => x.Key.IsPrepared == true)
 
-                                            .Select(x => new DtoMoveOrder
+                                            .Select(x => new ForApprovalMoveOrderPaginationDto
                                             {
                                                 OrderNo = x.Key.OrderNo,
                                                 CustomerName = x.Key.CustomerName,
@@ -958,12 +958,12 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                 Quantity = x.Sum(x => x.QuantityOrdered),
                                                 OrderDate = x.Key.OrderDate.ToString(),
                                                 PreparedDate = x.Key.PreparedDate.ToString(),
-                                                BatchNo = x.Key.BatchNo
+                                             
 
                                             }).Where(x => Convert.ToString(x.OrderDate).ToLower()
                                               .Contains(search.Trim().ToLower()));
 
-            return await PagedList<DtoMoveOrder>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
+            return await PagedList<ForApprovalMoveOrderPaginationDto>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
         }
 
         public async Task<PagedList<DtoMoveOrder>> ApprovedMoveOrderPagination(UserParams userParams)

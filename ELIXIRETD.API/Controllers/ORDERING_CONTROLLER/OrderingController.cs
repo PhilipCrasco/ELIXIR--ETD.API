@@ -477,7 +477,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         [HttpGet]
         [Route("GetAllForApprovalMoveOrderPagination")]
-        public async Task<ActionResult<IEnumerable<DtoMoveOrder>>> GEtAllForApprovalMoveOrderPagination([FromQuery] UserParams userParams )
+        public async Task<ActionResult<IEnumerable<ForApprovalMoveOrderPaginationDto>>> GEtAllForApprovalMoveOrderPagination([FromQuery] UserParams userParams )
         {
             var moveorder = await _unitofwork.Orders.ForApprovalMoveOrderPagination(userParams);
             Response.AddPaginationHeader(moveorder.CurrentPage, moveorder.PageSize, moveorder.TotalCount, moveorder.TotalPages, moveorder.HasNextPage, moveorder.HasPreviousPage);
@@ -499,7 +499,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         [HttpGet]
         [Route("GetAllForApprovalMoveOrderPaginationOrig")]
-        public async Task<ActionResult<IEnumerable<DtoMoveOrder>>> GetallForApprovalMoveOrderPaginationOrig([FromQuery] UserParams userParams , [FromQuery] string search)
+        public async Task<ActionResult<IEnumerable<ForApprovalMoveOrderPaginationDto>>> GetallForApprovalMoveOrderPaginationOrig([FromQuery] UserParams userParams , [FromQuery] string search)
         {
             if (search == null)
                 return await GEtAllForApprovalMoveOrderPagination(userParams);
