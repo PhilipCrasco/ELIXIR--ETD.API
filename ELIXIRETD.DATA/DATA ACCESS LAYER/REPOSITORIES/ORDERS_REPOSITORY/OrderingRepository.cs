@@ -1,6 +1,7 @@
 ﻿using ELIXIRETD.DATA.CORE.INTERFACES.Orders;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.INVENTORYDTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.MoveOrderDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.PreperationDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
@@ -437,7 +438,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         }
 
-        public async Task<IReadOnlyList<OrderDto>> GetAllApprovedOrdersForCalendar()
+        public async Task<IReadOnlyList<GetAllCalendarApproveDto>> GetAllApprovedOrdersForCalendar()
         {
             var orders = _context.Orders.GroupBy(x => new
             {
@@ -455,7 +456,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
               .Where(x => x.Key.PreparedDate != null)
               .Where(x => x.Key.IsMove == false)
 
-              .Select(x => new OrderDto
+              .Select(x => new GetAllCalendarApproveDto
               {
 
                   Id = x.Key.OrderNoPKey,
@@ -474,6 +475,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return await orders.ToListAsync();
 
         }
+
         // =========================================== MoveOrder ==============================================================================
 
         public async Task<IReadOnlyList<OrderDto>> TotalListOfApprovedPreparedDate(string customername)
@@ -514,9 +516,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
         }
 
 
-        public async Task<OrderDto> GetMoveOrderDetailsForMoveOrder(int orderId)
+        public async Task<GetMoveOrderDetailsForMoveOrderDto> GetMoveOrderDetailsForMoveOrder(int orderId)
         {
-            var orders = _context.Orders.Select(x => new OrderDto
+            var orders = _context.Orders.Select(x => new GetMoveOrderDetailsForMoveOrderDto
             {
                 Id = x.Id,
                 OrderNo = x.OrderNoPKey,
@@ -530,7 +532,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 Category = x.Category,
                 OrderDate = x.OrderDate.ToString("MM/dd/yyyy"),
                 DateNeeded = x.DateNeeded.ToString("MM/dd/yyyy"),
-                PreparedDate = x.PreparedDate.ToString()
+                PrepareDate = x.PreparedDate.ToString()
 
             });
 
@@ -549,11 +551,11 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         }
 
-        public async Task<IReadOnlyList<DtoMoveOrder>> ListOfPreparedItemsForMoveOrder(int id)
+        public async Task<IReadOnlyList<ListOfPreparedItemsForMoveOrderDto>> ListOfPreparedItemsForMoveOrder(int id)
         {
             var orders = _context.MoveOrders.Where(x => x.OrderNo == id)
                                             .Where(x => x.IsActive == true)
-                                            .Select(x => new DtoMoveOrder
+                                            .Select(x => new ListOfPreparedItemsForMoveOrderDto
                                             {
                                                 Id = x.Id,
                                                 OrderNo = x.OrderNo,
@@ -626,7 +628,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
         }
 
 
-        public async Task<PagedList<OrderDto>> GetAllListForMoveOrderPagination(UserParams userParams)
+        public async Task<PagedList<GetAllListForMoveOrderPaginationDto>> GetAllListForMoveOrderPagination(UserParams userParams)
         {
             var orders = _context.Orders
                                  .GroupBy(x => new
@@ -638,7 +640,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                  }).Where(x => x.Key.IsActive == true)
                                    .Where(x => x.Key.IsApproved == true)
                                    .Where(x => x.Key.IsMove == false)
-                                   .Select(x => new OrderDto
+                                   .Select(x => new GetAllListForMoveOrderPaginationDto
                                    {
                                        CustomerName = x.Key.CustomerName,
                                        IsActive = x.Key.IsActive,
@@ -646,7 +648,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
                                    });
 
-            return await PagedList<OrderDto>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
+            return await PagedList<GetAllListForMoveOrderPaginationDto>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
 
         }
 

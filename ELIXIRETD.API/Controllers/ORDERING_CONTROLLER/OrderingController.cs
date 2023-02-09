@@ -1,5 +1,6 @@
 ﻿using ELIXIRETD.DATA.CORE.ICONFIGURATION;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.MoveOrderDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.EXTENSIONS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
@@ -309,7 +310,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return Ok(orders);
         }
 
-        // =============================================== MoveOrder =========================================================================
+        // =============================================== MoveOrder =====================================================================
 
         [HttpPost]
         [Route("PrepareItemForMoveOrder")]
@@ -320,22 +321,22 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             if (details == null)
                 return BadRequest("No Prepare MoveOrder  Available ");
 
-            order.OrderNoPkey = details.Id;
+            order.OrderNo = details.Id;
+            order.OrderNoPkey = details.OrderNo;
             order.OrderDate = Convert.ToDateTime(details.OrderDate);
             order.DateNeeded = Convert.ToDateTime(details.DateNeeded);
-            order.PreparedDate = Convert.ToDateTime(details.PreparedDate);
+            order.PreparedDate = Convert.ToDateTime(details.PrepareDate);
             order.CustomerName= details.CustomerName;
             order.Department = details.Department;
             order.Company = details.Company;
             order.ItemCode = details.ItemCode;
             order.ItemDescription = details.ItemDescription;
-            order.Uom = details.Uom; 
+            order.Uom = details.Uom;
+            order.QuantityOrdered = details.QuantityOrder;
             order.Category = details.Category;
             order.IsActive = true;
             order.IsPrepared = true;
 
-            if (details == null)
-                return BadRequest("negats");
 
             await _unitofwork.Orders.PrepareItemForMoveOrder(order);
             await _unitofwork.CompleteAsync();
@@ -345,7 +346,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         [HttpGet]
         [Route("GetAllListForMoveOrderPagination")]
-        public async Task<ActionResult<IEnumerable<OrderDto>>> GetAllListForMoveOrderPagination([FromQuery] UserParams userParams )
+        public async Task<ActionResult<IEnumerable<GetAllListForMoveOrderPaginationDto>>> GetAllListForMoveOrderPagination([FromQuery] UserParams userParams )
         {
             var orders = await _unitofwork.Orders.GetAllListForMoveOrderPagination(userParams);
 

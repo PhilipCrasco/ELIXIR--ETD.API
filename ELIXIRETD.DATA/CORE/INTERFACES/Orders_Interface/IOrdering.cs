@@ -1,4 +1,5 @@
 ﻿using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.MoveOrderDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.PreperationDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
@@ -22,14 +23,14 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<IReadOnlyList<DetailedListofOrdersDto>> DetailedListOfOrders (string customer);
         Task<IReadOnlyList<GetallApproveDto>> GetAllListForApprovalOfSchedule();
         Task<IReadOnlyList<GetallOrderfroScheduleApproveDto>> GetAllOrdersForScheduleApproval(int Id);
-        Task<IReadOnlyList<OrderDto>> GetAllApprovedOrdersForCalendar();
+        Task<IReadOnlyList<GetAllCalendarApproveDto>> GetAllApprovedOrdersForCalendar();
         Task<bool> CancelOrders(Ordering orders);
-        Task<OrderDto> GetMoveOrderDetailsForMoveOrder(int orderId);
+        Task<GetMoveOrderDetailsForMoveOrderDto> GetMoveOrderDetailsForMoveOrder(int orderId);
         Task<bool> PrepareItemForMoveOrder(MoveOrder orders);
-        Task<IReadOnlyList<DtoMoveOrder>> ListOfPreparedItemsForMoveOrder(int id);
+        Task<IReadOnlyList<ListOfPreparedItemsForMoveOrderDto>> ListOfPreparedItemsForMoveOrder(int id);
         Task<IReadOnlyList<OrderDto>> ListOfOrdersForMoveOrder(int id);
 
-        Task<PagedList<OrderDto>> GetAllListForMoveOrderPagination(UserParams userParams);
+        Task<PagedList<GetAllListForMoveOrderPaginationDto>> GetAllListForMoveOrderPagination(UserParams userParams);
 
         Task<IReadOnlyList<OrderDto>> TotalListOfApprovedPreparedDate(string customername);
 
