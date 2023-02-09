@@ -806,8 +806,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                       x.ordering.PreparedDate,
                       x.ordering.IsApproved
 
-
-
                   }).Select(total => new GetAllOutOfStockByItemCodeAndOrderDateDto
                   {
 
@@ -856,10 +854,10 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         // ======================================== Move Order Approval ==============================================================
 
-        public async Task<IReadOnlyList<DtoMoveOrder>> ViewMoveOrderForApproval(int id)
+        public async Task<IReadOnlyList<ViewMoveOrderForApprovalDto>> ViewMoveOrderForApproval(int id)
         {
             var orders = _context.MoveOrders.Where(x => x.IsActive == true)
-                                            .Select(x => new DtoMoveOrder
+                                            .Select(x => new ViewMoveOrderForApprovalDto
                                             {
                                                 Id = x.Id,
                                                 OrderNo = x.OrderNo,
@@ -869,8 +867,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                 Uom = x.Uom,
                                                 CustomerName = x.CustomerName,
                                                 ApprovedDate = x.ApprovedDate.ToString(),
-                                                Quantity = x.QuantityOrdered,
-                                                BatchNo = x.BatchNo
+                                                Quantity = x.QuantityOrdered
+                                              
 
                                             });
 
@@ -890,7 +888,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             foreach ( var items in existing)
             {
                 items.ApprovedDate = DateTime.Now;
-                items.ApprovedDate = DateTime.Now;
+                items.ApproveDateTempo = DateTime.Now;
                 items.IsApprove = true;
             }
 
