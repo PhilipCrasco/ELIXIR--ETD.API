@@ -525,7 +525,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         [HttpGet]
         [Route("ApprovedMoveOrderPagination")]
-        public async Task<ActionResult<IEnumerable<DtoMoveOrder>>> ApprovedMoveOrderPagination([FromQuery] UserParams userParams)
+        public async Task<ActionResult<IEnumerable<ApprovedMoveOrderPaginationDto>>> ApprovedMoveOrderPagination([FromQuery] UserParams userParams)
         {
             var moveorder = await _unitofwork.Orders.ApprovedMoveOrderPagination(userParams);
 
@@ -548,7 +548,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         [HttpGet]
         [Route("ApprovedMoveOrderPaginationOrig")]
-        public async Task<ActionResult<IEnumerable<DtoMoveOrder>>> ApprovedMoveOrderPaginationOrig([FromQuery] UserParams userParams, [FromQuery] string search)
+        public async Task<ActionResult<IEnumerable<ApprovedMoveOrderPaginationDto>>> ApprovedMoveOrderPaginationOrig([FromQuery] UserParams userParams, [FromQuery] string search)
         {
 
             if (search == null)
