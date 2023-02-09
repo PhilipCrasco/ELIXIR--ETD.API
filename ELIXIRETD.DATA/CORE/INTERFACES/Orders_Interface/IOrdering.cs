@@ -38,7 +38,7 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
 
         Task<ItemStocksDto> GetActualItemQuantityInWarehouse(int id, string itemcode);
 
-        Task<IReadOnlyList<OrderDto>> GetAllOutOfStockByItemCodeAndOrderDate(string itemcode, string orderdate);
+        Task<IReadOnlyList<GetAllOutOfStockByItemCodeAndOrderDateDto>> GetAllOutOfStockByItemCodeAndOrderDate(string itemcode, string orderdate);
 
         Task<bool> ApprovalForMoveOrders(MoveOrder moveorder);
         Task<IReadOnlyList<DtoMoveOrder>> ViewMoveOrderForApproval(int id);

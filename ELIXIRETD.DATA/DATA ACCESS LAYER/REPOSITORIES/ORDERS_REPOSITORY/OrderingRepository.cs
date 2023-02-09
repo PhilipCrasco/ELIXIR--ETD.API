@@ -743,7 +743,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         }
 
-        public async Task<IReadOnlyList<OrderDto>> GetAllOutOfStockByItemCodeAndOrderDate(string itemcode, string orderdate)
+        public async Task<IReadOnlyList<GetAllOutOfStockByItemCodeAndOrderDateDto>> GetAllOutOfStockByItemCodeAndOrderDate(string itemcode, string orderdate)
         {
             var totalRemaining = _context.WarehouseReceived
                 .OrderBy(x => x.ReceivingDate)
@@ -774,7 +774,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                          x.IsPrepared,
                          x.IsActive
 
-                     }).Select(x => new OrderDto
+                     }).Select(x => new GetAllOutOfStockByItemCodeAndOrderDateDto
                      {
 
                          ItemCode = x.Key.ItemCode,
@@ -808,7 +808,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
 
 
-                  }).Select(total => new OrderDto
+                  }).Select(total => new GetAllOutOfStockByItemCodeAndOrderDateDto
                   {
 
                       Id = total.Key.Id,
@@ -831,7 +831,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                   });
 
             return await orders.ToListAsync();
-
 
         }
 
