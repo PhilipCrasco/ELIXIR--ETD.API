@@ -318,11 +318,10 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         {
             var details = await _unitofwork.Orders.GetMoveOrderDetailsForMoveOrder(order.OrderNoPkey);
 
-            if (details == null)
-                return BadRequest("No Prepare MoveOrder  Available ");
+           
 
-            order.OrderNo = details.Id;
-            order.OrderNoPkey = details.OrderNo;
+            order.OrderNoPkey = details.Id;
+         
             order.OrderDate = Convert.ToDateTime(details.OrderDate);
             order.DateNeeded = Convert.ToDateTime(details.DateNeeded);
             order.PreparedDate = Convert.ToDateTime(details.PrepareDate);

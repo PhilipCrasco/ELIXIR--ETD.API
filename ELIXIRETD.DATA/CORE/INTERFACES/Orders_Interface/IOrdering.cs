@@ -28,11 +28,11 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<GetMoveOrderDetailsForMoveOrderDto> GetMoveOrderDetailsForMoveOrder(int orderId);
         Task<bool> PrepareItemForMoveOrder(MoveOrder orders);
         Task<IReadOnlyList<ListOfPreparedItemsForMoveOrderDto>> ListOfPreparedItemsForMoveOrder(int id);
-        Task<IReadOnlyList<OrderDto>> ListOfOrdersForMoveOrder(int id);
+        Task<IReadOnlyList<ListOfOrdersForMoveOrderDto>> ListOfOrdersForMoveOrder(int id);
 
         Task<PagedList<GetAllListForMoveOrderPaginationDto>> GetAllListForMoveOrderPagination(UserParams userParams);
 
-        Task<IReadOnlyList<OrderDto>> TotalListOfApprovedPreparedDate(string customername);
+        Task<IReadOnlyList<TotalListOfApprovedPreparedDateDto>> TotalListOfApprovedPreparedDate(string customername);
 
         Task<ItemStocksDto> GetFirstNeeded(string itemCode);
 
