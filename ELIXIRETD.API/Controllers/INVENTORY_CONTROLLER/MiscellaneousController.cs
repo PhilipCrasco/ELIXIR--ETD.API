@@ -49,8 +49,34 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
 
             return Ok("SuccessfullyAd new miscellaneous receipt in wareouse!");
 
-
         }
+
+        [HttpPut]
+        [Route("InActiveReceipt")]
+        public async Task<IActionResult> InActiveReceipt([FromBody] MiscellaneousReceipt receipt)
+        {
+            var validate = await _unitofwork.miscellaneous.ValidateMiscellaneousInIssue(receipt);
+
+            if (validate == false)
+                return BadRequest("InActive Failed, you already use the receiving id");
+
+            await _unitofwork.miscellaneous.InActiveMiscellaneousReceipt(receipt);
+            await _unitofwork.CompleteAsync();
+
+            return new JsonResult("Successfully InActive!");
+  
+        }
+
+        [HttpPut]
+        [Route("ActivateReceipt")]
+        public async Task<IActionResult> ActivateReceipt([FromBody] MiscellaneousReceipt receipt)
+        {
+            await _unitofwork.miscellaneous.ActivateMiscellaenousReceipt(receipt);
+            await _unitofwork.CompleteAsync();
+
+            return new JsonResult("Successfully active receipt");
+        }
+
 
        
         

@@ -18,6 +18,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
 
         }
 
+       
+
         public async Task<bool> AddMiscellaneousReceipt(MiscellaneousReceipt receipt)
         {
 
@@ -28,13 +30,54 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
             return true;
         }
 
+
         public async Task<bool> AddMiscellaneousReceiptInWarehouse(Warehouse_Receiving receive)
         {
             await _context.WarehouseReceived.AddAsync(receive);
             return true;
         }
 
+        public async Task<bool> InActiveMiscellaneousReceipt(MiscellaneousReceipt receipt)
+        {
+            var existing = await _context.MiscellaneousReceipts.Where(x => x.Id == receipt.Id)
+                                                               .FirstOrDefaultAsync();
 
+            var existingWH = await _context.WarehouseReceived.Where(x => x.MiscellanousReceiptId == receipt.Id)
+                                                            .ToListAsync();
+
+
+            if (existing == null)
+                return false;
+
+            existing.IsActive = false;
+
+            foreach (var items in existingWH)
+            {
+                items.IsActive = false;
+            }
+            return true;
+
+        }
+
+        public async Task<bool> ActivateMiscellaenousReceipt(MiscellaneousReceipt receipt)
+        {
+            var existing = await _context.MiscellaneousReceipts.Where(x => x.Id == receipt.Id)
+                                                               .FirstOrDefaultAsync();
+
+            var existingWH = await _context.WarehouseReceived.Where(x => x.MiscellanousReceiptId == receipt.Id)
+                                                             .ToListAsync();
+
+            if (existing == null) 
+                return false;
+
+            existing.IsActive = true;
+
+            foreach(var items in existingWH)
+            {
+                items.IsActive = true;
+            }
+            return true;    
+        }
 
 
 

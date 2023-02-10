@@ -15,7 +15,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.INVENTORY_INTERFACE
         Task<bool> AddMiscellaneousReceiptInWarehouse(Warehouse_Receiving receive);
         Task<bool> ValidateMiscellaneousInIssue (MiscellaneousReceipt receipt);
 
-
+        Task<bool> InActiveMiscellaneousReceipt(MiscellaneousReceipt receipt);
+        Task<bool> ActivateMiscellaenousReceipt (MiscellaneousReceipt receipt);
 
 
 
