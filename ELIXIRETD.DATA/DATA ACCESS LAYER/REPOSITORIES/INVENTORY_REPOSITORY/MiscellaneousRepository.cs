@@ -1,4 +1,6 @@
 ﻿using ELIXIRETD.DATA.CORE.INTERFACES.INVENTORY_INTERFACE;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.MISCELLANEOUS_DTO;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
@@ -79,6 +81,51 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
             return true;    
         }
 
+        public async Task<PagedList<GetAllMReceiptWithPaginationdDto>> GetAllMReceiptWithPaginationd(UserParams userParams, bool status)
+        {
+            var receipt = _context.MiscellaneousReceipts.OrderByDescending(x => x.PreparedDate)
+                                                        .Where(x => x.IsActive == status)
+                                                        .Select(x => new GetAllMReceiptWithPaginationdDto
+                                                        {
+
+                                                            Id= x.Id,
+                                                            SupplierCode = x.SupplierCode,
+                                                            SupplierName = x.supplier,
+                                                            TotalQuantity= x.TotalQuantity,
+                                                            PreparedBy = x.PreparedBy,
+                                                            PreparedDate = x.PreparedDate.ToString("MM/dd/yyyy"),
+                                                            Remarks = x.Remarks,
+                                                            IsActive= x.IsActive
+                                                            
+                                                        });
+
+            return await PagedList<GetAllMReceiptWithPaginationdDto>.CreateAsync(receipt, userParams.PageNumber , userParams.PageSize);
+        }
+
+        public async Task<PagedList<GetAllMReceiptWithPaginationdDto>> GetAllMReceiptWithPaginationOrig(UserParams userParams, string search, bool status)
+        {
+            var receipt = _context.MiscellaneousReceipts.OrderByDescending(x => x.PreparedDate)
+                                                        .Where(x => x.IsActive == status)
+                                                        .Select(x => new GetAllMReceiptWithPaginationdDto
+                                                        {
+
+                                                            Id = x.Id,
+                                                            SupplierCode = x.SupplierCode,
+                                                            SupplierName = x.supplier,
+                                                            TotalQuantity = x.TotalQuantity,
+                                                            PreparedBy = x.PreparedBy,
+                                                            PreparedDate = x.PreparedDate.ToString("MM/dd/yyyy"),
+                                                            Remarks = x.Remarks,
+                                                            IsActive = x.IsActive
+
+                                                        }).Where(x => (Convert.ToString(x.Id)).ToLower()
+                                                          .Contains(search.Trim().ToLower()));
+
+            return await PagedList<GetAllMReceiptWithPaginationdDto>.CreateAsync(receipt , userParams.PageNumber , userParams.PageSize);
+
+        }
+
+
 
 
 
@@ -101,9 +148,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
             return true;
         }
 
-
-
-
-
+       
     }
 }

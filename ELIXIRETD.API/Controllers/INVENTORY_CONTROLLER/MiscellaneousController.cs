@@ -1,6 +1,10 @@
 ﻿using ELIXIRETD.DATA.CORE.ICONFIGURATION;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.MISCELLANEOUS_DTO;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.EXTENSIONS;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL;
+using ELIXIRETD.DATA.SERVICES;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -77,9 +81,59 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
             return new JsonResult("Successfully active receipt");
         }
 
+        [HttpGet]
+        [Route("GetAllMReceiptWithPagination")]
+        public async Task<ActionResult<IEnumerable<GetAllMReceiptWithPaginationdDto>>> GetAllMiscellaneousReceiptPagination([FromQuery] UserParams userParams, [FromQuery] bool status)
+        {
+            var receipt = await _unitofwork.miscellaneous.GetAllMReceiptWithPaginationd(userParams, status);
 
-       
-        
+            Response.AddPaginationHeader(receipt.CurrentPage, receipt.PageSize, receipt.TotalCount, receipt.TotalPages, receipt.HasNextPage, receipt.HasPreviousPage);
+
+            var receiptResult = new
+            {
+                receipt,
+                receipt.CurrentPage,
+                receipt.PageSize,
+                receipt.TotalCount,
+                receipt.TotalPages,
+                receipt.HasNextPage,
+                receipt.HasPreviousPage
+            };
+
+            return Ok(receiptResult);
+        }
+
+        [HttpGet]
+        [Route("GetAllMiscellaneousReceiptPaginationOrig")]
+        public async Task<ActionResult<IEnumerable<GetAllMReceiptWithPaginationdDto>>> GetAllMiscellaneousReceiptPaginationOrig([FromQuery] UserParams userParams, [FromQuery] string search, [FromQuery] bool status)
+        {
+
+            if (search == null)
+
+                return await GetAllMiscellaneousReceiptPagination(userParams, status);
+
+            var receipt = await _unitofwork.miscellaneous.GetAllMReceiptWithPaginationOrig(userParams, search, status);
+
+            Response.AddPaginationHeader(receipt.CurrentPage, receipt.PageSize, receipt.TotalCount, receipt.TotalPages, receipt.HasNextPage, receipt.HasPreviousPage);
+
+            var receiptResult = new
+            {
+                receipt,
+                receipt.CurrentPage,
+                receipt.PageSize,
+                receipt.TotalCount,
+                receipt.TotalPages,
+                receipt.HasNextPage,
+                receipt.HasPreviousPage
+            };
+
+            return Ok(receiptResult);
+        }
+
+
+
+
+
 
 
 
