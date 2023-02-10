@@ -59,8 +59,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<bool> RejectApproveMoveOrder(MoveOrder moveOrder);
         Task<bool> RejectForMoveOrder(MoveOrder moveOrder);
 
-        Task<PagedList<DtoMoveOrder>> RejectedMoveOrderPagination(UserParams userParams);
-        Task<PagedList<DtoMoveOrder>> RejectedMoveOrderPaginationOrig(UserParams userParams, string search);
+        Task<PagedList<RejectedMoveOrderPaginationDto>> RejectedMoveOrderPagination(UserParams userParams);
+        Task<PagedList<RejectedMoveOrderPaginationDto>> RejectedMoveOrderPaginationOrig(UserParams userParams, string search);
 
         Task<IReadOnlyList<OrderDto>> TotalListForTransactMoveOrder(bool status);
 

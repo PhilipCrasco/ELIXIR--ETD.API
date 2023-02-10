@@ -1233,7 +1233,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
         }
 
 
-        public async Task<PagedList<DtoMoveOrder>> RejectedMoveOrderPagination(UserParams userParams)
+        public async Task<PagedList<RejectedMoveOrderPaginationDto>> RejectedMoveOrderPagination(UserParams userParams)
         {
             var orders = _context.MoveOrders.Where(x => x.IsApproveReject == true)
                                             .GroupBy(x => new
@@ -1251,7 +1251,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                 x.Remarks,
                                                 x.BatchNo
 
-                                            }).Select(x => new DtoMoveOrder
+                                            }).Select(x => new RejectedMoveOrderPaginationDto
                                             {
                                                 OrderNo = x.Key.OrderNo,
                                                 CustomerName = x.Key.CustomerName,
@@ -1263,15 +1263,15 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                 IsReject = x.Key.IsReject != null,
                                                 RejectedDate = x.Key.RejectedDateTempo.ToString(),
                                                 Remarks = x.Key.Remarks,
-                                                BatchNo = x.Key.BatchNo
+                                             
 
                                             });
 
-            return await PagedList<DtoMoveOrder>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
+            return await PagedList<RejectedMoveOrderPaginationDto>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
 
         }
 
-        public async Task<PagedList<DtoMoveOrder>> RejectedMoveOrderPaginationOrig(UserParams userParams, string search)
+        public async Task<PagedList<RejectedMoveOrderPaginationDto>> RejectedMoveOrderPaginationOrig(UserParams userParams, string search)
         {
             var orders = _context.MoveOrders.Where(x => x.IsApproveReject == true)
                                             .GroupBy( x => new
@@ -1289,7 +1289,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                   x.BatchNo
 
 
-                                            }).Select(x => new DtoMoveOrder
+                                            }).Select(x => new RejectedMoveOrderPaginationDto
                                             {
                                                 OrderNo = x.Key.OrderNo,
                                                 CustomerName = x.Key.CustomerName,
@@ -1301,14 +1301,14 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                 IsReject = x.Key.IsReject != null,
                                                 RejectedDate = x.Key.RejectedDateTempo.Value.ToString("MM/dd/yyyy"),
                                                 Remarks = x.Key.Remarks,
-                                                BatchNo = x.Key.BatchNo
+                                               
 
 
 
                                             }).Where(x => Convert.ToString(x.OrderNo).ToLower()
                                               .Contains(search.Trim().ToLower()));
 
-            return await PagedList<DtoMoveOrder>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
+            return await PagedList<RejectedMoveOrderPaginationDto>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
         }
 
         // =========================================== Transact Order ============================================================
