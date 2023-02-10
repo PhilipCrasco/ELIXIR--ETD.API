@@ -1,6 +1,7 @@
 ﻿using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.MoveOrderDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.PreperationDto;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.TransactDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using System.Threading.Tasks;
@@ -62,9 +63,9 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<PagedList<RejectedMoveOrderPaginationDto>> RejectedMoveOrderPagination(UserParams userParams);
         Task<PagedList<RejectedMoveOrderPaginationDto>> RejectedMoveOrderPaginationOrig(UserParams userParams, string search);
 
-        Task<IReadOnlyList<OrderDto>> TotalListForTransactMoveOrder(bool status);
+        Task<IReadOnlyList<TotalListForTransactMoveOrderDto>> TotalListForTransactMoveOrder(bool status);
 
-        Task<IReadOnlyList<DtoMoveOrder>> ListOfMoveOrdersForTransact(int orderid);
+        Task<IReadOnlyList<ListOfMoveOrdersForTransactDto>> ListOfMoveOrdersForTransact(int orderid);
 
         Task<bool> TransanctListOfMoveOrders(TransactMoveOrder transact);
 

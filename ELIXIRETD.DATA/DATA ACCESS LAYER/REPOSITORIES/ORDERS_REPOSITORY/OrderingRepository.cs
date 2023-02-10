@@ -3,6 +3,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.INVENTORYDTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.MoveOrderDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.PreperationDto;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.TransactDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
@@ -1313,7 +1314,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         // =========================================== Transact Order ============================================================
 
-        public async Task<IReadOnlyList<OrderDto>> TotalListForTransactMoveOrder(bool status)
+        public async Task<IReadOnlyList<TotalListForTransactMoveOrderDto>> TotalListForTransactMoveOrder(bool status)
         {
             var orders = _context.MoveOrders.Where(x => x.IsActive == true)
                                             .Where(x => x.IsTransact == status)
@@ -1330,7 +1331,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
                                             }).Where(x => x.Key.IsApprove == true)
 
-                                            .Select(x => new OrderDto
+                                            .Select(x => new TotalListForTransactMoveOrderDto
                                             {
                                                 OrderNo = x.Key.OrderNo,
                                                 CustomerName = x.Key.CustomerName,
@@ -1348,19 +1349,19 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         }
 
-        public async Task<IReadOnlyList<DtoMoveOrder>> ListOfMoveOrdersForTransact(int orderid)
+        public async Task<IReadOnlyList<ListOfMoveOrdersForTransactDto>> ListOfMoveOrdersForTransact(int orderid)
         {
             var orders = _context.MoveOrders.Where(x => x.IsActive == true)
                                            .Where(x => x.IsApprove == true)
 
-                                           .Select(x => new DtoMoveOrder
+                                           .Select(x => new ListOfMoveOrdersForTransactDto
                                            {
                                                OrderNoPKey = x.OrderNoPkey,
                                                OrderNo = x.OrderNo,
                                                BarcodeNo = x.warehouseId,
                                                OrderDate = x.OrderDate.ToString(),
                                                PreparedDate = x.PreparedDate.ToString(),
-                                               DateNeeed = x.DateNeeded.ToString(),
+                                               DateNeeded = x.DateNeeded.ToString(),
                                                Department = x.Department,
                                                CustomerName = x.CustomerName,
                                                Company = x.Company,
