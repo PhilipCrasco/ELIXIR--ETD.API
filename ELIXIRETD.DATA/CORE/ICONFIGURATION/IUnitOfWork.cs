@@ -1,4 +1,5 @@
 ﻿using ELIXIRETD.DATA.CORE.INTERFACES.IMPORT_INTERFACE;
+using ELIXIRETD.DATA.CORE.INTERFACES.INVENTORY_INTERFACE;
 using ELIXIRETD.DATA.CORE.INTERFACES.Orders;
 using ELIXIRETD.DATA.CORE.INTERFACES.SETUP_INTERFACE;
 using ELIXIRETD.DATA.CORE.INTERFACES.USER_INTERFACE;
@@ -42,6 +43,8 @@ namespace ELIXIRETD.DATA.CORE.ICONFIGURATION
         IWarehouseReceiveRepository Receives { get; }
 
         IOrdering Orders { get; }
+
+        IMiscellaneous miscellaneous { get; }
                                            
         Task CompleteAsync();
     }
