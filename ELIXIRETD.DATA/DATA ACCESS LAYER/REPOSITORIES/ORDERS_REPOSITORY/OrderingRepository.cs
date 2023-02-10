@@ -1207,7 +1207,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             if (existing == null)
                 return false;
-
+            
             foreach(var items in existing)
             {
                 items.RejectBy = moveOrder.RejectBy;
