@@ -24,6 +24,7 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.INVENTORY_INTERFACE
         Task<IReadOnlyList<GetWarehouseDetailsByMReceiptDto>> GetWarehouseDetailsByMReceipt(int id);
 
         Task<bool> AddMiscellaneousIssue(MiscellaneousIssue issue);
+        Task<bool> AddMiscellaneousIssueDetails(MiscellaneousIssueDetails details);
 
 
 

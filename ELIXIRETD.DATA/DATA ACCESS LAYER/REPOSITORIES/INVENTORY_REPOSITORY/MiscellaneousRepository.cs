@@ -153,17 +153,18 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
 
         //================================================= Miscellaneous Issue ===================================================================
 
+        public async Task<bool> AddMiscellaneousIssueDetails(MiscellaneousIssueDetails details)
+        {
+            await _context.MiscellaneousIssueDetail.AddAsync(details);
+            return true;
+        }
+
         public async Task<bool> AddMiscellaneousIssue(MiscellaneousIssue issue)
         {
             await _context.MiscellaneousIssues.AddAsync(issue);
 
             return true;
         }
-
-
-
-
-
 
 
         // ================================================================= Validation =====================================================
@@ -185,6 +186,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
             return true;
         }
 
-
+       
     }
 }

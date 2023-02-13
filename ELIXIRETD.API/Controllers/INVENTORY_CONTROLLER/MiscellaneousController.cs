@@ -4,10 +4,6 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.EXTENSIONS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL;
-using ELIXIRETD.DATA.SERVICES;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Data.OracleClient;
 
 namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
 {
@@ -142,10 +138,18 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
 
         // ================================================= Miscellaneous Issue ==================================================================
 
+        [HttpPost]
+        [Route("AddNewMiscellaneousIssueDetails")]
+        public async Task<IActionResult> AddNewMiscellaneousDetails([FromBody] MiscellaneousIssueDetails issue)
+        {
+            issue.IsActive = true;
+            issue.PreparedDate = DateTime.Now;
+            await _unitofwork.miscellaneous.AddMiscellaneousIssueDetails(issue);
+            await _unitofwork.CompleteAsync();
+
+            return Ok("Successfully add new miscellaneous issue!");
+        }
        
-        
-        
-        
         
         [HttpPost]
         [Route("AddNewMiscellaneousIssue")]
@@ -157,8 +161,6 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
 
             await _unitofwork.miscellaneous.AddMiscellaneousIssue(issue);
             await _unitofwork.CompleteAsync();
-
-
 
             return Ok(issue);
         }
