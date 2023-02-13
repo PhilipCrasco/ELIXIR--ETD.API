@@ -140,6 +140,28 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
             return Ok(receipt);
         }
 
+        // ================================================= Miscellaneous Issue ==================================================================
+
+       
+        
+        
+        
+        
+        [HttpPost]
+        [Route("AddNewMiscellaneousIssue")]
+        public async Task<IActionResult> AddNewMiscellaneousIssueDetails([FromBody] MiscellaneousIssue issue)
+        {
+            issue.IsActive = true;
+            issue.IsTransact = true;
+            issue.PreparedDate = DateTime.Now;
+
+            await _unitofwork.miscellaneous.AddMiscellaneousIssue(issue);
+            await _unitofwork.CompleteAsync();
+
+
+
+            return Ok(issue);
+        }
 
 
 
