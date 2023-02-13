@@ -21,6 +21,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.INVENTORY_INTERFACE
 
         Task<PagedList<GetAllMReceiptWithPaginationdDto>> GetAllMReceiptWithPaginationOrig(UserParams userParams, string search, bool status);
 
+        Task<IReadOnlyList<GetWarehouseDetailsByMReceiptDto>> GetWarehouseDetailsByMReceipt(int id);
+
 
 
 

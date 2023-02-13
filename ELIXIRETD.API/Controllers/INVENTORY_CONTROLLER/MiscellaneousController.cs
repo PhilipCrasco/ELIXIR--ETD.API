@@ -7,6 +7,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL;
 using ELIXIRETD.DATA.SERVICES;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Data.OracleClient;
 
 namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
 {
@@ -128,6 +129,15 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
             };
 
             return Ok(receiptResult);
+        }
+
+        [HttpGet]
+        [Route("GetAllDetailsFromWarehouseByMReceipt")]
+        public async Task<IActionResult> GetAllListofOrders([FromQuery] int id)
+        {
+            var receipt = await _unitofwork.miscellaneous.GetWarehouseDetailsByMReceipt(id);
+
+            return Ok(receipt);
         }
 
 

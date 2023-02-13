@@ -20,8 +20,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
 
         }
 
-       
-
         public async Task<bool> AddMiscellaneousReceipt(MiscellaneousReceipt receipt)
         {
 
@@ -126,6 +124,33 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
         }
 
 
+        public async Task<IReadOnlyList<GetWarehouseDetailsByMReceiptDto>> GetWarehouseDetailsByMReceipt(int id)
+        {
+
+            var receipt = _context.WarehouseReceived
+                      .Where(x => x.MiscellanousReceiptId == id && x.IsActive == true)
+                      .GroupJoin(_context.MiscellaneousReceipts, warehouse => warehouse.MiscellanousReceiptId, receiptparents => receiptparents.Id, (warehouse, receiptparents) => new { warehouse, receiptparents })
+                      .SelectMany(x => x.receiptparents.DefaultIfEmpty(), (x, receiptparents) => new { x.warehouse, receiptparents })
+                      .Select(x => new GetWarehouseDetailsByMReceiptDto
+                      {
+
+                          Id = x.receiptparents.Id,
+                          WarehouseId = x.warehouse.Id,
+                          Itemcode = x.warehouse.ItemCode,
+                          ItemDescription = x.warehouse.ItemDescription,
+                          TotalQuantity = x.warehouse.ActualGood,
+                          SupplierCode = x.receiptparents.SupplierCode,
+                          SupplierName = x.receiptparents.supplier,
+                          PreparedDate = x.receiptparents.PreparedBy,
+                          Remarks = x.receiptparents.Remarks
+
+                      });
+
+            return await receipt.ToListAsync();
+
+        }
+
+
 
 
 
@@ -148,6 +173,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
             return true;
         }
 
-       
+
+
+      
     }
 }
