@@ -15,7 +15,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO
         public string OrderDate { get; set; }
         public string DateNeeded { get; set; }
         public string CustomerName { get; set; }
-        public string Company { get; set; }
+        public string CustomerCode { get; set; }
         public string Category { get; set; }
         public string ItemCode { get; set; }
         public string ItemDescription { get; set; }

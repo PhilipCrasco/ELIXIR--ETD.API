@@ -28,12 +28,11 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                 List<Ordering> DuplicateList = new List<Ordering>();
                 List<Ordering> AvailableImport = new List<Ordering>();
                 List<Ordering> CustomerNameNotExist = new List<Ordering>();
-                List<Ordering> CompanyCodeNotExist = new List<Ordering>();
-                List<Ordering> LocationNotExist = new List<Ordering>();
-                List<Ordering> DepartmentNotExist = new List<Ordering>();
                 List<Ordering> UomNotExist = new List<Ordering>();
                 List<Ordering> ItemCodesExist = new List<Ordering>();
+                //List<Ordering> CustomerCodeNotExist = new List<Ordering>();
                 List<Ordering> PreviousDateNeeded = new List<Ordering>();
+                
                 foreach (Ordering items in order)
                 {
 
@@ -45,12 +44,11 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                     {
                         var validateOrderNoAndItemcode = await _unitofwork.Orders.ValidateExistOrderandItemCode(items.TrasactId, items.ItemCode , items.CustomerName);
                         var validateDateNeeded = await _unitofwork.Orders.ValidateDateNeeded(items);
-                        var validateCompanyCode = await _unitofwork.Orders.ValidateCompanyCode(items.Company);
                         var validateCustomerName = await _unitofwork.Orders.ValidateCustomerName(items.CustomerName);
-                        var validateLocation = await _unitofwork.Orders.ValidateLocation(items.Location);
-                        var validateDepartment = await _unitofwork.Orders.ValidateCustomerType(items.Department);
                         var validateItemCode = await _unitofwork.Orders.ValidateItemCode(items.ItemCode);
                         var validateUom = await _unitofwork.Orders.ValidateUom(items.Uom);
+                        //var validateCustomerCode = await _unitofwork.Orders.ValidateCustomerCode(items.Customercode);
+
 
                         if (validateOrderNoAndItemcode == true)
                         {
@@ -60,22 +58,12 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                         {
                             PreviousDateNeeded.Add(items);
                         }
-                        else if (validateCompanyCode == false)
-                        {
-                            CompanyCodeNotExist.Add(items);
-                        }
+                    
                         else if (validateCustomerName == false)
                         {
                             CustomerNameNotExist.Add(items);
                         }
-                        else if (validateLocation == false)
-                        {
-                            LocationNotExist.Add(items);
-                        }
-                        else if (validateDepartment == false)
-                        {
-                            DepartmentNotExist.Add(items);
-                        }
+
                         else if (validateItemCode == false)
                         {
                             ItemCodesExist.Add(items);
@@ -85,6 +73,12 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                         {
                             UomNotExist.Add(items);
                         }
+                        //else if (validateCustomerCode == false)
+                        //{
+                        //    CustomerCodeNotExist.Add(items);
+                        //}
+
+
                         else
                             AvailableImport.Add(items);
                         await _unitofwork.Orders.AddNewOrders(items);
@@ -96,16 +90,14 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                 {
                    AvailableImport,
                    DuplicateList,
-                   CompanyCodeNotExist,
-                   LocationNotExist,
-                   DepartmentNotExist,
                    ItemCodesExist,
                    UomNotExist,
                    CustomerNameNotExist,
-                   PreviousDateNeeded
+                   PreviousDateNeeded,
+                    //CustomerCodeNotExist
                 };
 
-                if ( DuplicateList.Count == 0 && CompanyCodeNotExist.Count == 0  && CustomerNameNotExist.Count == 0 && LocationNotExist.Count == 0 && DepartmentNotExist.Count == 0  && ItemCodesExist.Count == 0 && UomNotExist.Count == 0 && PreviousDateNeeded.Count == 0 )
+                if ( DuplicateList.Count == 0 &&  CustomerNameNotExist.Count == 0  && ItemCodesExist.Count == 0 && UomNotExist.Count == 0 && PreviousDateNeeded.Count == 0 /*&&/* CustomerCodeNotExist.Count == 0*/)
                 {
                     await _unitofwork.CompleteAsync();
                     return Ok("Successfully Add!");

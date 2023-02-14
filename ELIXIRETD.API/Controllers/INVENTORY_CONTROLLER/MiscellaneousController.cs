@@ -5,6 +5,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.EXTENSIONS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL;
+using ELIXIRETD.DATA.SERVICES;
 
 namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
 {
@@ -192,12 +193,28 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
             return Ok(reciept);
         }
 
-        //[HttpGet]
-        //[Route(" GetAllMIssueWithPagination")]
-        //public async Task<ActionResult<IEnumerable<GetAllMIssueWithPaginationDto>>> GetAllMiscellaneousIssuePagination([FromQuery] UserParams userParams, [FromQuery] bool status)
-        //{
+        [HttpGet]
+        [Route(" GetAllMIssueWithPagination")]
+        public async Task<ActionResult<IEnumerable<GetAllMIssueWithPaginationDto>>> GetAllMiscellaneousIssuePagination([FromQuery] UserParams userParams, [FromQuery] bool status)
+        {
 
-        //}
+            var issue = await _unitofwork.miscellaneous.GetAllMIssueWithPagination(userParams, status);
+
+            Response.AddPaginationHeader(issue.CurrentPage, issue.PageSize, issue.TotalCount, issue.TotalPages, issue.HasNextPage, issue.HasPreviousPage);
+
+            var issueResult = new
+            {
+                issue,
+                issue.CurrentPage,
+                issue.PageSize,
+                issue.TotalCount,
+                issue.TotalPages,
+                issue.HasNextPage,
+                issue.HasPreviousPage
+            };
+
+            return Ok(issueResult);
+        }
 
 
 

@@ -7,6 +7,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
 {
@@ -290,6 +291,28 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
         }
 
 
+        public async Task<PagedList<GetAllMIssueWithPaginationDto>> GetAllMIssueWithPaginationOrig(UserParams userParams, string search, bool status)
+        {
+            var issue = _context.MiscellaneousIssues.OrderByDescending(x => x.PreparedDate)
+                                                    .Where(x => x.IsActive == status)
+                                                    .Select(x => new GetAllMIssueWithPaginationDto
+                                                    {
+                                                        IssuePKey = x.Id,
+                                                        Customer = x.Customer,
+                                                        Department = x.Customercode,
+                                                        TotalQuantity = x.TotalQuantity,
+                                                        PreparedDate = x.PreparedDate.ToString("MM/dd/yyyy"),
+                                                        Remarks = x.Remarks,
+                                                        PreparedBy = x.PreparedBy,
+                                                        IsActive = x.IsActive
+
+                                                    }).Where(x => (Convert.ToString(x.IssuePKey)).ToLower()
+                                                      .Contains(search.Trim().ToLower()));
+
+            return await PagedList<GetAllMIssueWithPaginationDto>.CreateAsync(issue, userParams.PageNumber, userParams.PageSize);
+        }
+
+
 
 
         // ================================================================= Validation =====================================================
@@ -311,6 +334,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
             return true;
         }
 
-      
+       
     }
 }

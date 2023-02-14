@@ -7,6 +7,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL
     {
         public int TrasactId { get; set; }
         public string CustomerName { get; set; }
+        public string Customercode { get; set; }
         public string Company { get; set; }
         public string Location { get; set; }
 

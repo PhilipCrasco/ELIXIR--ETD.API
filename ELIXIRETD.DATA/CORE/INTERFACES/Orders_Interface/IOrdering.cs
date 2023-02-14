@@ -4,6 +4,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.PreperationDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.TransactDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.SETUP_MODEL;
 using System.Threading.Tasks;
 
 namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
@@ -78,18 +79,13 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
 
 
 
-
-
-
         //============================ Validation ====================================================================
         Task<bool> ValidateExistOrderandItemCode(int TransactId, string ItemCode , string customerName);
         Task<bool> ValidateDateNeeded(Ordering orders);
-        Task<bool> ValidateCompanyCode(string CompanyCode);
         Task<bool> ValidateCustomerName(string Customer);
-        Task<bool> ValidateLocation(string Location);
-        Task<bool> ValidateCustomerType(string Department);
         Task<bool> ValidateUom(string Uom);
         Task<bool> ValidateItemCode (string ItemCode);
+        //Task<bool> ValidateCustomerCode(string Customercode);
        
 
 

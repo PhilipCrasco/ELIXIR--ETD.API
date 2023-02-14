@@ -6,6 +6,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.PreperationDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.TransactDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.SETUP_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
@@ -28,10 +29,17 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             var existingInfo = await _context.Materials.Where(x => x.ItemCode == Orders.ItemCode)
                                                         .FirstOrDefaultAsync();
 
+            var existing = await _context.Customers.Where(x => x.CustomerName == Orders.CustomerName)
+                                                   .FirstOrDefaultAsync();
+
             if (existingInfo == null)
                 return false;
 
+            if (existing == null)
+                return false;
+
             Orders.ItemdDescription = existingInfo.ItemDescription;
+            Orders.Customercode = existing.CustomerCode;
 
             await _context.Orders.AddAsync(Orders);
             return true;
@@ -112,7 +120,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                     x.ordering.OrderDate,
                     x.ordering.DateNeeded,
                     x.ordering.CustomerName,
-                    x.ordering.Company,
+                    x.ordering.Customercode,
                     x.ordering.Category,
                     x.ordering.ItemCode,
                     x.ordering.ItemdDescription,
@@ -128,7 +136,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                     OrderDate = total.Key.OrderDate.ToString("MM/dd/yyyy"),
                     DateNeeded = total.Key.DateNeeded.ToString("MM/dd/yyyy"),
                     CustomerName = total.Key.CustomerName,
-                    Company = total.Key.Company,
+                    CustomerCode = total.Key.Customercode,
                     Category = total.Key.Category,
                     ItemCode = total.Key.ItemCode,
                     ItemDescription = total.Key.ItemdDescription,
@@ -1402,16 +1410,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         //================================= Validation =============================================================================
 
-        public async Task<bool> ValidateCompanyCode(string CompanyCode)
-        {
-            var validate = await _context.Companies.Where(x => x.CompanyCode == CompanyCode)
-                                                  .Where(x => x.IsActive == true)
-                                                  .FirstOrDefaultAsync();
-            if (validate == null)
-                return false;
-
-            return true;
-        }
 
 
         public async Task<bool> ValidateDateNeeded(Ordering orders)
@@ -1456,41 +1454,25 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             if (validate == null)
                 return false;
 
+            
+
             return true;
         }
 
         public async Task<bool> ValidateCustomerName(string Customer)
         {
-            var validate = await _context.Customers.Where(x => x.CustomerName == Customer )
+            var validate = await _context.Customers.Where(x => x.CustomerName == Customer)
                                                  .Where(x => x.IsActive == true)
                                                  .FirstOrDefaultAsync();
             if (validate == null)
                 return false;
 
-            return true;
-        }
-
-        public async Task<bool> ValidateLocation(string Location)
-        {
-            var validate = await _context.Locations.Where(x => x.LocationCode == Location)
-                                               .Where(x => x.IsActive == true)
-                                               .FirstOrDefaultAsync();
-            if (validate == null)
-                return false;
+           
 
             return true;
         }
 
-        public async Task<bool> ValidateCustomerType(string Department)
-        {
-            var validate = await _context.Departments.Where(x => x.DepartmentCode == Department)
-                                             .Where(x => x.IsActive == true)
-                                             .FirstOrDefaultAsync();
-            if (validate == null)
-                return false;
 
-            return true;
-        }
 
         public async Task<bool> ValidatePrepareDate(Ordering orders)
         {
@@ -1502,8 +1484,16 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         }
 
+        //public async Task<bool> ValidateCustomerCode(string Customercode)
+        //{
+        //    var validate = await _context.Customers.Where(x => x.CustomerCode == Customercode)
+        //                                           .Where(x => x.IsActive == true)
+        //                                           .FirstOrDefaultAsync();
 
-
+        //    if(validate == null) 
+        //        return false;
+        //    return true;
+        //}
 
     }
 }
