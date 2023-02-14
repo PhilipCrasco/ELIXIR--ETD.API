@@ -1,5 +1,7 @@
 ﻿using ELIXIRETD.DATA.CORE.INTERFACES.INVENTORY_INTERFACE;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.INVENTORYDTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.MISCELLANEOUS_DTO;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL;
@@ -180,73 +182,112 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
             return true;
         }
 
-        //public async Task<IReadOnlyList<GetAvailableStocksForIssueDto>> GetAvailableStocksForIssue(string itemcode)
-        //{
-        //    var getWarehouseStocks = _context.WarehouseReceived.Where(x => x.IsActive == true)
-        //                                                       .GroupBy(x => new
-        //                                                       {
-        //                                                           x.Id,
-        //                                                           x.ItemCode,
-        //                                                           x.ActualGood,
-        //                                                           x.ActualReceivingDate
-        //                                                       }).Select(x => new WarehouseInventory
-        //                                                       {
-        //                                                           WarehouseId = x.Key.Id,
-        //                                                           ItemCode = x.Key.ItemCode,
-        //                                                           ActualGood = x.Key.ActualGood,
-        //                                                           RecievingDate = x.Key.ActualReceivingDate.ToString("MM/dd/yyyy")
+        public async Task<IReadOnlyList<GetAvailableStocksForIssueDto>> GetAvailableStocksForIssue(string itemcode)
+        {
+            var getWarehouseStocks = _context.WarehouseReceived.Where(x => x.IsActive == true)
+                                                               .GroupBy(x => new
+                                                               {
+                                                                   x.Id,
+                                                                   x.ItemCode,
+                                                                   x.ActualGood,
+                                                                   x.ActualReceivingDate
+                                                               }).Select(x => new WarehouseInventory
+                                                               {
+                                                                   WarehouseId = x.Key.Id,
+                                                                   ItemCode = x.Key.ItemCode,
+                                                                   ActualGood = x.Key.ActualGood,
+                                                                   RecievingDate = x.Key.ActualReceivingDate.ToString()
 
-        //                                                       });
+                                                               });
 
-        //    var moveorderOut = _context.MoveOrders.Where(x => x.IsActive == true)
-        //                                          .Where(x => x.IsPrepared == true)
-        //                                          .GroupBy(x => new
-        //                                          {
-        //                                              x.warehouseId,
-        //                                              x.ItemCode
-        //                                          }).Select(x => new MoveOrderInventory
-        //                                          {
-        //                                              WarehouseId = x.Key.warehouseId,
-        //                                              ItemCode = x.Key.ItemCode,
-        //                                              QuantityOrdered = x.Sum(x => x.QuantityOrdered)
+            var moveorderOut = _context.MoveOrders.Where(x => x.IsActive == true)
+                                                  .Where(x => x.IsPrepared == true)
+                                                  .GroupBy(x => new
+                                                  {
+                                                      x.warehouseId,
+                                                      x.ItemCode
+                                                  }).Select(x => new MoveOrderInventory
+                                                  {
+                                                      WarehouseId = x.Key.warehouseId,
+                                                      ItemCode = x.Key.ItemCode,
+                                                      QuantityOrdered = x.Sum(x => x.QuantityOrdered)
 
-        //                                          });
+                                                  });
 
-        //    var issueOut = _context.MiscellaneousIssueDetail.Where(x => x.IsActive == true)
-        //                                                    .GroupBy(x => new
-        //                                                    {
-        //                                                        x.ItemCode,
-        //                                                        x.WareHouseId
+            var issueOut = _context.MiscellaneousIssueDetail.Where(x => x.IsActive == true)
+                                                            .GroupBy(x => new
+                                                            {
+                                                                x.ItemCode,
+                                                                x.WareHouseId
 
-        //                                                    }).Select(x => new ItemStocksDto
-        //                                                    {
-        //                                                        ItemCode = x.Key.ItemCode,
-        //                                                        warehouseId = x.Key.WareHouseId,
-        //                                                        Out = x.Sum(x => x.Quantity)
+                                                            }).Select(x => new ItemStocksDto
+                                                            {
+                                                                ItemCode = x.Key.ItemCode,
+                                                                warehouseId = x.Key.WareHouseId,
+                                                                Out = x.Sum(x => x.Quantity)
 
-        //                                                    });
+                                                            });
 
-        //    var getAvailable = getWarehouseStocks
-        //                      .GroupJoin(moveorderOut, warehouse => warehouse.WarehouseId, moveorder => moveorder.WarehouseId, (warehouse, moveorder) => new { warehouse, moveorder })
-        //                      .SelectMany(x => x.moveorder.DefaultIfEmpty(), (x, moveorder) => new { x.warehouse, moveorder })
-        //                      .GroupJoin(issueOut, warehouse => warehouse.warehouse.WarehouseId, issue => issue.warehouseId, (warehouse, issue) => new { warehouse, issue })
-        //                      .SelectMany(x => x.issue.DefaultIfEmpty(), (x, issue) => new
-        //                      {
-        //                          warehouseId = x.warehouse.warehouse.WarehouseId,
-        //                          itemcode = x.warehouse.warehouse.ItemCode,
-        //                          ReceivingDate = x.warehouse.warehouse.RecievingDate,
-        //                          WarehouseActualGood = x.warehouse.warehouse.ActualGood != null ? x.warehouse.warehouse.ActualGood : 0,
-        //                          MoveOrderOut = x.warehouse.moveorder.QuantityOrdered != null ? moveorder.QuantityOrdered : 0,
-        //                          IssueOut = issue.Out != null ? issue.Out : 0
+            var getAvailable = getWarehouseStocks
+                              .GroupJoin(moveorderOut, warehouse => warehouse.WarehouseId, moveorder => moveorder.WarehouseId, (warehouse, moveorder) => new { warehouse, moveorder })
+                              .SelectMany(x => x.moveorder.DefaultIfEmpty(), (x, moveorder) => new { x.warehouse, moveorder })
+                              .GroupJoin(issueOut, warehouse => warehouse.warehouse.WarehouseId, issue => issue.warehouseId, (warehouse, issue) => new { warehouse, issue })
+                              .SelectMany(x => x.issue.DefaultIfEmpty(), (x, issue) => new
+                              {
+                                  warehouseId = x.warehouse.warehouse.WarehouseId,
+                                  itemcode = x.warehouse.warehouse.ItemCode,
+                                  ReceivingDate = x.warehouse.warehouse.RecievingDate,
+                                  WarehouseActualGood = x.warehouse.warehouse.ActualGood != null ? x.warehouse.warehouse.ActualGood : 0,
+                                  MoveOrderOut = x.warehouse.moveorder.QuantityOrdered != null ? x.warehouse.moveorder.QuantityOrdered : 0,
+                                  IssueOut = issue.Out != null ? issue.Out : 0
 
-        //                      })
+                              }).GroupBy(x => new
+                              {
 
+                                  x.warehouseId,
+                                  x.itemcode,
+                                  x.ReceivingDate,
+                                  x.WarehouseActualGood,
+                                  x.MoveOrderOut,
+                                  x.IssueOut
 
+                              }
+                              ,
+                              x => x
+                              ).Select(total => new GetAvailableStocksForIssueDto
+                              {
+                                  WarehouseId = total.Key.warehouseId,
+                                  ItemCode = total.Key.itemcode,
+                                  RemainningStocks = total.Key.WarehouseActualGood - total.Key.MoveOrderOut - total.Key.IssueOut,
+                                  ReceivingDate = total.Key.ReceivingDate
 
+                              }).Where(x => x.RemainningStocks != 0)
+                              .Where(x => x.ItemCode == itemcode);
 
+            return await getAvailable.ToListAsync();
 
+        }
 
-        //}
+        public async Task<PagedList<GetAllMIssueWithPaginationDto>> GetAllMIssueWithPagination(UserParams userParams, bool status)
+        {
+            var issue = _context.MiscellaneousIssues.OrderByDescending(x => x.PreparedDate)
+                                                    .Where(x => x.IsActive == status)
+                                                    .Select(x => new GetAllMIssueWithPaginationDto
+                                                    {
+
+                                                        IssuePKey = x.Id,
+                                                        Customer = x.Customer,
+                                                        Department = x.Customercode,
+                                                        TotalQuantity = x.TotalQuantity,
+                                                        PreparedDate = x.PreparedDate.ToString("MM/dd/yyyy"),
+                                                        Remarks = x.Remarks,
+                                                        PreparedBy = x.PreparedBy,
+                                                        IsActive = x.IsActive
+
+                                                    });
+
+            return await PagedList<GetAllMIssueWithPaginationDto>.CreateAsync(issue, userParams.PageNumber, userParams.PageSize);
+        }
 
 
 
@@ -270,9 +311,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
             return true;
         }
 
-        public Task<IReadOnlyList<GetAvailableStocksForIssueDto>> GetAvailableStocksForIssue(string itemcode)
-        {
-            throw new NotImplementedException();
-        }
+      
     }
 }

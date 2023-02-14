@@ -63,9 +63,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                                    ItemCode = x.ItemCode,
                                                    ItemDescription = x.ItemDescription,
                                                    Supplier = x.VendorName,
-                                                   //QuantityOrdered = x.Ordered,
-                                                   //QuantityCancel = receive != null ? receive.Actual_Delivered : 0,
-                                                   //QuantityGood = receive != null ? receive.Actual_Delivered : 0,
+                                                   QuantityOrdered = x.Ordered,
+                                                   //QuantityCancel = actual != null ? receive.Actual_Delivered : 0,
+                                                   //QuantityGood = x.Orde
                                                    DateCancelled = x.DateCancelled.ToString(),
                                                    Remarks = x.Reason,
                                                    IsActive = x.IsActive
@@ -100,33 +100,50 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
 
         public async Task<PagedList<WarehouseReceivingDto>> GetAllPoSummaryWithPagination(UserParams userParams)
         {
-            var poSummary = _context.PoSummaries
-                           .Where(posummary => posummary.IsActive == true)
-                           .GroupJoin(_context.WarehouseReceived, posummary => posummary.Id , warehouse => warehouse.Id, (posummary , warehouse) => new {posummary,warehouse} )
-                           .SelectMany(x => x.warehouse.DefaultIfEmpty() , (x , warehouse) => new {x.posummary, warehouse})
-                           .Select( x => new WarehouseReceivingDto
-                
-                              //(from posummary in _context.PoSummaries
-            //                 where posummary.IsActive == true
-            //                 join warehouse in _context.WarehouseReceived
-            //                 on posummary.Id equals warehouse.PoSummaryId into leftJ
-            //                 from receive in leftJ.DefaultIfEmpty()
-                             {
-                                 Id = x.posummary.Id,
-                                 PoNumber = x.posummary.PO_Number,
-                                 PoDate = x.posummary.PO_Date,
-                                 PrNumber = x.posummary.PR_Number,
-                                 PrDate = x.posummary.PR_Date,
-                                 ItemCode = x.posummary.ItemCode,
-                                 ItemDescription = x.posummary.ItemDescription,
-                                 Supplier = x.posummary.VendorName,
-                                 Uom = x.posummary.Uom,
-                                 QuantityOrdered = x.posummary.Ordered,
-                                 IsActive =  x.posummary.IsActive,
-                                 ActualRemaining = 0,
-                                 ActualGood = x.warehouse != null && x.warehouse.IsActive != false ? x.warehouse.ActualDelivered : 0,
+            var poSummary = //_context.PoSummaries
+                            //               .Where(posummary => posummary.IsActive == true)
+                            //               .GroupJoin(_context.WarehouseReceived, posummary => posummary.Id , warehouse => warehouse.Id, (posummary , warehouse) => new {posummary,warehouse} )
+                            //               .SelectMany(x => x.warehouse.DefaultIfEmpty() , (x , warehouse) => new {x.posummary, warehouse})
+                            //               .Select( x => new WarehouseReceivingDto
 
-                             }).GroupBy(x => new
+                              (from posummary in _context.PoSummaries
+                               where posummary.IsActive == true
+                               join warehouse in _context.WarehouseReceived
+                               on posummary.Id equals warehouse.PoSummaryId into leftJ
+                               from receive in leftJ.DefaultIfEmpty()
+                               select new WarehouseReceivingDto
+                               {
+                                   //Id = x.posummary.Id,
+                                   //PoNumber = x.posummary.PO_Number,
+                                   //PoDate = x.posummary.PO_Date,
+                                   //PrNumber = x.posummary.PR_Number,
+                                   //PrDate = x.posummary.PR_Date,
+                                   //ItemCode = x.posummary.ItemCode,
+                                   //ItemDescription = x.posummary.ItemDescription,
+                                   //Supplier = x.posummary.VendorName,
+                                   //Uom = x.posummary.Uom,
+                                   //QuantityOrdered = x.posummary.Ordered,
+                                   //IsActive =  x.posummary.IsActive,
+                                   //ActualRemaining = 0,
+                                   //TotalReject = 0,
+                                   //ActualGood = x.warehouse != null && x.warehouse.IsActive != false ? x.warehouse.ActualDelivered : 0,
+
+                                   Id = posummary.Id,
+                                   PoNumber = posummary.PO_Number,
+                                   PoDate = posummary.PO_Date,
+                                   PrNumber = posummary.PR_Number,
+                                   PrDate = posummary.PR_Date,
+                                   ItemCode = posummary.ItemCode,
+                                   ItemDescription = posummary.ItemDescription,
+                                   Supplier = posummary.VendorName,
+                                   Uom = posummary.Uom,
+                                   QuantityOrdered = posummary.Ordered,
+                                   IsActive = posummary.IsActive,
+                                   ActualRemaining = 0,
+                                   TotalReject = 0,
+                                   ActualGood = receive != null && receive.IsActive != false ? receive.ActualDelivered : 0,
+
+                               }).GroupBy(x => new
                              {
                                  x.Id,
                                  x.PoNumber,
@@ -138,7 +155,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                  x.Uom,
                                  x.Supplier,
                                  x.QuantityOrdered,
-                                 x.IsActive
+                                 x.IsActive,
+                                 x.TotalReject
 
                              })
                                                      .Select(receive => new WarehouseReceivingDto
@@ -156,6 +174,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                                          ActualGood = receive.Sum(x => x.ActualGood),
                                                          ActualRemaining = receive.Key.QuantityOrdered - (receive.Sum(x => x.ActualGood)),
                                                          IsActive = receive.Key.IsActive,
+                                                         TotalReject = receive.Key.TotalReject
                                                      })
                                                      .OrderBy(x => x.PoNumber)
                                                      .Where(x => x.ActualRemaining != 0 && (x.ActualRemaining > 0))

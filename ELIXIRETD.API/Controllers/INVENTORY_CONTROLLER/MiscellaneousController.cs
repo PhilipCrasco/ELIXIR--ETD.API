@@ -1,4 +1,5 @@
 ﻿using ELIXIRETD.DATA.CORE.ICONFIGURATION;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.INVENTORYDTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.MISCELLANEOUS_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.EXTENSIONS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
@@ -182,8 +183,21 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
             return Ok(details);
         }
 
+        [HttpGet]
+        [Route("GetAllAvailableStocksForMIsssue")]
+        public async Task<IActionResult> GetAllAvailableStocksFOrMIssue([FromQuery] string itemcode)
+        {
+            var reciept = await _unitofwork.miscellaneous.GetAvailableStocksForIssue(itemcode);
 
+            return Ok(reciept);
+        }
 
+        //[HttpGet]
+        //[Route(" GetAllMIssueWithPagination")]
+        //public async Task<ActionResult<IEnumerable<GetAllMIssueWithPaginationDto>>> GetAllMiscellaneousIssuePagination([FromQuery] UserParams userParams, [FromQuery] bool status)
+        //{
+
+        //}
 
 
 
