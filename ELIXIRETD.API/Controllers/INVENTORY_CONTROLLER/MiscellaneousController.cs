@@ -165,6 +165,23 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
             return Ok(issue);
         }
 
+        [HttpPut]
+        [Route("UpdateMiscellaneousIssuePKey")]
+        public async Task<IActionResult> UpdateMiscellaneousIssuePKey([FromBody] MiscellaneousIssueDetails[] details )
+        {
+            foreach (MiscellaneousIssueDetails items in details)
+            {
+                items.IsActive = true;
+                items.PreparedDate = DateTime.Now;
+
+                await _unitofwork.miscellaneous.UpdateIssuePKey(items);
+            }
+
+            await _unitofwork.CompleteAsync();
+
+            return Ok(details);
+        }
+
 
 
 

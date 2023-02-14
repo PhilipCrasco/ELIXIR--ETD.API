@@ -20,7 +20,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL
 
         [Column(TypeName ="Date")]
         public DateTime DateNeeded { get; set; }
-        public string TimeNeeded { get; set; }
+  
         public string TransactionType { get; set; }
         public string ItemCode { get; set; }
         public string ItemdDescription { get; set; }

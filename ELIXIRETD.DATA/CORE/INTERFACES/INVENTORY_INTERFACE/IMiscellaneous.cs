@@ -26,6 +26,10 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.INVENTORY_INTERFACE
         Task<bool> AddMiscellaneousIssue(MiscellaneousIssue issue);
         Task<bool> AddMiscellaneousIssueDetails(MiscellaneousIssueDetails details);
 
+        Task<bool> UpdateIssuePKey(MiscellaneousIssueDetails details);
+
+        Task<IReadOnlyList<GetAvailableStocksForIssueDto>> GetAvailableStocksForIssue(string itemcode);
+
 
 
 

@@ -16,6 +16,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO
        public decimal ActualGood { get; set; }     
         public decimal Remaining { get; set; }
 
+        public decimal Out { get; set; }
         public decimal In { get; set; }
         public decimal TotalMoveOrder { get; set; }
     }

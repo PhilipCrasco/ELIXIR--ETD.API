@@ -1439,7 +1439,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         public async Task<bool> ValidateUom(string Uom)
         {
-            var validate = await _context.Uoms.Where(x => x.UomDescription == Uom)
+            var validate = await _context.Uoms.Where(x => x.UomCode == Uom)
                                                   .Where(x => x.IsActive == true)
                                                   .FirstOrDefaultAsync();
             if (validate == null)
@@ -1472,7 +1472,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         public async Task<bool> ValidateLocation(string Location)
         {
-            var validate = await _context.Locations.Where(x => x.LocationName == Location)
+            var validate = await _context.Locations.Where(x => x.LocationCode == Location)
                                                .Where(x => x.IsActive == true)
                                                .FirstOrDefaultAsync();
             if (validate == null)
@@ -1483,7 +1483,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         public async Task<bool> ValidateCustomerType(string Department)
         {
-            var validate = await _context.CustomerTypes.Where(x => x.CustomerName == Department)
+            var validate = await _context.Departments.Where(x => x.DepartmentCode == Department)
                                              .Where(x => x.IsActive == true)
                                              .FirstOrDefaultAsync();
             if (validate == null)
@@ -1501,6 +1501,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
 
         }
+
+
 
 
     }
