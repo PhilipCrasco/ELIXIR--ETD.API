@@ -348,9 +348,13 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             CultureInfo usCulture = new CultureInfo("en-US");
             CultureInfo.CurrentCulture = usCulture;
 
+            var dateFrom = DateTime.ParseExact(DateFrom, "MM/dd/yyyy", CultureInfo.InvariantCulture);
+            var dateTo = DateTime.ParseExact(DateTo, "MM/dd/yyyy", CultureInfo.InvariantCulture);
 
-            var dateFrom = DateTime.ParseExact(DateFrom, "MM/dd/yyyy", usCulture);
-            var dateTo = DateTime.ParseExact(DateTo, "MM/dd/yyyy", usCulture);
+            if (dateFrom >= dateTo)
+            {
+                return new List<OrderSummaryDto>();
+            }
 
 
             var Totalramaining = _context.WarehouseReceived.GroupBy(x => new
@@ -424,7 +428,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                     PreparedDate = total.Key.PreparedDate.ToString(),
                     IsApproved = total.Key.IsApproved != null
 
-                });
+                })
+                   ;
 
             return await orders.ToListAsync();
         }

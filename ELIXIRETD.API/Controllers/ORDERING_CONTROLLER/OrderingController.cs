@@ -281,16 +281,18 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         [HttpGet]
         [Route("OrderSummary")]
-        public async Task<IActionResult> Ordersummary([FromQuery] string DateFrom , [FromQuery] string DateTo)
+        public async Task<IActionResult> Ordersummary([FromQuery] string DateFrom, [FromQuery] string DateTo)
         {
-            var orders = await _unitofwork.Orders.OrderSummary(DateFrom, DateTo);
 
-            if (DateTime.Parse(DateFrom) > DateTime.Parse(DateTo))
+         
+            if (string.IsNullOrEmpty(DateFrom) || string.IsNullOrEmpty(DateTo))
             {
-                return BadRequest("DateFrom cannot be greater than DateTo.");
+                return BadRequest("Date range is required.");
             }
 
-            return Ok(orders);
+            var orderSummary = await _unitofwork.Orders.OrderSummary(DateFrom, DateTo);
+
+            return Ok(orderSummary);
 
         }
 
