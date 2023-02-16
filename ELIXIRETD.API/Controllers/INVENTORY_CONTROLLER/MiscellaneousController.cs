@@ -216,9 +216,45 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
             return Ok(issueResult);
         }
 
+        [HttpGet]
+        [Route("GetAllMiscellaneousIssuePaginationOrig")]
+        public async Task<ActionResult<IEnumerable<GetAllMIssueWithPaginationDto>>> GetAllMiscellaneousIssuePaginationOrig([FromQuery] UserParams userParams, [FromQuery] string search, [FromQuery] bool status)
+        {
+
+            if (search == null)
+
+                return await GetAllMiscellaneousIssuePagination(userParams, status);
+
+            var issue = await _unitofwork.miscellaneous.GetAllMIssueWithPaginationOrig(userParams, search, status);
+
+            Response.AddPaginationHeader(issue.CurrentPage, issue.PageSize, issue.TotalCount, issue.TotalPages, issue.HasNextPage, issue.HasPreviousPage);
+
+            var issueResult = new
+            {
+                issue,
+                issue.CurrentPage,
+                issue.PageSize,
+                issue.TotalCount,
+                issue.TotalPages,
+                issue.HasNextPage,
+                issue.HasPreviousPage
+            };
+
+            return Ok(issueResult);
+        }
+
+        [HttpPut]
+        [Route("InActiveIssue")]
+        public async Task<IActionResult> InActiveIssue([FromBody] MiscellaneousIssue issue)
+        {
 
 
 
+            await _unitofwork.miscellaneous.InActivateMiscellaenousIssue(issue);
+            await _unitofwork.CompleteAsync();
+
+            return new JsonResult("Successfully inactive issue!");
+        }
 
 
 

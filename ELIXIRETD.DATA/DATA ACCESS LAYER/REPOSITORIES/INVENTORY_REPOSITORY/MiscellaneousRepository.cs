@@ -312,6 +312,28 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
             return await PagedList<GetAllMIssueWithPaginationDto>.CreateAsync(issue, userParams.PageNumber, userParams.PageSize);
         }
 
+        public async Task<bool> InActivateMiscellaenousIssue(MiscellaneousIssue issue)
+        {
+            var existing = await _context.MiscellaneousIssues.Where(x => x.Id == issue.Id)
+                                                              .FirstOrDefaultAsync();
+            var existingdetails = await _context.MiscellaneousIssueDetail.Where(x => x.IssuePKey == issue.Id)
+                                                                        .ToListAsync();
+
+            if (existing == null)
+                return false;
+
+            existing.IsActive = false;
+
+            foreach (var items in existingdetails)
+            {
+                items.IsActive = false;
+            }
+            return true;
+        }
+
+
+
+
 
 
 
