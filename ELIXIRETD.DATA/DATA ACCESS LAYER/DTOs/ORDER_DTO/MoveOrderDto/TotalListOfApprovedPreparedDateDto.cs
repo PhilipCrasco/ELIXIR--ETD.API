@@ -7,7 +7,7 @@
 
         public string CustomerName { get; set; }
 
-        public string Department { get; set; }
+        public string CustomerCode { get; set; }
 
         public string Category { get; set; }
 

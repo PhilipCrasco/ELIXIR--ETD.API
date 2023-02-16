@@ -11,7 +11,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.INVENTORYDTO
         public int IssuePKey { get; set; }
 
         public string Customer { get; set; }
-        public string Department { get; set; }
+        public string CustomerCode { get; set; }
         public decimal TotalQuantity { get; set; }
 
         public string PreparedDate { get; set; }    

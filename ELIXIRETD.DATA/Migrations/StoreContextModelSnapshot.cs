@@ -245,9 +245,6 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<DateTime?>("ApprovedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("BatchNo")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CancelBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -257,17 +254,14 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Company")
+                    b.Property<string>("CustomerName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CustomerName")
+                    b.Property<string>("Customercode")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateNeeded")
                         .HasColumnType("Date");
-
-                    b.Property<string>("Department")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -354,16 +348,10 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<DateTime?>("ApprovedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("BatchNo")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("CancelDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Category")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Company")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerName")
@@ -374,12 +362,6 @@ namespace ELIXIRETD.DATA.Migrations
 
                     b.Property<DateTime>("DateNeeded")
                         .HasColumnType("Date");
-
-                    b.Property<string>("DeliveryStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Department")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -406,9 +388,6 @@ namespace ELIXIRETD.DATA.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ItemdDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("OrderDate")
@@ -469,6 +448,9 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<string>("CustomerName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Customercode")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("DeliveryDate")
                         .HasColumnType("datetime2");
 
@@ -484,10 +466,10 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<bool>("IsTransact")
                         .HasColumnType("bit");
 
-                    b.Property<int>("OrderNioPkey")
+                    b.Property<int>("OrderNo")
                         .HasColumnType("int");
 
-                    b.Property<int>("OrderNo")
+                    b.Property<int>("OrderNoPkey")
                         .HasColumnType("int");
 
                     b.Property<string>("PreparedBy")

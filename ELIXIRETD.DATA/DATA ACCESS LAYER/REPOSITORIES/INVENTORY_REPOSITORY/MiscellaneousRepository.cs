@@ -278,7 +278,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
 
                                                         IssuePKey = x.Id,
                                                         Customer = x.Customer,
-                                                        Department = x.Customercode,
+                                                        CustomerCode = x.Customercode,
                                                         TotalQuantity = x.TotalQuantity,
                                                         PreparedDate = x.PreparedDate.ToString("MM/dd/yyyy"),
                                                         Remarks = x.Remarks,
@@ -299,7 +299,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
                                                     {
                                                         IssuePKey = x.Id,
                                                         Customer = x.Customer,
-                                                        Department = x.Customercode,
+                                                        CustomerCode = x.Customercode,
                                                         TotalQuantity = x.TotalQuantity,
                                                         PreparedDate = x.PreparedDate.ToString("MM/dd/yyyy"),
                                                         Remarks = x.Remarks,

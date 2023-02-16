@@ -316,10 +316,9 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             order.OrderNo = details.OrderNo;
             order.OrderDate = Convert.ToDateTime(details.OrderDate);
             order.DateNeeded = Convert.ToDateTime(details.DateNeeded);
-            order.PreparedDate = Convert.ToDateTime(details.PrepareDate);
+            order.PreparedDate = Convert.ToDateTime(details.PrepareDate.ToString());
             order.CustomerName= details.CustomerName;
-            order.Department = details.Department;
-            order.Company = details.Company;
+            order.Customercode = details.CustomerCode;
             order.ItemCode = details.ItemCode;
             order.ItemDescription = details.ItemDescription;
             order.Uom = details.Uom;

@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ELIXIRETD.DATA.Migrations
 {
-    public partial class createinitial : Migration
+    public partial class updatedatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            migrationBuilder.CreateTable( 
                 name: "Accounts",
                 columns: table => new
                 {
@@ -228,9 +228,8 @@ namespace ELIXIRETD.DATA.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OrderNo = table.Column<int>(type: "int", nullable: false),
-                    Company = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Department = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Customercode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ItemCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ItemDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Uom = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -257,59 +256,14 @@ namespace ELIXIRETD.DATA.Migrations
                     Remarks = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsTransact = table.Column<bool>(type: "bit", nullable: false),
                     IsPrint = table.Column<bool>(type: "bit", nullable: true),
-                    IsApproveReject = table.Column<bool>(type: "bit", nullable: true),
-                    BatchNo = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    IsApproveReject = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MoveOrders", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Orders",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TrasactId = table.Column<int>(type: "int", nullable: false),
-                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Company = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Department = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OrderNo = table.Column<int>(type: "int", nullable: false),
-                    BatchNo = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OrderDate = table.Column<DateTime>(type: "Date", nullable: false),
-                    DateNeeded = table.Column<DateTime>(type: "Date", nullable: false),
-                    TimeNeeded = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TransactionType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ItemCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ItemdDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Uom = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    QuantityOrdered = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Category = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    PreparedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    PreparedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsApproved = table.Column<bool>(type: "bit", nullable: true),
-                    ApprovedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsReject = table.Column<bool>(type: "bit", nullable: true),
-                    RejectBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RejectedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsPrepared = table.Column<bool>(type: "bit", nullable: false),
-                    IsCancel = table.Column<bool>(type: "bit", nullable: true),
-                    IsCancelBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CancelDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    AddedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OrderNoPKey = table.Column<int>(type: "int", nullable: false),
-                    IsMove = table.Column<bool>(type: "bit", nullable: false),
-                    DeliveryStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SyncDate = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Orders", x => x.Id);
-                });
+           
 
             migrationBuilder.CreateTable(
                 name: "PoSummaries",
@@ -402,12 +356,13 @@ namespace ELIXIRETD.DATA.Migrations
                     OrderNo = table.Column<int>(type: "int", nullable: false),
                     Department = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Company = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Customercode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     IsApprove = table.Column<bool>(type: "bit", nullable: true),
                     PreparedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PreparedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    OrderNioPkey = table.Column<int>(type: "int", nullable: false),
+                    OrderNoPkey = table.Column<int>(type: "int", nullable: false),
                     DeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsTransact = table.Column<bool>(type: "bit", nullable: false)
                 },

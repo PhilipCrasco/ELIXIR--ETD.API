@@ -8,16 +8,11 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL
         public int TrasactId { get; set; }
         public string CustomerName { get; set; }
         public string Customercode { get; set; }
-        public string Company { get; set; }
-        public string Location { get; set; }
-
-        public string Department { get; set; }
 
         public int OrderNo { get; set; }
-        public string BatchNo { get; set; }
 
         [Column(TypeName = "Date")]
-        public DateTime OrderDate { get; set; }
+        public DateTime OrderDate { get; set; } 
 
         [Column(TypeName ="Date")]
         public DateTime DateNeeded { get; set; }
@@ -53,7 +48,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL
         public string Remarks { get; set; }
         public int OrderNoPKey { get; set; }
         public bool IsMove { get; set; }
-        public string DeliveryStatus { get; set; }
         public DateTime? SyncDate { get; set; }
 
     }

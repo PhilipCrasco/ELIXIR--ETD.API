@@ -16,7 +16,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.PreperationDto
 
         public string CustomerName { get; set; }
 
-        public string Department { get; set; }
+        public string  CustomerCode { get; set; }
 
         public string Category { get; set; }
         public string ItemCode {get; set; }

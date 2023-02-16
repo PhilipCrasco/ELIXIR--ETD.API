@@ -6,11 +6,9 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.PreperationDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.TransactDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
-using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.SETUP_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
-using System.Security.Cryptography.X509Certificates;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 {
@@ -32,6 +30,10 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             var existing = await _context.Customers.Where(x => x.CustomerName == Orders.CustomerName)
                                                    .FirstOrDefaultAsync();
 
+
+          
+
+
             if (existingInfo == null)
                 return false;
 
@@ -40,6 +42,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             Orders.ItemdDescription = existingInfo.ItemDescription;
             Orders.Customercode = existing.CustomerCode;
+
+            Orders.IsActive = true;
+            
 
             await _context.Orders.AddAsync(Orders);
             return true;
@@ -255,8 +260,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             {
                 x.OrderNoPKey,
                 x.CustomerName,
-                x.Company,
-                x.Department,
+                x.Customercode,
+                x.Category,
                 x.PreparedDate,
                 x.IsApproved,
                 x.IsActive
@@ -268,8 +273,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
               {
                   OrderNoPKey =x.Key.OrderNoPKey,
                   CustomerName = x.Key.CustomerName,
-                  Department = x.Key.Department,
-                  Category = x.Key.Company,
+                  CustomerCode = x.Key.Customercode,
+                  Category = x.Key.Category,
                   TotalOrders = x.Sum(x => x.QuantityOrdered),
                   PreparedDate = x.Key.PreparedDate.ToString()
                   
@@ -290,7 +295,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                             OrderDate = x.OrderDate.ToString("MM/dd/yyyy"),
                                             DateNeeded = x.DateNeeded.ToString("MM/dd/yyyy"),
                                             CustomerName = x.CustomerName,
-                                            Department = x.Department,
+                                            CustomerCode = x.Customercode,
                                             ItemCode = x.ItemCode,
                                             ItemDescription = x.ItemdDescription,
                                             Uom = x.Uom,
@@ -343,10 +348,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             CultureInfo usCulture = new CultureInfo("en-US");
             CultureInfo.CurrentCulture = usCulture;
 
-            if (DateTime.ParseExact(DateFrom, "MM/dd/yyyy", usCulture) > DateTime.ParseExact(DateTo, "MM/dd/yyyy", usCulture))
-            {
-                return new List<OrderSummaryDto>();
-            }
 
             var dateFrom = DateTime.ParseExact(DateFrom, "MM/dd/yyyy", usCulture);
             var dateTo = DateTime.ParseExact(DateTo, "MM/dd/yyyy", usCulture);
@@ -386,23 +387,23 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 .GroupJoin(totalOrders, ordering => ordering.ItemCode, total => total.ItemCode, (ordering, total) => new { ordering, total })
                 .SelectMany(x => x.total.DefaultIfEmpty(), (x, total) => new { x.ordering, total })
                 .GroupJoin( Totalramaining, ordering => ordering.ordering.ItemCode, remaining => remaining.ItemCode, (ordering, remaining) => new { ordering, remaining })
-                .SelectMany(x => x.remaining.DefaultIfEmpty(), (x, remaining) => new { ordering = x.ordering.ordering, total = x.ordering.total, remaining })
+                .SelectMany(x => x.remaining.DefaultIfEmpty(), (x, remaining) => new {x.ordering , remaining})
                 .GroupBy(x => new
                 {
-                    x.ordering.Id,
-                    x.ordering.OrderDate,
-                    x.ordering.DateNeeded,
-                    x.ordering.CustomerName,
-                    x.ordering.Department,
-                    x.ordering.Category,
-                    x.ordering.ItemCode,
-                    x.ordering.ItemdDescription,
-                    x.ordering.Uom,
-                    x.ordering.QuantityOrdered,
-                    x.ordering.IsActive,
-                    x.ordering.IsPrepared,
-                    x.ordering.PreparedDate,
-                    x.ordering.IsApproved
+                    x.ordering.ordering.Id,
+                    x.ordering.ordering.OrderDate,
+                    x.ordering.ordering.DateNeeded,
+                    x.ordering.ordering.CustomerName,
+                    x.ordering.ordering.Customercode,
+                    x.ordering.ordering.Category,
+                    x.ordering.ordering.ItemCode,
+                    x.ordering.ordering.ItemdDescription,
+                    x.ordering.ordering.Uom,
+                    x.ordering.ordering.QuantityOrdered,
+                    x.ordering.ordering.IsActive,
+                    x.ordering.ordering.IsPrepared,
+                    x.ordering.ordering.PreparedDate,
+                    x.ordering.ordering.IsApproved
 
                 }).Select(total => new OrderSummaryDto
                 {
@@ -410,7 +411,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                     OrderDate = total.Key.OrderDate.ToString("MM/dd/yyyy"),
                     DateNeeded = total.Key.DateNeeded.ToString("MM/dd/yyyy"),
                     CustomerName = total.Key.CustomerName,
-                    Department = total.Key.Department,
+                    CustomerCode = total.Key.Customercode,
                     Category = total.Key.Category,
                     ItemCode = total.Key.ItemCode,
                     ItemDescription = total.Key.ItemdDescription,
@@ -436,7 +437,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                             OrderDate = x.OrderDate.ToString("MM/dd/yyyy"),
                                             DateNeeded = x.DateNeeded.ToString("MM/dd/yyyy"),
                                             CustomerName = x.CustomerName,
-                                            Department = x.Department,
+                                            CustomerCode = x.Customercode,
                                             ItemCode = x.ItemCode,
                                             ItemDescription = x.ItemdDescription,
                                             Uom = x.Uom,
@@ -453,8 +454,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             {
                 x.OrderNoPKey,
                 x.CustomerName,
-                x.Company,
-                x.Department,
+                x.Category,
+                x.Customercode,
                 x.PreparedDate,
                 x.IsApproved,
                 x.IsMove,
@@ -470,8 +471,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
                   Id = x.Key.OrderNoPKey,
                   CustomerName = x.Key.CustomerName,
-                  Company = x.Key.Company,
-                  Category = x.Key.Department,
+                  CustomerCode = x.Key.Customercode,
+                  Category = x.Key.Category,
                   TotalOrders = x.Sum(x => x.QuantityOrdered),
                   PreparedDate = x.Key.PreparedDate.ToString(),
                   IsMove = x.Key.IsMove,
@@ -493,8 +494,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             {
                 x.OrderNoPKey,
                 x.CustomerName,
-                x.Department,
-                x.Company,
+                x.Customercode,
+                x.Category,
                 x.PreparedDate,
                 x.IsApproved,
                 x.IsMove,
@@ -509,8 +510,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
               {
                   Id = x.Key.OrderNoPKey,
                   CustomerName = x.Key.CustomerName,
-                  Department = x.Key.Department,
-                  Category  = x.Key.Company,
+                  CustomerCode = x.Key.Customercode,
+                  Category  = x.Key.Category,
                   TotalOrders = x.Sum(x => x.QuantityOrdered),
                   PreparedDate = x.Key.PreparedDate.ToString(),
                   IsMove = x.Key.IsMove,
@@ -531,18 +532,17 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 Id = x.Id,
                 OrderNo = x.OrderNoPKey,
                 CustomerName = x.CustomerName,
-                Department= x.Department,
-                Company = x.Company,
+                CustomerCode = x.Customercode,
                 ItemCode = x.ItemCode,
                 ItemDescription = x.ItemdDescription,
                 Uom = x.Uom,
                 QuantityOrder = x.QuantityOrdered,
                 Category = x.Category,
                 OrderDate = x.OrderDate.ToString("MM/dd/yyyy"),
-                DateNeeded = x.DateNeeded.ToString("MM/dd/yyyy"),
+                DateNeeded = x.DateNeeded.ToString("yyyy/MM/dd"),
                 PrepareDate = x.PreparedDate.ToString()
 
-            });
+            }) ;
 
             return await orders.Where(x => x.Id == orderId)
                                .FirstOrDefaultAsync();
@@ -602,7 +602,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                        x.ordering.OrderDate,
                        x.ordering.DateNeeded,
                        x.ordering.CustomerName,
-                       x.ordering.Department,
+                       x.ordering.Customercode,
                        x.ordering.Category,
                        x.ordering.ItemCode,
                        x.ordering.ItemdDescription,
@@ -617,7 +617,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                        OrderDate = total.Key.OrderDate.ToString("MM/dd/yyyy"),
                        DateNeeded = total.Key.DateNeeded.ToString("MM/dd/yyyy"),
                        CustomerName = total.Key.CustomerName,
-                       Department = total.Key.Department,
+                       CustomerCode = total.Key.Customercode,
                        Category = total.Key.Category,
                        ItemCode = total.Key.ItemCode,
                        ItemDescription = total.Key.ItemdDescription,
@@ -691,6 +691,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             var totalremaining = getwarehouseIn
                               .OrderBy(x => x.RecievingDate)
+                              .ThenBy(x => x.ItemCode)
                               .GroupJoin(getMoveOrder, warehouse => warehouse.WarehouseId, moveorder => moveorder.warehouseId, (warehouse, moveorder) => new { warehouse, moveorder })
                               .SelectMany(x => x.moveorder.DefaultIfEmpty(), (x, moveorder) => new { x.warehouse, moveorder })
                               .GroupBy(x => new
@@ -742,6 +743,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                   warehouseId = total.Key.Id,
                                   ItemCode = total.Key.ItemCode,
                                   ItemDescription = total.Key.ItemDescription,
+                                  ActualGood = total.Key.ActualDelivered,
+                                  DateReceived = total.Key.ReceivingDate.ToString("MM/dd/yyyy"),
                                   In  = total.Key.ActualDelivered,
                                   Remaining = total.Key.ActualDelivered - TotaloutMoveOrder
 
@@ -761,7 +764,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                     x.Id,
                     x.ItemCode,
                     x.ItemDescription,
-                    x.ActualDelivered,
+                    x.ActualDelivered,   
                     x.ReceivingDate
 
                 }).Select(total => new ItemStocksDto
@@ -769,7 +772,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                     warehouseId = total.Key.Id,
                     ItemCode = total.Key.ItemCode,
                     ItemDescription = total.Key.ItemDescription,
-                    DateReceived = total.Key.ReceivingDate.ToString("MM/dd/yyyy"),
+                    DateReceived = total.Key.ReceivingDate.ToString(),
                     In = total.Key.ActualDelivered,
                     Remaining = total.Key.ActualDelivered
 
@@ -794,7 +797,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
 
             var orders = _context.Orders
-                  .Where(ordering => ordering.ItemCode == itemcode && ordering.OrderDate == DateTime.Parse(orderdate))
+                .Where(ordering => ordering.ItemCode == itemcode)
+                 .Where(x => x.OrderDate == DateTime.Parse(orderdate))
                   .GroupJoin(totalRemaining, ordering => ordering.ItemCode, warehouse => warehouse.ItemCode, (ordering, warehouse) => new { ordering, warehouse })
                   .SelectMany(x => x.warehouse.DefaultIfEmpty(), (x, warehouse) => new { x.ordering, warehouse })
                   .GroupBy(x => new
@@ -803,8 +807,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                       x.ordering.OrderDate,
                       x.ordering.DateNeeded,
                       x.ordering.CustomerName,
-                      x.ordering.Department,
-                      x.ordering.Company,
+                      x.ordering.Customercode,
                       x.ordering.Category,
                       x.ordering.ItemCode,
                       x.ordering.ItemdDescription,
@@ -822,7 +825,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                       OrderDate = total.Key.OrderDate.ToString("MM/dd/yyyy"),
                       DateNeeded = total.Key.DateNeeded.ToString("MM/dd/yyyy"),
                       CustomerName = total.Key.CustomerName,
-                      Department = total.Key.Department,
+                      CustomerCode = total.Key.Customercode,
                       Category = total.Key.Category,
                       ItemCode = total.Key.ItemCode,
                       ItemDescription = total.Key.ItemdDescription,
@@ -833,7 +836,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                       StockOnHand = total.Sum(x => x.warehouse.Remaining),
                       Difference = total.Sum(x => x.warehouse.Remaining) - total.Key.QuantityOrdered,
                       PreparedDate = total.Key.PreparedDate.ToString(),
-                      IsApproved = total.Key.IsApproved !=null
+                      IsApproved = total.Key.IsApproved != null
 
                   });
 
@@ -912,14 +915,14 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
                                                x.OrderNo,
                                                x.CustomerName,
-                                               x.Department,
-                                               x.Company,
+                                               x.Customercode,
+                                               x.Category,
                                                x.OrderDate,
                                                x.IsApprove,
                                                x.PreparedDate,
                                                x.ApprovedDate,
                                                x.IsPrepared,
-                                               x.BatchNo
+                                              
 
                                            }).Where(x => x.Key.IsApprove != true)
                                               .Where(x => x.Key.IsPrepared == true)
@@ -929,8 +932,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
                                                   OrderNo = x.Key.OrderNo,
                                                   CustomerName = x.Key.CustomerName,
-                                                  Department = x.Key.Department,
-                                                  Category = x.Key.Company,
+                                                  Customercode = x.Key.Customercode,
+                                                  Category = x.Key.Category,
                                                   Quantity = x.Sum(x => x.QuantityOrdered),
                                                   OrderDate = x.Key.OrderDate.ToString(),
                                                   PreparedDate = x.Key.PreparedDate.ToString(),
@@ -947,13 +950,13 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                             {
                                                 x.OrderNo,
                                                 x.CustomerName,
-                                                x.Department,
-                                                x.Company,
+                                                x.Customercode,
+                                                x.Category,
                                                 x.OrderDate,
                                                 x.PreparedDate,
                                                 x.IsApprove,
                                                 x.IsPrepared,
-                                                x.BatchNo
+                                              
 
                                             }).Where(x => x.Key.IsPrepared != true)
                                             .Where(x => x.Key.IsPrepared == true)
@@ -962,8 +965,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                             {
                                                 OrderNo = x.Key.OrderNo,
                                                 CustomerName = x.Key.CustomerName,
-                                                Department = x.Key.Department,
-                                                Category = x.Key.Company,
+                                                Customercode = x.Key.Customercode,
+                                                Category = x.Key.Category,
                                                 Quantity = x.Sum(x => x.QuantityOrdered),
                                                 OrderDate = x.Key.OrderDate.ToString(),
                                                 PreparedDate = x.Key.PreparedDate.ToString(),
@@ -982,8 +985,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                      {
                          x.OrderNo,
                          x.CustomerName,
-                         x.Department,
-                         x.Company,           
+                         x.Customercode,
+                         x.Category,           
                          x.PreparedDate,
                          x.IsApprove,
                          x.IsPrepared,
@@ -991,7 +994,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                          x.ApproveDateTempo,
                          x.IsPrint,
                          x.IsTransact,
-                         x.BatchNo
+                        
 
                      }).Where(x => x.Key.IsApprove == true)
               .Where(x => x.Key.IsReject != true)
@@ -1001,8 +1004,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
                   OrderNo = x.Key.OrderNo,
                   CustomerName = x.Key.CustomerName,
-                  Department    = x.Key.Department,
-                  Category = x.Key.Company,
+                  CustomerCode = x.Key.Customercode,
+                  Category = x.Key.Customercode,
                   Quantity = x.Sum(x => x.QuantityOrdered),
                   PreparedDate = x.Key.PreparedDate.ToString(),
                   IsApprove = x.Key.IsApprove != null,
@@ -1023,8 +1026,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             {
                 x.OrderNo,
                 x.CustomerName,
-                x.Department,
-                x.Company,
+                x.Customercode,
+                x.Category,
                 x.PreparedDate,
                 x.IsApprove,
                 x.IsPrepared,
@@ -1032,7 +1035,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 x.ApproveDateTempo,
                 x.IsPrint,
                 x.IsTransact,
-                x.BatchNo
+              
 
 
             }).Where(x => x.Key.IsApprove == true)
@@ -1043,8 +1046,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
                   OrderNo = x.Key.OrderNo,
                   CustomerName = x.Key.CustomerName,
-                  Department = x.Key.Department,
-                  Category = x.Key.Company,
+                  CustomerCode = x.Key.Customercode,
+                  Category = x.Key.Category,
                   Quantity = x.Sum(x => x.QuantityOrdered),
                   PreparedDate = x.Key.PreparedDate.ToString(),
                   IsApprove = x.Key.IsApprove != null,
@@ -1059,6 +1062,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             return await PagedList<ApprovedMoveOrderPaginationDto>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
         }
+
+
         public async Task<GetAllApprovedMoveOrderDto> GetAllApprovedMoveOrder(int id)
         {
             var orders = _context.MoveOrders.Where(x => x.OrderNoPkey == id)
@@ -1070,8 +1075,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                 x.ItemDescription,
                                                 x.Uom,
                                                 x.CustomerName,
-                                                x.Department,
-                                                x.Company,
+                                                x.Customercode,
+                                                x.Category,
                                                 x.OrderDate,
                                                 x.PreparedDate,
                                                 x.IsApprove,
@@ -1093,8 +1098,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                  ItemDescription = x.Key.ItemDescription,
                                                  Uom = x.Key.Uom,
                                                  CustomerName = x.Key.CustomerName,
-                                                 Department = x.Key.Department,
-                                                 Category = x.Key.Company,
+                                                 CustomerCode = x.Key.Customercode,
+                                                 Category = x.Key.Category,
                                                  Quantity = x.Sum(x => x.QuantityOrdered),
                                                  OrderDate = x.Key.OrderDate.ToString(),
                                                  PreparedDate = x.Key.PreparedDate.ToString(),
@@ -1250,22 +1255,22 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
                                                 x.OrderNo,
                                                 x.CustomerName,
-                                                x.Department,
-                                                x.Company,
+                                                x.Customercode,
+                                                x.Category,
                                                 x.OrderDate,
                                                 x.PreparedDate,
                                                 x.IsApprove,
                                                 x.IsReject,
                                                 x.RejectedDateTempo,
                                                 x.Remarks,
-                                                x.BatchNo
+                                          
 
                                             }).Select(x => new RejectedMoveOrderPaginationDto
                                             {
                                                 OrderNo = x.Key.OrderNo,
                                                 CustomerName = x.Key.CustomerName,
-                                                Department = x.Key.Department,
-                                                Category = x.Key.Company,
+                                                CustomerCode = x.Key.Customercode,
+                                                Category = x.Key.Category,
                                                 Quantity = x.Sum(x => x.QuantityOrdered),
                                                 OrderDate = x.Key.OrderDate.ToString(),
                                                 PreparedDate = x.Key.PreparedDate.ToString(),
@@ -1287,23 +1292,23 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                             {
                                                   x.OrderNo,
                                                   x.CustomerName,
-                                                  x.Department,
-                                                  x.Company,
+                                                  x.Customercode,
+                                                  x.Category,
                                                   x.OrderDate,
                                                   x.PreparedDate,
                                                   x.IsApprove,
                                                   x.IsReject,
                                                   x.RejectedDateTempo,
                                                   x.Remarks,
-                                                  x.BatchNo
+                                                
 
 
                                             }).Select(x => new RejectedMoveOrderPaginationDto
                                             {
                                                 OrderNo = x.Key.OrderNo,
                                                 CustomerName = x.Key.CustomerName,
-                                                Department = x.Key.Department,
-                                                Category = x.Key.Company,
+                                                CustomerCode = x.Key.Customercode,
+                                                Category = x.Key.Category,
                                                 Quantity = x.Sum(x => x.QuantityOrdered),
                                                 OrderDate = x.Key.OrderDate.ToString(),
                                                 PreparedDate = x.Key.PreparedDate.ToString(),
@@ -1330,8 +1335,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                             {
                                                 x.OrderNo,
                                                 x.CustomerName,
-                                                x.Department,
-                                                x.Company,
+                                                x.Customercode,
+                                                x.Category,
                                                 x.DateNeeded,
                                                 x.PreparedDate,
                                                 x.IsApprove,
@@ -1343,9 +1348,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                             {
                                                 OrderNo = x.Key.OrderNo,
                                                 CustomerName = x.Key.CustomerName,
-                                                Department = x.Key.Department,
-                                                Company = x.Key.Company,
-                                                Category = x.Key.Company,
+                                                CustomerCode = x.Key.Customercode,
+                                                Category = x.Key.Category,
                                                 TotalOrders = x.Sum(x => x.QuantityOrdered),
                                                 DateNeeded = x.Key.DateNeeded.ToString("MM/dd/yyyy"),
                                                 PreparedDate = x.Key.PreparedDate.ToString(),
@@ -1370,9 +1374,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                OrderDate = x.OrderDate.ToString(),
                                                PreparedDate = x.PreparedDate.ToString(),
                                                DateNeeded = x.DateNeeded.ToString(),
-                                               Department = x.Department,
+                                               CustomerCode = x.Customercode,
                                                CustomerName = x.CustomerName,
-                                               Company = x.Company,
                                                Category = x.Category,
                                                ItemCode = x.ItemCode,
                                                ItemDescription = x.ItemDescription,
@@ -1415,7 +1418,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
         public async Task<bool> ValidateDateNeeded(Ordering orders)
         {
             var dateNow = DateTime.Now;
-
+            
             if(Convert.ToDateTime(orders.DateNeeded).Date < dateNow.Date) 
                 return false;
             return true;
