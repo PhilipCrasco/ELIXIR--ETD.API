@@ -287,6 +287,21 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
 
         }
 
+        [HttpPut]
+        [Route("CancelItemCodeInMiscellaneousIssue")]
+        public async Task<IActionResult> CancelItemCodeInMiscellaneoussIssue([FromBody] MiscellaneousIssueDetails[] issue)
+        {
+
+            foreach (MiscellaneousIssueDetails items in issue)
+            {
+                await _unitofwork.miscellaneous.CancelItemCodeInMiscellaneousIssue(items);
+                await _unitofwork.CompleteAsync();
+            }
+
+            return new JsonResult("Successfully cancelled transaction!");
+        }
+
+
 
     }
 }

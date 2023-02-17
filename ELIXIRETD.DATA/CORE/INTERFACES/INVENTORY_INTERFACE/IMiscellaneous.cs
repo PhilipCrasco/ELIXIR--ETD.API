@@ -40,6 +40,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.INVENTORY_INTERFACE
 
         Task<IReadOnlyList<GetAllAvailableIssueDto>> GetAllAvailableIssue(int empid);
 
+        Task<bool> CancelItemCodeInMiscellaneousIssue(MiscellaneousIssueDetails issue);
+
 
 
 

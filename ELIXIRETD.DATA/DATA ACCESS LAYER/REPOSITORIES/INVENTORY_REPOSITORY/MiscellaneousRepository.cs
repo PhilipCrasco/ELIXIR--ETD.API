@@ -351,31 +351,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
 
             return true;
         }
-
-
-
-
-
-        // ================================================================= Validation =====================================================
-
-        public async Task<bool> ValidateMiscellaneousInIssue(MiscellaneousReceipt receipt)
-        {
-            var validate = await _context.WarehouseReceived.Where(x => x.MiscellanousReceiptId == receipt.Id)
-                                                           .ToListAsync();
-
-            foreach(var items in validate)
-            {
-                var issue = await _context.MiscellaneousIssueDetail.Where(x => x.WareHouseId == items.Id )
-                                                                   .FirstOrDefaultAsync();
-
-                if (issue != null)
-                    return false;
-              
-            }
-            return true;
-        }
-
-        public async Task<IReadOnlyList<GetAllDetailsInMiscellaneousIssueDto>> GetAllDetailsInMiscellaneousIssue(int id)
+          public async Task<IReadOnlyList<GetAllDetailsInMiscellaneousIssueDto>> GetAllDetailsInMiscellaneousIssue(int id)
         {
 
             var warehouse = _context.MiscellaneousIssueDetail.Where(x => x.IssuePKey == id)
@@ -418,5 +394,46 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
             return await items.ToListAsync();
 
         }
+
+        public async Task<bool> CancelItemCodeInMiscellaneousIssue(MiscellaneousIssueDetails issue)
+        {
+            var validate = await _context.WarehouseReceived.Where(x => x.MiscellanousReceiptId == issue.Id)
+                                                           .ToListAsync();
+
+            foreach (var items in validate)
+            {
+                var issueDetails = await _context.MiscellaneousIssueDetail.Where(x => x.WareHouseId == items.Id)
+                                                                    .FirstOrDefaultAsync();
+
+                if (issueDetails != null)
+                    return false;
+            }
+
+            return true;
+        }
+
+
+
+
+        // ================================================================= Validation =====================================================
+
+        public async Task<bool> ValidateMiscellaneousInIssue(MiscellaneousReceipt receipt)
+        {
+            var validate = await _context.WarehouseReceived.Where(x => x.MiscellanousReceiptId == receipt.Id)
+                                                           .ToListAsync();
+
+            foreach(var items in validate)
+            {
+                var issue = await _context.MiscellaneousIssueDetail.Where(x => x.WareHouseId == items.Id )
+                                                                   .FirstOrDefaultAsync();
+
+                if (issue != null)
+                    return false;
+              
+            }
+            return true;
+        }
+
+      
     }
 }
