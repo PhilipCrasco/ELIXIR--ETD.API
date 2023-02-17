@@ -30,7 +30,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                 List<Ordering> CustomerNameNotExist = new List<Ordering>();
                 List<Ordering> UomNotExist = new List<Ordering>();
                 List<Ordering> ItemCodesExist = new List<Ordering>();
-                //List<Ordering> CustomerCodeNotExist = new List<Ordering>();
                 List<Ordering> PreviousDateNeeded = new List<Ordering>();
                 
                 foreach (Ordering items in order)
@@ -47,7 +46,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                         var validateCustomerName = await _unitofwork.Orders.ValidateCustomerName(items.CustomerName);
                         var validateItemCode = await _unitofwork.Orders.ValidateItemCode(items.ItemCode);
                         var validateUom = await _unitofwork.Orders.ValidateUom(items.Uom);
-                        //var validateCustomerCode = await _unitofwork.Orders.ValidateCustomerCode(items.Customercode);
 
 
                         if (validateOrderNoAndItemcode == true)
@@ -73,11 +71,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                         {
                             UomNotExist.Add(items);
                         }
-                        //else if (validateCustomerCode == false)
-                        //{
-                        //    CustomerCodeNotExist.Add(items);
-                        //}
-
 
                         else
                             AvailableImport.Add(items);
@@ -97,7 +90,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                     //CustomerCodeNotExist
                 };
 
-                if ( DuplicateList.Count == 0 &&  CustomerNameNotExist.Count == 0  && ItemCodesExist.Count == 0 && UomNotExist.Count == 0 && PreviousDateNeeded.Count == 0 /*&&/* CustomerCodeNotExist.Count == 0*/)
+                if ( DuplicateList.Count == 0 &&  CustomerNameNotExist.Count == 0  && ItemCodesExist.Count == 0 && UomNotExist.Count == 0 && PreviousDateNeeded.Count == 0 )
                 {
                     await _unitofwork.CompleteAsync();
                     return Ok("Successfully Add!");
@@ -725,6 +718,8 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return Ok(transact);
 
         }
+
+
 
 
 
