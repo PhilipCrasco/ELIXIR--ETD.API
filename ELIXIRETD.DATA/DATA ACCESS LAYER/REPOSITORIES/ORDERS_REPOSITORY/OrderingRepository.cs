@@ -716,6 +716,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
                                 
                               });
+             
 
             return await totalremaining.Where(x => x.Remaining != 0)
                                        .Where(x => x.ItemCode == itemCode)
@@ -1491,6 +1492,22 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
 
         }
+
+        public async Task<bool> ValidateWarehouseId(int id , string itemcode)
+        {
+            var validate = await _context.WarehouseReceived.Where(x => x.Id == id)
+                                                           .Where(x => x.ItemCode == itemcode)
+                                                           .Where(x => x.IsActive == true)
+                                                            . FirstOrDefaultAsync();
+
+           if (validate == null) 
+                return false;
+            return true;
+        }
+
+     
+
+
 
         //public async Task<bool> ValidateCustomerCode(string Customercode)
         //{

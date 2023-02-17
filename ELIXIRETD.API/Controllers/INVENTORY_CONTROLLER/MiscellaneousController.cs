@@ -246,9 +246,7 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
         [HttpPut]
         [Route("InActiveIssue")]
         public async Task<IActionResult> InActiveIssue([FromBody] MiscellaneousIssue issue)
-        {
-
-
+        { 
 
             await _unitofwork.miscellaneous.InActivateMiscellaenousIssue(issue);
             await _unitofwork.CompleteAsync();

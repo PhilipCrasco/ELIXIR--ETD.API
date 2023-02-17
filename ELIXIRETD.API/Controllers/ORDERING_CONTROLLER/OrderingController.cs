@@ -392,8 +392,16 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         public async Task <IActionResult> GetAvailableStockFromWarehouse([FromQuery] int id, [FromQuery] string itemcode)
         {
             var orders = await _unitofwork.Orders.GetActualItemQuantityInWarehouse(id, itemcode);
-
+            
             var getFirstrecieve = await _unitofwork.Orders.GetFirstNeeded(itemcode);
+
+            var validate = _unitofwork.Orders.ValidateWarehouseId(id , itemcode);
+
+          
+
+            if (!await validate)
+                return BadRequest("No id or itemcode existing");
+    
 
             var resultList = new
             {

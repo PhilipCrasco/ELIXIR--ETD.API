@@ -86,6 +86,9 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<bool> ValidateUom(string Uom);
         Task<bool> ValidateItemCode (string ItemCode);
         //Task<bool> ValidateCustomerCode(string Customercode);
+
+        Task<bool> ValidateWarehouseId(int id , string itemcode);
+    
        
 
 
