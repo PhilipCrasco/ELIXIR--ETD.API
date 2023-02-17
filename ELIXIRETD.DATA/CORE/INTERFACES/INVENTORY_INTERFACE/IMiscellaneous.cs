@@ -38,6 +38,7 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.INVENTORY_INTERFACE
         Task<bool> ActivateMiscellaenousIssue (MiscellaneousIssue issue);
         Task<IReadOnlyList<GetAllDetailsInMiscellaneousIssueDto>> GetAllDetailsInMiscellaneousIssue(int id);
 
+        Task<IReadOnlyList<GetAllAvailableIssueDto>> GetAllAvailableIssue(int empid);
 
 
 
@@ -45,7 +46,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.INVENTORY_INTERFACE
 
 
 
-             //================================ Validation ====================================================
+
+       //================================ Validation ====================================================
 
        Task<bool> ValidateMiscellaneousInIssue (MiscellaneousReceipt receipt);
 

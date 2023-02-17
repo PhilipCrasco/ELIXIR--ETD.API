@@ -276,7 +276,16 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
 
         }
 
+        [HttpGet]
+        [Route("GetAllActiveMiscellaneousIssueTransaction")]
+        public async Task<IActionResult> GetAllActiveMiscellaneousIssueTransaction([FromQuery] int empid)
+        {
 
+            var issue = await _unitofwork.miscellaneous.GetAllAvailableIssue(empid);
+
+            return Ok(issue);
+
+        }
 
 
     }
