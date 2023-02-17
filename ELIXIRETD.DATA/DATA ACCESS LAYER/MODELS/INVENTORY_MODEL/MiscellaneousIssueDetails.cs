@@ -14,6 +14,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL
         public string CustomerCode { get; set; }
 
         public string ItemCode { get; set; }
+        public string ItemDescription { get; set; }
 
         public string Uom { get; set; }
 

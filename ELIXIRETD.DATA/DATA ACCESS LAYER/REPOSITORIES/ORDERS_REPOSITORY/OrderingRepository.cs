@@ -298,6 +298,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                             CustomerCode = x.Customercode,
                                             ItemCode = x.ItemCode,
                                             ItemDescription = x.ItemdDescription,
+                                            Category = x.Category,
                                             Uom = x.Uom,
                                             QuantityOrder = x.QuantityOrdered,
                                             IsApproved = x.IsApproved != null
@@ -763,6 +764,12 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         public async Task<IReadOnlyList<GetAllOutOfStockByItemCodeAndOrderDateDto>> GetAllOutOfStockByItemCodeAndOrderDate(string itemcode, string orderdate)
         {
+
+            CultureInfo usCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentCulture = usCulture;
+
+           DateTime.ParseExact(orderdate, "MM/dd/yyyy", CultureInfo.InvariantCulture);
+         
             var totalRemaining = _context.WarehouseReceived
                 .OrderBy(x => x.ReceivingDate)
                 .GroupBy(x => new

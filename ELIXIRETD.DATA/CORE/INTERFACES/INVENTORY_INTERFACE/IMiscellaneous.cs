@@ -35,6 +35,11 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.INVENTORY_INTERFACE
         Task<PagedList<GetAllMIssueWithPaginationDto>> GetAllMIssueWithPaginationOrig(UserParams userParams, string search, bool status);
         Task<bool> InActivateMiscellaenousIssue (MiscellaneousIssue issue);
 
+        Task<bool> ActivateMiscellaenousIssue (MiscellaneousIssue issue);
+        Task<IReadOnlyList<GetAllDetailsInMiscellaneousIssueDto>> GetAllDetailsInMiscellaneousIssue(int id);
+
+
+
 
 
 

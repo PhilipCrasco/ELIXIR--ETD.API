@@ -254,6 +254,27 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
             return new JsonResult("Successfully inactive issue!");
         }
 
+        [HttpPut]
+        [Route("ActivateIssue")]
+        public async Task<IActionResult> ActivateIssue([FromBody] MiscellaneousIssue issue)
+        {
+
+            await _unitofwork.miscellaneous.ActivateMiscellaenousIssue(issue);
+            await _unitofwork.CompleteAsync();
+
+            return new JsonResult("Successfully active issue!");
+        }
+
+        [HttpGet]
+        [Route("GetAllDetailsInMiscellaneousIssue")]
+        public async Task<IActionResult> GetAllDetailsInMiscellaneousIssue([FromQuery] int id)
+        {
+
+            var receipt = await _unitofwork.miscellaneous.GetAllDetailsInMiscellaneousIssue(id);
+
+            return Ok(receipt);
+
+        }
 
 
 

@@ -331,7 +331,26 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
             return true;
         }
 
+        public async Task<bool> ActivateMiscellaenousIssue(MiscellaneousIssue issue)
+        {
+           var existing = await _context.MiscellaneousIssues.Where(x => x.Id == issue.Id)
+                                                            .FirstOrDefaultAsync();
 
+            var existingdetails = await _context.MiscellaneousIssueDetail.Where(x => x.IssuePKey == issue.Id)
+                                                                          .ToListAsync();
+
+            if (existing == null)
+                return false;
+
+            existing.IsActive = true;
+
+            foreach (var items in existingdetails)
+            {
+                items.IsActive = true;
+            }
+
+            return true;
+        }
 
 
 
@@ -356,6 +375,27 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
             return true;
         }
 
-       
+        public async Task<IReadOnlyList<GetAllDetailsInMiscellaneousIssueDto>> GetAllDetailsInMiscellaneousIssue(int id)
+        {
+
+            var warehouse = _context.MiscellaneousIssueDetail.Where(x => x.IssuePKey == id)
+                                                             .Select(x => new GetAllDetailsInMiscellaneousIssueDto
+                                                             {
+                                                                 IssuePKey = x.IssuePKey,
+                                                                 Customer = x.Customer,
+                                                                 CustomerCode = x.CustomerCode,
+                                                                 PreparedDate = x.PreparedDate.ToString(),
+                                                                 PreparedBy = x.PreparedBy,
+                                                                 ItemCode = x.ItemCode,
+                                                                 ItemDescription = x.ItemDescription,
+                                                                 TotalQuantity = x.Quantity,
+                                                                 Remarks = x.Remarks
+
+                                                             });
+
+            return await warehouse.ToListAsync();
+        }
+
+
     }
 }

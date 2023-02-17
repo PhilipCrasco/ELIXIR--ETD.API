@@ -19,6 +19,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.PreperationDto
 
         public string ItemDescription { get; set; }
 
+        public string Category { get; set; }    
+
         public string Uom { get; set; }
 
         public decimal QuantityOrder { get; set; }
