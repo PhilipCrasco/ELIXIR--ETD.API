@@ -13,6 +13,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.MoveOrderDto
         public string CustomerName { get; set; }
 
         public string Customercode { get; set; }
+        public string Itemcode { get; set; }
 
         public string Category { get; set; }
         public decimal Quantity { get; set; }

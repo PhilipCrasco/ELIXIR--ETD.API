@@ -867,6 +867,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 return false;
             }
 
+            existing.IsPrepared= false;
             existing.IsActive = false;
             existing.CancelledDate = DateTime.Now;
 
@@ -912,9 +913,12 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             foreach ( var items in existing)
             {
+                items.IsPrepared = false;
                 items.ApprovedDate = DateTime.Now;
                 items.ApproveDateTempo = DateTime.Now;
                 items.IsApprove = true;
+                items.IsTransact = true;
+         
             }
 
             return true;
@@ -929,6 +933,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                x.OrderNo,
                                                x.CustomerName,
                                                x.Customercode,
+                                               x.ItemCode,
                                                x.Category,
                                                x.OrderDate,
                                                x.IsApprove,
@@ -946,6 +951,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                   OrderNo = x.Key.OrderNo,
                                                   CustomerName = x.Key.CustomerName,
                                                   Customercode = x.Key.Customercode,
+                                                  Itemcode = x.Key.ItemCode,
                                                   Category = x.Key.Category,
                                                   Quantity = x.Sum(x => x.QuantityOrdered),
                                                   OrderDate = x.Key.OrderDate.ToString(),
@@ -1155,6 +1161,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             {
                 items.IsApprove = null;
                 items.ApprovedDate = null;
+                
             }
 
             if(existMOveOrders != null)
@@ -1394,7 +1401,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                ItemDescription = x.ItemDescription,
                                                Uom = x.Uom,
                                                Quantity = x.QuantityOrdered,
-                                               IsPrepared = x.IsPrepared,
                                                IsApprove = x.IsApprove != null
 
                                            });

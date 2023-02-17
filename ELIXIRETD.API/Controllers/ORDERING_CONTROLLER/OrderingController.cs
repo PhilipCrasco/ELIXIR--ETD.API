@@ -426,7 +426,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         }
 
         [HttpPut]
-        [Route(" CancelPreparedItems")]
+        [Route("CancelPreparedItems")]
         public async Task<IActionResult> CancelPreparedItems([FromBody] MoveOrder moveorder)
         {
             var order = await _unitofwork.Orders.CancelMoveOrder(moveorder);
@@ -434,8 +434,10 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             if (order == false)
                 return BadRequest("No existing Prepared Items");
 
+           
             await _unitofwork.CompleteAsync();
-            return Ok(order);
+            return new JsonResult("Successfully cancel prepared moverorder date!");
+        
 
         }
 
