@@ -4,6 +4,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ELIXIRETD.DATA.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    partial class StoreContextModelSnapshot : ModelSnapshot
+    [Migration("20230220052436_AddBorrowedModules")]
+    partial class AddBorrowedModules
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,7 +119,66 @@ namespace ELIXIRETD.DATA.Migrations
                     b.ToTable("BorrowedIssueDetails");
                 });
 
-          
+            modelBuilder.Entity("ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL.BorrowedItems", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal>("ActualBorrowed")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ApproveBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ApproveDate")
+                        .HasColumnType("Date");
+
+                    b.Property<DateTime>("BorrowedDate")
+                        .HasColumnType("Date");
+
+                    b.Property<string>("CustomerCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsApprove")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsBorrowed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPrepared")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ItemCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ItemDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PreparedDate")
+                        .HasColumnType("Date");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ReceivingDate")
+                        .HasColumnType("Date");
+
+                    b.Property<DateTime?>("ReturnedDate")
+                        .HasColumnType("Date");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BorrowedItem");
+                });
 
             modelBuilder.Entity("ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL.BorrowedReceipt", b =>
                 {
@@ -1231,9 +1292,6 @@ namespace ELIXIRETD.DATA.Migrations
 
                     b.Property<DateTime>("ActualReceivingDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("BorrowedReceiptId")
-                        .HasColumnType("int");
 
                     b.Property<bool?>("ConfirmRejectByWarehouse")
                         .HasColumnType("bit");

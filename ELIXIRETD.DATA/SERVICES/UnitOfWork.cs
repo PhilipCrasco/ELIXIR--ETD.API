@@ -1,4 +1,5 @@
 ﻿using ELIXIRETD.DATA.CORE.ICONFIGURATION;
+using ELIXIRETD.DATA.CORE.INTERFACES.BORROWED_INTERFACE;
 using ELIXIRETD.DATA.CORE.INTERFACES.IMPORT_INTERFACE;
 using ELIXIRETD.DATA.CORE.INTERFACES.INVENTORY_INTERFACE;
 using ELIXIRETD.DATA.CORE.INTERFACES.Orders;
@@ -6,6 +7,7 @@ using ELIXIRETD.DATA.CORE.INTERFACES.SETUP_INTERFACE;
 using ELIXIRETD.DATA.CORE.INTERFACES.USER_INTERFACE;
 using ELIXIRETD.DATA.CORE.INTERFACES.WAREHOUSE_INTERFACE;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.IMPORT_REPOSITORY;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository;
@@ -51,6 +53,8 @@ namespace ELIXIRETD.DATA.SERVICES
 
         public IMiscellaneous miscellaneous { get; set; }
 
+        public IBorrowedItem Borrowed { get; set; }
+
         public UnitOfWork(StoreContext context)
   
         {
@@ -72,6 +76,7 @@ namespace ELIXIRETD.DATA.SERVICES
             Receives = new WarehouseRepository(_context);
             Orders = new OrderingRepository(_context);
             miscellaneous = new MiscellaneousRepository(_context);
+            Borrowed = new BorrowedRepository(_context);
         }
 
         public async Task CompleteAsync()

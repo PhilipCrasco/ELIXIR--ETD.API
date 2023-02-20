@@ -20,6 +20,5 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL
         public bool IsActive { get; set; } = true;
         public string RejectedBy { get; set; }
 
-
     }
 }

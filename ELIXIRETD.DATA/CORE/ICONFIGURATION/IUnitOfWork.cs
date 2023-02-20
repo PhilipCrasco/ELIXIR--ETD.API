@@ -1,4 +1,5 @@
-﻿using ELIXIRETD.DATA.CORE.INTERFACES.IMPORT_INTERFACE;
+﻿using ELIXIRETD.DATA.CORE.INTERFACES.BORROWED_INTERFACE;
+using ELIXIRETD.DATA.CORE.INTERFACES.IMPORT_INTERFACE;
 using ELIXIRETD.DATA.CORE.INTERFACES.INVENTORY_INTERFACE;
 using ELIXIRETD.DATA.CORE.INTERFACES.Orders;
 using ELIXIRETD.DATA.CORE.INTERFACES.SETUP_INTERFACE;
@@ -45,6 +46,10 @@ namespace ELIXIRETD.DATA.CORE.ICONFIGURATION
         IOrdering Orders { get; }
 
         IMiscellaneous miscellaneous { get; }
+
+        IBorrowedItem Borrowed { get; }
+
+
                                            
         Task CompleteAsync();
     }

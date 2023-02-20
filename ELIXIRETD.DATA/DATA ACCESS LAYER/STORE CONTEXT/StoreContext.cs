@@ -1,4 +1,5 @@
 ﻿using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.IMPORT_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
@@ -45,6 +46,12 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT
         public virtual DbSet<MiscellaneousIssueDetails> MiscellaneousIssueDetail { get; set; }
 
         public virtual DbSet<MiscellaneousReceipt> MiscellaneousReceipts { get; set; }
+
+
+        public virtual DbSet<BorrowedIssue> BorrowedIssues { get; set; }
+        public virtual DbSet<BorrowedIssueDetails> BorrowedIssueDetails { get; set; }
+
+        public virtual DbSet<BorrowedReceipt> BorrowedReceipts { get; set; }
 
        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL
+namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL
 {
-    public class MiscellaneousIssue : BaseEntity
+    public class BorrowedReceipt : BaseEntity
     {
         public string Customer { get; set; }
 
-        public string Customercode { get; set; }
+        public string CustomerCode { get; set; }
 
-        [Column(TypeName ="decimal(18,2)")]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal TotalQuantity { get; set; }
 
         public DateTime PreparedDate { get; set; }
@@ -16,14 +16,11 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL
         public string PreparedBy { get; set; }
 
         public string Details { get; set; }
+
         public string Remarks { get; set; }
 
         public bool IsActive { get; set; }
-        public bool? IsTransact { get; set; }
+
 
     }
-
-
-
-
 }
