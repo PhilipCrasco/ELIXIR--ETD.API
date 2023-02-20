@@ -194,7 +194,7 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
         }
 
         [HttpGet]
-        [Route(" GetAllMIssueWithPagination")]
+        [Route("GetAllMIssueWithPagination")]
         public async Task<ActionResult<IEnumerable<GetAllMIssueWithPaginationDto>>> GetAllMiscellaneousIssuePagination([FromQuery] UserParams userParams, [FromQuery] bool status)
         {
 

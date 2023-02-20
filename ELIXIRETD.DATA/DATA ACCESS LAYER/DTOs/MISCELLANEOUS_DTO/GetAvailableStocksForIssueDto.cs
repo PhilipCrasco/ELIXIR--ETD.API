@@ -12,7 +12,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.MISCELLANEOUS_DTO
         public int WarehouseId { get; set; }
         public string ItemCode { get; set; }
 
-        public decimal ActualGood { get; set; }
         public string ReceivingDate { get; set; }
 
         public decimal RemainningStocks { get; set; }

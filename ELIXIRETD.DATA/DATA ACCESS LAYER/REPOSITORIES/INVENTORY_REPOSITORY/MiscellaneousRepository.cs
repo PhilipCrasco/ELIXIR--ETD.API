@@ -376,6 +376,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
         {
             var employee = await _context.Users.Where(x => x.Id == empid)
                                                .FirstOrDefaultAsync();
+
             var items = _context.MiscellaneousIssueDetail.Where(x => x.IsActive == true)
                                                          .Where(x => x.IsTransact != true)
                                                          .Where(x => x.PreparedBy == employee.FullName)
