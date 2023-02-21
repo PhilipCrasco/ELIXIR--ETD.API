@@ -109,11 +109,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
         //========================================================== Borrowed ========================================================================
 
 
-
-
-
-
-
         public async Task<bool> AddBorrowedIssue(BorrowedIssue borrowed)
         {
             await _context.BorrowedIssues.AddAsync(borrowed);
@@ -122,7 +117,13 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
         }
 
 
+        public async Task<bool> AddBorrowedIssueDetails(BorrowedIssueDetails borrowed)
+        {
 
+            await _context.BorrowedIssueDetails.AddAsync(borrowed);
+            return true;
+
+        }
 
 
         public async Task<IReadOnlyList<GetAvailableStocksForBorrowedIssue_Dto>> GetAvailableStocksForBorrowedIssue(string itemcode)
@@ -193,6 +194,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
                                                            });
 
+
             var getAvailable = (from warehouse in getWarehouseStocks
                                 join Moveorder in moveorderOut
                                 on warehouse.WarehouseId equals Moveorder.WarehouseId
@@ -258,7 +260,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
 
 
-
         //======================================================== Validation ================================================================
 
         public async Task<bool> ValidateBorrowReceiptIssue(BorrowedReceipt borrowed)
@@ -279,10 +280,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return true;
         }
 
-
-
-
-
-  
+       
     }
 }

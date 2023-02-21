@@ -23,6 +23,7 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.BORROWED_INTERFACE
 
         Task<IReadOnlyList<GetAvailableStocksForBorrowedIssue_Dto>> GetAvailableStocksForBorrowedIssue(string itemcode);
         Task<bool> AddBorrowedIssue(BorrowedIssue borrowed);
+        Task<bool> AddBorrowedIssueDetails(BorrowedIssueDetails borrowed);
 
 
 

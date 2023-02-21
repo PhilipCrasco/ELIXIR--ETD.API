@@ -2,6 +2,7 @@
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL;
+using ELIXIRETD.DATA.Migrations;
 using ELIXIRETD.DATA.SERVICES;
 using FluentValidation.AspNetCore;
 
@@ -89,7 +90,6 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
         //======================================================== Borrowed Issue ===========================================================================
 
 
-
         [HttpPost]
         [Route("AddNewBorrowedIssues")]
         public async Task<IActionResult> AddNewBorrowedIssues([FromBody] BorrowedIssue borrowed)
@@ -105,9 +105,20 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
 
         }
 
+        [HttpPost]
+        [Route("AddNewBorrowedIssueDetails")]
+        public async Task<IActionResult> AddNewBorrowedIssueDetails ([FromBody] BorrowedIssueDetails borrowed)
+        {
+            borrowed.IsActive= true;
 
+            borrowed.PreparedDate= DateTime.Now;
 
+            await _unitofwork.Borrowed.AddBorrowedIssueDetails(borrowed);
+            await _unitofwork.CompleteAsync();
 
+            return Ok("Successfully add new borrowed issue!");
+
+        }
 
 
 

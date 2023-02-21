@@ -193,7 +193,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             var existing = await _unitofwork.Orders.CancelOrders(orders);
 
             if (existing == false)
-                return BadRequest("Order ID is not existing");
+                return BadRequest("Order Id is not existing");
 
 
             await _unitofwork.CompleteAsync();

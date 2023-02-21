@@ -1157,7 +1157,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             var existMOveOrders = await _context.MoveOrders.Where(x => x.OrderNo == orders.OrderNoPKey)
                                                             .ToListAsync();
 
-            foreach(var items in existMOveOrders)
+            foreach(var items in cancelorder)
             {
                 items.IsApprove = null;
                 items.ApprovedDate = null;
