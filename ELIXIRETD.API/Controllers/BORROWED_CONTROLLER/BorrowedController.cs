@@ -1,9 +1,9 @@
 ﻿using ELIXIRETD.DATA.CORE.ICONFIGURATION;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL;
 using ELIXIRETD.DATA.SERVICES;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using FluentValidation.AspNetCore;
 
 namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
 {
@@ -71,8 +71,45 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
             return new JsonResult("Successfully inactive receipt!");
 
         }
-        
-        
+
+        [HttpPut]
+        [Route("ActivateReceipt")]
+        public async Task<IActionResult> ActivateReceipt([FromBody] BorrowedReceipt borrowed)
+        {
+
+            await _unitofwork.Borrowed.ActivateMiscellaenousReceipt(borrowed);
+            await _unitofwork.CompleteAsync();
+
+            return new JsonResult("Successfully active receipt!");
+        }
+
+
+
+
+
+
+
+
+
+
+        //======================================================== Borrowed Issue ===========================================================================
+
+
+        [HttpGet]
+        [Route("GetAllAvailableStocksForBorrowedIsssue")]
+        public async Task<IActionResult> GetAllAvailableStocksForBorrowedIsssue([FromQuery] string itemcode)
+        {
+
+            var borrow = await _unitofwork.Borrowed.GetAvailableStocksForBorrowedIssue(itemcode);
+
+            return Ok (borrow);
+        }
+
+
+
+
+
+
 
 
 
