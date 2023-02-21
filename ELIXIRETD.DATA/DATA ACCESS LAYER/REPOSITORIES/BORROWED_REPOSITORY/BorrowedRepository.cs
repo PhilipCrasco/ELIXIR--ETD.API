@@ -84,6 +84,23 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
         //========================================================== Borrowed ========================================================================
 
+
+
+
+
+
+
+        public async Task<bool> AddBorrowedIssue(BorrowedIssue borrowed)
+        {
+            await _context.BorrowedIssues.AddAsync(borrowed);
+
+            return true;
+        }
+
+
+
+
+
         public async Task<IReadOnlyList<GetAvailableStocksForBorrowedIssue_Dto>> GetAvailableStocksForBorrowedIssue(string itemcode)
         {
             var getWarehouseStocks = _context.WarehouseReceived.Where(x => x.IsActive == true)
@@ -206,6 +223,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return await getAvailable.ToListAsync();
 
         }
+
 
 
 

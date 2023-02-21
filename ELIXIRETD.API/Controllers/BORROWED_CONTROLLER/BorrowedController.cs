@@ -95,6 +95,26 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
         //======================================================== Borrowed Issue ===========================================================================
 
 
+
+        [HttpPost]
+        [Route("AddNewBorrowedIssues")]
+        public async Task<IActionResult> AddNewBorrowedIssues([FromBody] BorrowedIssue borrowed)
+        {
+            borrowed.IsActive = true;
+            borrowed.PreparedDate= DateTime.Now;
+            borrowed.IsTransact = true;
+
+            await _unitofwork.Borrowed.AddBorrowedIssue(borrowed);
+            await _unitofwork.CompleteAsync();
+
+            return Ok(borrowed);
+
+        }
+
+
+
+
+
         [HttpGet]
         [Route("GetAllAvailableStocksForBorrowedIsssue")]
         public async Task<IActionResult> GetAllAvailableStocksForBorrowedIsssue([FromQuery] string itemcode)
