@@ -3,6 +3,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.BORROWED_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.INVENTORYDTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.MISCELLANEOUS_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL;
@@ -78,6 +79,29 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
             return true;
                                                              
+        }
+
+        public async Task<PagedList<GetAllMReceiptWithPaginationDto>> GetAllBorrowedReceiptWithPagination(UserParams userParams, bool status)
+        {
+            var borrow = _context.BorrowedReceipts.OrderByDescending(x => x.PreparedDate)
+                                                  .Where(x => x.IsActive == status)
+                                                  .Select(x => new GetAllMReceiptWithPaginationDto
+                                                  {
+
+                                                      Id = x.Id,
+                                                      CustomerName = x.Customer,
+                                                      CustomerCode = x.CustomerCode,
+                                                      TotalQuantity = x.TotalQuantity,
+                                                      PreparedDate = x.PreparedDate.ToString("MM/dd/yyyy"),
+                                                      Remarks = x.Remarks,
+                                                      PreparedBy = x.PreparedBy,
+                                                      IsActive = x.IsActive
+
+                                                  });
+
+            return await PagedList<GetAllMReceiptWithPaginationDto>.CreateAsync(borrow, userParams.PageNumber, userParams.PageSize);
+
+
         }
 
 
@@ -232,6 +256,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
 
 
+
+
+
         //======================================================== Validation ================================================================
 
         public async Task<bool> ValidateBorrowReceiptIssue(BorrowedReceipt borrowed)
@@ -252,6 +279,10 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return true;
         }
 
-      
+
+
+
+
+  
     }
 }

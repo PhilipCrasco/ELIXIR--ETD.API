@@ -1,5 +1,6 @@
 ﻿using ELIXIRETD.DATA.CORE.INTERFACES.WAREHOUSE_INTERFACE;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.BORROWED_DTO;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL;
 using System;
@@ -17,10 +18,13 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.BORROWED_INTERFACE
         Task<bool> AddBorrowReceipt(BorrowedReceipt receipt);
         Task<bool> InActiveBorrowedReceipt(BorrowedReceipt borrowed);
         Task<bool> ActivateMiscellaenousReceipt(BorrowedReceipt borrowed);
+        Task<PagedList<GetAllMReceiptWithPaginationDto>> GetAllBorrowedReceiptWithPagination(UserParams userParams, bool status);
 
 
         Task<IReadOnlyList<GetAvailableStocksForBorrowedIssue_Dto>> GetAvailableStocksForBorrowedIssue(string itemcode);
         Task<bool> AddBorrowedIssue(BorrowedIssue borrowed);
+
+
 
 
 
