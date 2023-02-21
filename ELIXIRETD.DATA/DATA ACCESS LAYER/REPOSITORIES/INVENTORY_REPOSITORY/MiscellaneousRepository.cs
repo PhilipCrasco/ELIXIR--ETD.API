@@ -229,18 +229,36 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
 
                                                             });
 
+            var borrowedOut = _context.BorrowedIssueDetails.Where(x => x.IsActive == true)
+                                                           .GroupBy(x => new
+                                                           {
+
+                                                               x.ItemCode,
+                                                               x.WarehouseId
+
+                                                           }).Select(x => new ItemStocksDto
+                                                           {
+                                                               ItemCode = x.Key.ItemCode,
+                                                               warehouseId = x.Key.WarehouseId,
+                                                               Out = x.Sum(x => x.Quantity)
+
+                                                           });
+
             var getAvailable = getWarehouseStocks
                               .GroupJoin(moveorderOut, warehouse => warehouse.WarehouseId, moveorder => moveorder.WarehouseId, (warehouse, moveorder) => new { warehouse, moveorder })
                               .SelectMany(x => x.moveorder.DefaultIfEmpty(), (x, moveorder) => new { x.warehouse, moveorder })
-                              .GroupJoin(issueOut, warehouse => warehouse.warehouse.WarehouseId, issue => issue.warehouseId, (warehouse, issue) => new { warehouse, issue })
+                              .GroupJoin(borrowedOut , warehouse => warehouse.warehouse.WarehouseId , borrowed => borrowed.warehouseId , ( warehouse , borrowed) => new { warehouse, borrowed })
+                              .SelectMany(x => x.borrowed.DefaultIfEmpty() , (x , borrowed) => new {x.warehouse , borrowed })
+                              .GroupJoin(issueOut, warehouse => warehouse.warehouse.warehouse.WarehouseId, issue => issue.warehouseId, (warehouse, issue) => new { warehouse, issue })
                               .SelectMany(x => x.issue.DefaultIfEmpty(), (x, issue) => new
                               {
-                                  warehouseId = x.warehouse.warehouse.WarehouseId,
-                                  itemcode = x.warehouse.warehouse.ItemCode,
-                                  ReceivingDate = x.warehouse.warehouse.RecievingDate,
-                                  WarehouseActualGood = x.warehouse.warehouse.ActualGood != null ? x.warehouse.warehouse.ActualGood : 0,
-                                  MoveOrderOut = x.warehouse.moveorder.QuantityOrdered != null ? x.warehouse.moveorder.QuantityOrdered : 0,
-                                  IssueOut = issue.Out != null ? issue.Out : 0
+                                  warehouseId = x.warehouse.warehouse.warehouse.WarehouseId,
+                                  itemcode = x.warehouse.warehouse.warehouse.ItemCode,
+                                  ReceivingDate = x.warehouse.warehouse.warehouse.RecievingDate,
+                                  WarehouseActualGood = x.warehouse.warehouse.warehouse.ActualGood != null ? x.warehouse.warehouse.warehouse.ActualGood : 0,
+                                  MoveOrderOut = x.warehouse.warehouse.moveorder.QuantityOrdered != null ? x.warehouse.warehouse.moveorder.QuantityOrdered : 0,
+                                  IssueOut = issue.Out != null ? issue.Out : 0,
+                                  BorrowedOut = x.warehouse.borrowed.Out != null ? x.warehouse.borrowed.Out : 0,
 
                               }).GroupBy(x => new
                               {
@@ -250,7 +268,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
                                   x.ReceivingDate,
                                   x.WarehouseActualGood,
                                   x.MoveOrderOut,
-                                  x.IssueOut
+                                  x.IssueOut,
+                                  x.BorrowedOut
 
                               }
                               ,
@@ -259,7 +278,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
                               {
                                   WarehouseId = total.Key.warehouseId,
                                   ItemCode = total.Key.itemcode,
-                                  RemainningStocks = total.Key.WarehouseActualGood - total.Key.MoveOrderOut - total.Key.IssueOut,
+                                  RemainningStocks = total.Key.WarehouseActualGood - total.Key.MoveOrderOut - total.Key.IssueOut - total.Key.BorrowedOut,
                                   ReceivingDate = total.Key.ReceivingDate
 
                               }).Where(x => x.RemainningStocks != 0)
