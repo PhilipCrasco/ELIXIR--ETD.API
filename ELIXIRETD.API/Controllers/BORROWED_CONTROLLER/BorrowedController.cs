@@ -1,10 +1,14 @@
 ﻿using ELIXIRETD.DATA.CORE.ICONFIGURATION;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.BORROWED_DTO;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.EXTENSIONS;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.INVENTORY_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL;
 using ELIXIRETD.DATA.Migrations;
 using ELIXIRETD.DATA.SERVICES;
 using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
 {
@@ -20,74 +24,56 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
         }
 
 
-        //[HttpPost]
-        //[Route("AddNewBorrowedReceipts")]
-        //public async Task<IActionResult> AddNewBorrowedReceipts([FromBody] BorrowedReceipt receipt)
-        //{
-        //    receipt.IsActive = true;
-        //    receipt.PreparedDate = DateTime.Now;
+        [HttpGet]
+        [Route("GetAllBorrowedIssueWithPagination")]
+        public async Task<ActionResult<IEnumerable<GetAllBorrowedReceiptWithPaginationDto>>> GetAllBorrowedIssueWithPagination([FromBody] UserParams userParams , [FromQuery] bool status)
+        {
+            var issue = await _unitofwork.Borrowed.GetAllBorrowedReceiptWithPagination(userParams, status);
 
-        //    await _unitofwork.Borrowed.AddBorrowReceipt(receipt);
-        //    await _unitofwork.CompleteAsync();
+            Response.AddPaginationHeader(issue.CurrentPage, issue.PageSize, issue.TotalCount, issue.TotalPages, issue.HasNextPage, issue.HasPreviousPage);
 
-        //    return Ok(receipt);
-        //}
+            var issueResult = new
+            {
+                issue,
+                issue.CurrentPage,
+                issue.PageSize,
+                issue.TotalCount,
+                issue.TotalPages,
+                issue.HasNextPage,
+                issue.HasPreviousPage
+            };
 
-
-
-        //[HttpPost]
-        //[Route("AddNewBorrowedReceiptInWarehouse")]
-        //public async Task<IActionResult> AddNewBorrowedReceiptInWarehouse([FromBody] Warehouse_Receiving[] warehouse )
-        //{
-        //    DateTime datenow = DateTime.Now;
-
-        //    foreach (Warehouse_Receiving items in warehouse)
-        //    {
-        //        items.IsActive = true;
-        //        items.ReceivingDate= datenow;
-        //        items.IsWarehouseReceived = true;
-        //        items.TransactionType = "BorrowedReceipt";
-        //        await _unitofwork.Borrowed.AddBorrowReceiptInWarehouse(items);
-        //        await _unitofwork.CompleteAsync();
-
-               
-        //    }
-
-        //    return Ok(" Successfully add new Borrow Request in warehouse");
-        //}
-
-        //[HttpPut]
-        //[Route("InActiveReceipt")]
-        //public async Task<IActionResult> InActiveReceipt([FromBody] BorrowedReceipt borrowed)
-        //{
-
-        //    var validate = await _unitofwork.Borrowed.ValidateBorrowReceiptIssue(borrowed);
-
-        //    if (validate == false)
-        //        return BadRequest("Inactive failed, you already use the receiving id");
-
-        //    await _unitofwork.Borrowed.InActiveBorrowedReceipt(borrowed);
-        //    await _unitofwork.CompleteAsync();
-
-        //    return new JsonResult("Successfully inactive receipt!");
-
-        //}
-
-        //[HttpPut]
-        //[Route("ActivateReceipt")]
-        //public async Task<IActionResult> ActivateReceipt([FromBody] BorrowedReceipt borrowed)
-        //{
-
-        //    await _unitofwork.Borrowed.ActivateMiscellaenousReceipt(borrowed);
-        //    await _unitofwork.CompleteAsync();
-
-        //    return new JsonResult("Successfully active receipt!");
-        //}
+            return Ok(issueResult);
+            
+        }
 
 
+        [HttpGet]
+        [Route("GetAllBorrowedIssueWithPaginationOrig")]
+        public async Task<ActionResult<IEnumerable<GetAllBorrowedReceiptWithPaginationDto>>> GetAllBorrowedIssueWithPaginationOrig ([FromQuery] UserParams userParams, [FromQuery] string search, [FromQuery] bool status)
+        {
+            if (search == null)
 
+                return await GetAllBorrowedIssueWithPagination(userParams, status);
 
-        //======================================================== Borrowed Issue ===========================================================================
+            var issue = await _unitofwork.Borrowed.GetAllBorrowedIssuetWithPaginationOrig(userParams, search, status);
+
+            Response.AddPaginationHeader(issue.CurrentPage, issue.PageSize, issue.TotalCount, issue.TotalPages, issue.HasNextPage, issue.HasPreviousPage);
+
+            var issueResult = new
+            {
+                issue,
+                issue.CurrentPage,
+                issue.PageSize,
+                issue.TotalCount,
+                issue.TotalPages,
+                issue.HasNextPage,
+                issue.HasPreviousPage
+            };
+
+            return Ok(issueResult);
+
+        }
 
 
         [HttpPost]

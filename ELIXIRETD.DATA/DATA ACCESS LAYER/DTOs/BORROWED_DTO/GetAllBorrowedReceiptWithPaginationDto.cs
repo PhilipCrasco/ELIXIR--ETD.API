@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.BORROWED_DTO
 {
-    public class GetAllMReceiptWithPaginationDto
+    public class GetAllBorrowedReceiptWithPaginationDto
     {
 
-        public int Id { get; set; }
+        public int BorrowedPKey { get; set; }
         public string CustomerCode { get; set; }
 
         public string CustomerName { get; set; }

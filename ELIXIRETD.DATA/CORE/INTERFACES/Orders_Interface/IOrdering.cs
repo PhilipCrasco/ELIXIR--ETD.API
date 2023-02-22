@@ -72,7 +72,9 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
 
         Task<bool> ValidatePrepareDate(Ordering orders);
 
-        public Task<bool> SavePreparedMoveOrder(Ordering order);
+        Task<bool> SavePreparedMoveOrder(Ordering order);
+
+        
 
 
 

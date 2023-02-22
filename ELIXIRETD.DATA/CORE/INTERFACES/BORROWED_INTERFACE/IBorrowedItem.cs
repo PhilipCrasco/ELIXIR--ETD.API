@@ -14,23 +14,12 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.BORROWED_INTERFACE
     public interface IBorrowedItem
     {
 
-        Task<bool> AddBorrowReceiptInWarehouse(Warehouse_Receiving warehouse);
-        Task<bool> AddBorrowReceipt(BorrowedReceipt receipt);
-        Task<bool> InActiveBorrowedReceipt(BorrowedReceipt borrowed);
-        Task<bool> ActivateMiscellaenousReceipt(BorrowedReceipt borrowed);
-        Task<PagedList<GetAllMReceiptWithPaginationDto>> GetAllBorrowedReceiptWithPagination(UserParams userParams, bool status);
-
-
         Task<IReadOnlyList<GetAvailableStocksForBorrowedIssue_Dto>> GetAvailableStocksForBorrowedIssue(string itemcode);
         Task<bool> AddBorrowedIssue(BorrowedIssue borrowed);
         Task<bool> AddBorrowedIssueDetails(BorrowedIssueDetails borrowed);
+        Task<PagedList<GetAllBorrowedReceiptWithPaginationDto>> GetAllBorrowedReceiptWithPagination(UserParams userParams, bool status);
 
-
-
-
-
-
-
+        Task<PagedList<GetAllBorrowedReceiptWithPaginationDto>> GetAllBorrowedIssuetWithPaginationOrig(UserParams userParams, string search, bool status);
 
 
 

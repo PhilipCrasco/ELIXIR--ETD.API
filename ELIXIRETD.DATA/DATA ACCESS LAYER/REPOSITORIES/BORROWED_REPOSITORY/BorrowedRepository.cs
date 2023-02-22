@@ -5,11 +5,8 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.MISCELLANEOUS_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL;
-using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
-using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Principal;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 {
@@ -20,76 +17,41 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
         public BorrowedRepository(StoreContext context)
         {
             _context = context;
-                
-        }
-
-       
-        public async Task<bool> AddBorrowReceipt(BorrowedReceipt receipt)
-        {
-            await _context.BorrowedReceipts.AddAsync(receipt);
-            return true;
-        }
-
-        public async Task<bool> AddBorrowReceiptInWarehouse(Warehouse_Receiving warehouse)
-        {
-           await _context.WarehouseReceived.AddAsync(warehouse);
-            return true;
-        }
-
-        public async Task<bool> InActiveBorrowedReceipt(BorrowedReceipt borrowed)
-        {
-            var existing = await _context.BorrowedReceipts.Where(x => x.Id == borrowed.Id)
-                                                          .FirstOrDefaultAsync();
-
-            var existingwh = await _context.WarehouseReceived.Where(x => x.BorrowedReceiptId == borrowed.Id)
-                                                             .ToListAsync();
-
-            if (existing == null)
-                return false;
-
-            existing.IsActive = false;
-
-            foreach(var items in existingwh)
-            {
-                items.IsActive = false;
-            }
-            return true;
 
         }
 
-        public async Task<bool> ActivateMiscellaenousReceipt(BorrowedReceipt borrowed)
+        public async Task<PagedList<GetAllBorrowedReceiptWithPaginationDto>> GetAllBorrowedIssuetWithPaginationOrig(UserParams userParams, string search, bool status)
         {
-            var existing = await _context.BorrowedReceipts.Where(x => x.Id == borrowed.Id)
-                                                          .FirstOrDefaultAsync();
 
-            var existingwh = await _context.WarehouseReceived.Where(x => x.BorrowedReceiptId == borrowed.Id)
-                                                             .ToListAsync();
+            var issue = _context.BorrowedIssues.OrderByDescending(x => x.PreparedDate)
+                                               .Where(x => x.IsActive == status)
+                                               .Select(x => new GetAllBorrowedReceiptWithPaginationDto
+                                               {
+                                                   BorrowedPKey = x.Id,
+                                                   CustomerName = x.CustomerName,
+                                                   CustomerCode = x.CustomerCode,
+                                                   TotalQuantity = x.TotalQuantity,
+                                                   PreparedDate = x.PreparedDate.ToString("MM/dd/yyyy"),
+                                                   Remarks = x.Remarks,
+                                                   PreparedBy = x.PreparedBy,
+                                                   IsActive = x.IsActive
 
+                                               }).Where(x => (Convert.ToString(x.BorrowedPKey)).ToLower()
+                                                 .Contains(search.Trim().ToLower()));
 
-            if (existing == null)
-                return false;
-
-            existing.IsActive = true;
-
-            foreach(var items in existingwh)
-            {
-
-                items.IsActive = true;
-            }
-
-            return true;
-                                                             
+            return await PagedList<GetAllBorrowedReceiptWithPaginationDto>.CreateAsync(issue, userParams.PageNumber, userParams.PageSize);
         }
 
-        public async Task<PagedList<GetAllMReceiptWithPaginationDto>> GetAllBorrowedReceiptWithPagination(UserParams userParams, bool status)
+
+        public async Task<PagedList<GetAllBorrowedReceiptWithPaginationDto>> GetAllBorrowedReceiptWithPagination(UserParams userParams, bool status)
         {
-            var borrow = _context.BorrowedReceipts.OrderByDescending(x => x.PreparedDate)
+            var borrow = _context.BorrowedIssues.OrderByDescending(x => x.PreparedDate)
                                                   .Where(x => x.IsActive == status)
-                                                  .Select(x => new GetAllMReceiptWithPaginationDto
+                                                  .Select(x => new GetAllBorrowedReceiptWithPaginationDto
                                                   {
 
-                                                      Id = x.Id,
-                                                      CustomerName = x.Customer,
+                                                      BorrowedPKey = x.Id,
+                                                      CustomerName = x.CustomerName,
                                                       CustomerCode = x.CustomerCode,
                                                       TotalQuantity = x.TotalQuantity,
                                                       PreparedDate = x.PreparedDate.ToString("MM/dd/yyyy"),
@@ -99,14 +61,11 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
                                                   });
 
-            return await PagedList<GetAllMReceiptWithPaginationDto>.CreateAsync(borrow, userParams.PageNumber, userParams.PageSize);
+            return await PagedList<GetAllBorrowedReceiptWithPaginationDto>.CreateAsync(borrow, userParams.PageNumber, userParams.PageSize);
 
 
         }
 
-
-
-        //========================================================== Borrowed ========================================================================
 
 
         public async Task<bool> AddBorrowedIssue(BorrowedIssue borrowed)

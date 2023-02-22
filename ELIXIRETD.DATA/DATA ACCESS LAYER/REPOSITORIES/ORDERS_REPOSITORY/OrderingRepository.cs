@@ -785,6 +785,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
 
             var totalRemaining = _context.WarehouseReceived
+                              .OrderBy(x => x.ReceivingDate)
                               .Where(totalin => totalin.Id == id && totalin.ItemCode == itemcode && totalin.IsActive == true)
                               .GroupBy(x => new
                               {
@@ -804,7 +805,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                   In  = total.Key.ActualDelivered,
                                   Remaining = total.Key.ActualDelivered - TotaloutMoveOrder - TotalIssue - TotalBorrowIssue
 
-                              }).OrderBy(x => x.DateReceived);
+                              });
 
             return await totalRemaining.Where(x => x.Remaining != 0)
                                        .FirstOrDefaultAsync();
