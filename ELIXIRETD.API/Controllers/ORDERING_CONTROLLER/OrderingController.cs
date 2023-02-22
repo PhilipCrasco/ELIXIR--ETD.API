@@ -4,6 +4,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.MoveOrderDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.EXTENSIONS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
+using ELIXIRETD.DATA.SERVICES;
 
 namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 {
@@ -311,7 +312,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             order.OrderNo = details.OrderNo;
             order.OrderDate = Convert.ToDateTime(details.OrderDate);
             order.DateNeeded = Convert.ToDateTime(details.DateNeeded);
-            order.PreparedDate = Convert.ToDateTime(details.PrepareDate.ToString());
+            order.PreparedDate = Convert.ToDateTime(details.PrepareDate);
             order.CustomerName= details.CustomerName;
             order.Customercode = details.CustomerCode;
             order.ItemCode = details.ItemCode;
@@ -445,7 +446,20 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             return Ok(moveorder);
         }
 
+        [HttpPut]
+        [Route("AddSavePreparedMoveOrder")]
+        public async Task<IActionResult> AddSavePreparedMoveOrder([FromBody] Ordering[] orders)
+        {
 
+            foreach (Ordering items in orders)
+            {
+                await _unitofwork.Orders.SavePreparedMoveOrder(items);
+            }
+
+            await _unitofwork.CompleteAsync();
+
+            return new JsonResult("Successfully added! ");
+        }
 
 
         //============================================= Move Order Preparation ===================================================
