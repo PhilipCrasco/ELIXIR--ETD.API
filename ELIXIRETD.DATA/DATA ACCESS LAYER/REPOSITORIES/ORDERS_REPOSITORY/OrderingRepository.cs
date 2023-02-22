@@ -917,7 +917,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 return false;
             }
 
-            existing.IsPrepared= false;
+     
             existing.IsActive = false;
             existing.CancelledDate = DateTime.Now;
 
