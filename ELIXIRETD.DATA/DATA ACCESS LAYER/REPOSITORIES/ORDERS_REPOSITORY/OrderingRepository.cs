@@ -772,6 +772,16 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                              .Where(x => x.ItemCode == itemcode)
                                                              .SumAsync(x => x.QuantityOrdered);
 
+            var TotalIssue = await _context.MiscellaneousIssueDetail.Where(x => x.WareHouseId == id)
+                                                                    .Where(x => x.IsActive == true)
+                                                                    .Where(x => x.IsTransact == true)
+                                                                    .SumAsync(x => x.Quantity);
+
+            var TotalBorrowIssue = await _context.BorrowedIssueDetails.Where(x => x.WarehouseId == id)
+                                                                      .Where(x => x.IsActive == true)
+                                                                      .Where(x => x.IsTransact == true)
+                                                                      .SumAsync(x => x.Quantity);
+
 
 
             var totalRemaining = _context.WarehouseReceived
@@ -792,9 +802,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                   ActualGood = total.Key.ActualDelivered,
                                   DateReceived = total.Key.ReceivingDate.ToString("MM/dd/yyyy"),
                                   In  = total.Key.ActualDelivered,
-                                  Remaining = total.Key.ActualDelivered - TotaloutMoveOrder
+                                  Remaining = total.Key.ActualDelivered - TotaloutMoveOrder - TotalIssue - TotalBorrowIssue
 
-                              });
+                              }).OrderBy(x => x.DateReceived);
 
             return await totalRemaining.Where(x => x.Remaining != 0)
                                        .FirstOrDefaultAsync();
