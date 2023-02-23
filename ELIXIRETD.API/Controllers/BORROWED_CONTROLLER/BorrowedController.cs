@@ -154,7 +154,15 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
             return new JsonResult("Successfully active borrowed issue!");
         }
 
+        [HttpGet]
+        [Route("GetAllDetailsInBorrowedIssue")]
+        public async Task<IActionResult> GetAllDetailsInBorrowedIssue([FromQuery] int id)
+        {
 
+            var borrow = await _unitofwork.Borrowed.GetAllDetailsInBorrowedIssue(id);
+
+            return Ok(borrow);
+        }
 
 
 

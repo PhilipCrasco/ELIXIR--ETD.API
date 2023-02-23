@@ -270,7 +270,25 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return true;
         }
 
+        public async Task<IReadOnlyList<GetAllDetailsInBorrowedIssueDto>> GetAllDetailsInBorrowedIssue(int id)
+        {
+            var warehouse = _context.BorrowedIssueDetails.Where(x => x.BorrowedPKey == id)
+                                                         .Select(x => new GetAllDetailsInBorrowedIssueDto
+                                                         {
 
+                                                             BorrowedPKey = x.BorrowedPKey,
+                                                             Customer = x.CustomerName,
+                                                             CustomerCode = x.CustomerCode,
+                                                             PreparedDate = x.PreparedBy,
+                                                             ItemCode = x.ItemCode,
+                                                             ItemDescription = x.ItemDescription,
+                                                             TotalQuantity = x.Quantity,
+                                                             Remarks = x.Remarks,
+
+                                                         });
+
+            return await warehouse.ToListAsync();
+        }
 
 
 
@@ -295,8 +313,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return true;
         }
 
-       
-
-
+        public Task<IReadOnlyList<GetAllAvailableBorrowIssueDto>> GetAllAvailableIssue(int empid)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
