@@ -112,7 +112,24 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
             return Ok (borrow);
         }
 
-        
+
+
+        [HttpPut]
+        [Route("UpdateBorrowedIssuePKey")]
+        public async Task<IActionResult> UpdateBorrowedIssuePKey([FromBody] BorrowedIssueDetails[] borrowed)
+        {
+            foreach(BorrowedIssueDetails items in borrowed)
+            {
+                items.IsActive= true;
+                items.PreparedDate = DateTime.Now;
+
+                await _unitofwork.Borrowed.UpdateIssuePKey(items);
+            }
+
+            await _unitofwork.CompleteAsync();
+
+            return Ok(borrowed);
+        }
 
 
 

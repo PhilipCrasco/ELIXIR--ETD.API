@@ -20,29 +20,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
         }
 
-        public async Task<PagedList<GetAllBorrowedReceiptWithPaginationDto>> GetAllBorrowedIssuetWithPaginationOrig(UserParams userParams, string search, bool status)
-        {
-
-            var issue = _context.BorrowedIssues.OrderByDescending(x => x.PreparedDate)
-                                               .Where(x => x.IsActive == status)
-                                               .Select(x => new GetAllBorrowedReceiptWithPaginationDto
-                                               {
-                                                   BorrowedPKey = x.Id,
-                                                   CustomerName = x.CustomerName,
-                                                   CustomerCode = x.CustomerCode,
-                                                   TotalQuantity = x.TotalQuantity,
-                                                   PreparedDate = x.PreparedDate.ToString("MM/dd/yyyy"),
-                                                   Remarks = x.Remarks,
-                                                   PreparedBy = x.PreparedBy,
-                                                   IsActive = x.IsActive
-
-                                               }).Where(x => (Convert.ToString(x.BorrowedPKey)).ToLower()
-                                                 .Contains(search.Trim().ToLower()));
-
-            return await PagedList<GetAllBorrowedReceiptWithPaginationDto>.CreateAsync(issue, userParams.PageNumber, userParams.PageSize);
-        }
-
-
         public async Task<PagedList<GetAllBorrowedReceiptWithPaginationDto>> GetAllBorrowedReceiptWithPagination(UserParams userParams, bool status)
         {
             var borrow = _context.BorrowedIssues.OrderByDescending(x => x.PreparedDate)
@@ -65,8 +42,27 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
 
         }
+        public async Task<PagedList<GetAllBorrowedReceiptWithPaginationDto>> GetAllBorrowedIssuetWithPaginationOrig(UserParams userParams, string search, bool status)
+        {
 
+            var issue = _context.BorrowedIssues.OrderByDescending(x => x.PreparedDate)
+                                               .Where(x => x.IsActive == status)
+                                               .Select(x => new GetAllBorrowedReceiptWithPaginationDto
+                                               {
+                                                   BorrowedPKey = x.Id,
+                                                   CustomerName = x.CustomerName,
+                                                   CustomerCode = x.CustomerCode,
+                                                   TotalQuantity = x.TotalQuantity,
+                                                   PreparedDate = x.PreparedDate.ToString("MM/dd/yyyy"),
+                                                   Remarks = x.Remarks,
+                                                   PreparedBy = x.PreparedBy,
+                                                   IsActive = x.IsActive
 
+                                               }).Where(x => (Convert.ToString(x.BorrowedPKey)).ToLower()
+                                                 .Contains(search.Trim().ToLower()));
+
+            return await PagedList<GetAllBorrowedReceiptWithPaginationDto>.CreateAsync(issue, userParams.PageNumber, userParams.PageSize);
+        }
 
         public async Task<bool> AddBorrowedIssue(BorrowedIssue borrowed)
         {
@@ -83,6 +79,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return true;
 
         }
+
+
 
 
         public async Task<IReadOnlyList<GetAvailableStocksForBorrowedIssue_Dto>> GetAvailableStocksForBorrowedIssue(string itemcode)
@@ -211,6 +209,22 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
 
 
+        public async Task<bool> UpdateIssuePKey(BorrowedIssueDetails borowed)
+        {
+
+            var existing = await _context.BorrowedIssueDetails.Where(x => x.Id == borowed.Id)
+                                                               .FirstOrDefaultAsync();
+            if (existing != null)
+                return false;
+
+            existing.BorrowedPKey = borowed.BorrowedPKey;
+            existing.IsActive = borowed.IsActive;
+
+            return true;
+        }
+
+
+
 
 
 
@@ -239,6 +253,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return true;
         }
 
-       
+     
     }
 }

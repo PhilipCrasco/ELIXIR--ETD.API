@@ -21,6 +21,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.BORROWED_INTERFACE
 
         Task<PagedList<GetAllBorrowedReceiptWithPaginationDto>> GetAllBorrowedIssuetWithPaginationOrig(UserParams userParams, string search, bool status);
 
+        Task<bool> UpdateIssuePKey(BorrowedIssueDetails borowed);
+
 
 
         Task<bool> ValidateBorrowReceiptIssue(BorrowedReceipt borrowed);
