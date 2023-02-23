@@ -34,7 +34,7 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.WAREHOUSE_INTERFACE
 
         Task<IReadOnlyList<ListofwarehouseReceivingIdDto>> ListOfWarehouseReceivingId(string search);
 
-
+        Task<IReadOnlyList<ListofwarehouseReceivingIdDto>> ListOfWarehouseReceivingId();
 
     }
 }

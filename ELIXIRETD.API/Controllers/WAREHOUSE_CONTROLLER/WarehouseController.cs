@@ -225,7 +225,37 @@ namespace ELIXIRETD.API.Controllers.WAREHOUSE_CONTROLLER
             return Ok(warehouseResult);
         }
 
+
+
         // ADDITIONAL
+
+
+
+
+
+        [HttpGet]
+        [Route("GetAllListOfWarehouseReceivingIdNull")]
+        public async Task<IActionResult> GetAllListOfWarehouseReceivingIdNull()
+        {
+            var warehouse = await _unitOfWork.Receives.ListOfWarehouseReceivingId();
+
+            return Ok(warehouse);
+        }
+
+        [HttpGet]
+        [Route("GetAllListOfWarehouseReceivingId")]
+        public async Task<IActionResult> GetAllListOfWarehouseReceivingId([FromQuery] string search)
+        {
+
+            if (search == null)
+
+                return await GetAllListOfWarehouseReceivingIdNull();
+
+
+            var warehouse = await _unitOfWork.Receives.ListOfWarehouseReceivingId(search);
+
+            return Ok(warehouse);
+        }
 
 
 
