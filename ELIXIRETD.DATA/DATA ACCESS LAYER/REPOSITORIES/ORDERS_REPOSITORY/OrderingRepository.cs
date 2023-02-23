@@ -963,11 +963,10 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             foreach ( var items in existing)
             {
-                items.IsPrepared = false;
+
                 items.ApprovedDate = DateTime.Now;
                 items.ApproveDateTempo = DateTime.Now;
                 items.IsApprove = true;
-                items.IsTransact = true;
          
             }
 
@@ -1462,14 +1461,17 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
         public async Task<bool> TransanctListOfMoveOrders(TransactMoveOrder transact)
         {
             var existing = await _context.MoveOrders.Where(x => x.OrderNo == transact.OrderNo)
-                                                   .ToListAsync();
+                                                       .ToListAsync();
 
             await _context.TransactOrder.AddAsync(transact);
 
+            if (existing == null)
+                return false;
 
             foreach (var items in existing)
             {
                 items.IsTransact = true;
+                
             }
 
             return true;

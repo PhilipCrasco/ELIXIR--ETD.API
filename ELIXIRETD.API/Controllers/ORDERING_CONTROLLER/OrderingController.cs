@@ -717,15 +717,22 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
         public async Task<IActionResult> TransactListOfMoveOrders([FromBody] TransactMoveOrder[] transact)
         {
 
+           
             foreach (TransactMoveOrder items in transact)
             {
+
+             var exist =  await _unitofwork.Orders.TransanctListOfMoveOrders(items);
+
+                if (exist == false)
+                    return BadRequest("No existing approved move order!");
 
                 items.IsActive = true;
                 items.IsTransact = true;
                 items.PreparedDate = DateTime.Now;
 
-                await _unitofwork.Orders.TransanctListOfMoveOrders(items);
+              
             }
+
 
             await _unitofwork.CompleteAsync();
 

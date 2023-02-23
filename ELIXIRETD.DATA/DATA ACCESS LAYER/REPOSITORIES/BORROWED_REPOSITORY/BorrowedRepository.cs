@@ -185,7 +185,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                     warehouse.WarehouseId,
                                     warehouse.ItemCode,
                                     warehouse.RecievingDate,
-                                    WarehouseActualGood = warehouse.WarehouseId != null ? warehouse.ActualGood : 0,
+                                    WarehouseActualGood = warehouse.ActualGood != null ? warehouse.ActualGood : 0,
                                     MoveOrderOut = Moveorder.QuantityOrdered != null ? Moveorder.QuantityOrdered : 0,
                                     IssueOut = issue.Out != null ? issue.Out : 0,
                                     BorrowedOut = borrowOut.Out != null ? borrowOut.Out : 0
