@@ -224,9 +224,51 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
         }
 
 
+        public async Task<bool> InActiveBorrowedIssues(BorrowedIssue borrowed)
+        {
+            
+            var existing = await _context.BorrowedIssues.Where(x => x.Id == borrowed.Id)
+                                                        .FirstOrDefaultAsync();
 
 
+            var existingdetails = await _context.BorrowedIssueDetails.Where(x => x.BorrowedPKey == borrowed.Id)
+                                                            .ToListAsync();
 
+            if(existing ==null)
+                return false;
+
+            existing.IsActive = false;
+
+            foreach(var items in existingdetails)
+            {
+
+                items.IsActive = false;
+            }
+            return true;
+
+        }
+
+        public async Task<bool> ActiveBorrowedIssues(BorrowedIssue borrowed)
+        {
+            var existing = await _context.BorrowedIssues.Where(x => x.Id == borrowed.Id)
+                                                       .FirstOrDefaultAsync();
+
+
+            var existingdetails = await _context.BorrowedIssueDetails.Where(x => x.BorrowedPKey == borrowed.Id)
+                                                            .ToListAsync();
+
+            if (existing == null)
+                return false;
+
+            existing.IsActive = true;
+
+            foreach (var items in existingdetails)
+            {
+
+                items.IsActive = true;
+            }
+            return true;
+        }
 
 
 
@@ -253,6 +295,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return true;
         }
 
-     
+       
+
+
     }
 }

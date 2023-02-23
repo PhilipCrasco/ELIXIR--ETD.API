@@ -23,6 +23,9 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.BORROWED_INTERFACE
 
         Task<bool> UpdateIssuePKey(BorrowedIssueDetails borowed);
 
+        Task<bool> InActiveBorrowedIssues (BorrowedIssue borrowed);
+
+        Task<bool> ActiveBorrowedIssues(BorrowedIssue borrowed);
 
 
         Task<bool> ValidateBorrowReceiptIssue(BorrowedReceipt borrowed);
