@@ -7,6 +7,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.IMPORT_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.WAREHOUSE_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
 {
@@ -530,8 +531,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                          Id = total.Key.Id,
                                          ItemCode = total.Key.ItemCode,
                                          ItemDescription = total.Key.ItemDescription,
-                                         ReceivingDate = total.Key.ReceivingDate.ToString("MM/dd/yyyy")
-
+                                         ReceivingDate = total.Key.ReceivingDate.ToString("MM/dd/yyyy"),
+                                           ActualGood = total.Key.ActualGood - total.Key.Issueout - total.Key.Borrowout - total.Key.MoveOrderOut
                                      });
 
             return await warehouseInventory.ToListAsync();
@@ -619,7 +620,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                          Id = total.Key.Id,
                                          ItemCode = total.Key.ItemCode,
                                          ItemDescription = total.Key.ItemDescription,
-                                         ReceivingDate = total.Key.ReceivingDate.ToString("MM/dd/yyyy")
+                                         ReceivingDate = total.Key.ReceivingDate.ToString("MM/dd/yyyy"),
+                                         ActualGood  = total.Key.ActualGood - total.Key.Issueout - total.Key.Borrowout - total.Key.MoveOrderOut 
 
                                      });
 
