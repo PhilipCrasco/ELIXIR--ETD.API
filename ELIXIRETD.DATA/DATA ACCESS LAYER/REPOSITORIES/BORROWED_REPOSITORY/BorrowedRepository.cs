@@ -6,6 +6,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
@@ -290,6 +291,44 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return await warehouse.ToListAsync();
         }
 
+        public async Task<IReadOnlyList<GetAllAvailableBorrowIssueDto>> GetAllAvailableIssue(int empid)
+        {
+            var employee = await _context.Users.Where(x => x.Id == empid)
+                                                .FirstOrDefaultAsync();
+
+            var items = _context.BorrowedIssueDetails.Where(x => x.IsActive == true)
+                                                         .Where(x => x.IsTransact != true)
+                                                         .Where(x => x.PreparedBy == employee.FullName)
+                                                         .Select(x => new GetAllAvailableBorrowIssueDto
+                                                         {
+
+                                                             Id = x.Id,
+                                                             ItemCode = x.ItemCode,
+                                                             ItemDescription = x.ItemDescription,
+                                                             Uom = x.Uom,
+                                                             TotalQuantity = x.Quantity,
+                                                             BorrowDate = x.BorrowedDate.ToString()
+
+                                                         });
+
+            return await items.ToListAsync();
+        }
+
+        public async Task<bool> CancelIssuePerItemCode(BorrowedIssueDetails borrowed)
+        {
+
+            var items = await _context.BorrowedIssueDetails.Where(x => x.Id == borrowed.Id)
+                                                           .FirstOrDefaultAsync();
+
+
+            if (items == null)
+                return false;
+
+            items.IsActive = false;
+
+            return true;
+
+        }
 
 
 
@@ -313,9 +352,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return true;
         }
 
-        public Task<IReadOnlyList<GetAllAvailableBorrowIssueDto>> GetAllAvailableIssue(int empid)
-        {
-            throw new NotImplementedException();
-        }
+      
     }
 }

@@ -3,6 +3,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.BORROWED_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.EXTENSIONS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL;
+using ELIXIRETD.DATA.SERVICES;
 
 namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
 {
@@ -164,7 +165,30 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
             return Ok(borrow);
         }
 
+        [HttpGet]
+        [Route("GetAllActiveBorrowedIssueTransaction")]
+        public async Task<IActionResult> GetAllActiveBorrowedIssueTransaction([FromQuery] int empid)
+        {
 
+            var issue = await _unitofwork.Borrowed.GetAllAvailableIssue(empid);
+
+            return Ok(issue);
+
+        }
+
+        [HttpPut]
+        [Route("CancelItemCodeInBorrowedIssue")]
+        public async Task<IActionResult> CancelItemCodeInBorrowedIssue([FromBody] BorrowedIssueDetails[] borrowed)
+        {
+
+            foreach(BorrowedIssueDetails items in borrowed)
+            {
+                await _unitofwork.Borrowed.CancelIssuePerItemCode(items);
+                await _unitofwork.CompleteAsync();  
+            }
+
+            return new JsonResult("Successfully cancelled transaction!");
+        }
 
 
 
