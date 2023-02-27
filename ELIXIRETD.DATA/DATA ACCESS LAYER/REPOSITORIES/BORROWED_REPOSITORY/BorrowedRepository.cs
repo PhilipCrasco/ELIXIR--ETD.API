@@ -215,7 +215,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
             var existing = await _context.BorrowedIssueDetails.Where(x => x.Id == borowed.Id)
                                                                .FirstOrDefaultAsync();
-            if (existing != null)
+            if (existing == null)
                 return false;
 
             existing.BorrowedPKey = borowed.BorrowedPKey;

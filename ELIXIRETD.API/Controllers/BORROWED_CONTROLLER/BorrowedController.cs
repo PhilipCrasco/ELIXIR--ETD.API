@@ -21,7 +21,7 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
 
         [HttpGet]
         [Route("GetAllBorrowedIssueWithPagination")]
-        public async Task<ActionResult<IEnumerable<GetAllBorrowedReceiptWithPaginationDto>>> GetAllBorrowedIssueWithPagination([FromBody] UserParams userParams , [FromQuery] bool status)
+        public async Task<ActionResult<IEnumerable<GetAllBorrowedReceiptWithPaginationDto>>> GetAllBorrowedIssueWithPagination([FromQuery] UserParams userParams , [FromQuery] bool status)
         {
             var issue = await _unitofwork.Borrowed.GetAllBorrowedReceiptWithPagination(userParams, status);
 
