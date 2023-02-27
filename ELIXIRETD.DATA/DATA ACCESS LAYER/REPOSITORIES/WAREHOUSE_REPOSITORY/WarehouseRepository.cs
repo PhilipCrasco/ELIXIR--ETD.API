@@ -398,7 +398,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
             if (validateActualRemaining == null)
                 return true;
 
-            if (validateActualRemaining.ActualRemaining < receiving.ActualDelivered)
+            if (validateActualRemaining.ActualRemaining < receiving.ActualDelivered) 
                 return false;
 
             return true;
