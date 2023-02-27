@@ -274,7 +274,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
         public async Task<IReadOnlyList<GetAllDetailsInBorrowedIssueDto>> GetAllDetailsInBorrowedIssue()
         {
             var warehouse = _context.BorrowedIssueDetails
-                                                          .GroupBy(x => new
+.GroupBy(x => new
                                                           {
                                                               x.WarehouseId,
                                                               x.CustomerName,
@@ -286,7 +286,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                                               x.Quantity,
                                                               x.Consume,
                                                               x.Remarks,
-
                                                           })       
                                                           .OrderBy(x => x.Key.WarehouseId)
                                                          .Select(x => new GetAllDetailsInBorrowedIssueDto          
@@ -300,6 +299,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                                              ItemDescription = x.Key.ItemDescription,
                                                              TotalQuantity = x.Sum(x => x.Quantity),
                                                              Consumes = x.Key.Consume != null ? x.Key.Consume : 0,
+                                                             ReturnQuantity = x.Sum(x => x.Quantity) - x.Key.Consume,
                                                              Remarks = x.Key.Remarks
 
                                                          });
