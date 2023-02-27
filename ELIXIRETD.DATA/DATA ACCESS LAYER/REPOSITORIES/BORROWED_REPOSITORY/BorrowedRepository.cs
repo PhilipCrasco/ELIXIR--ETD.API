@@ -271,20 +271,36 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return true;
         }
 
-        public async Task<IReadOnlyList<GetAllDetailsInBorrowedIssueDto>> GetAllDetailsInBorrowedIssue(int id)
+        public async Task<IReadOnlyList<GetAllDetailsInBorrowedIssueDto>> GetAllDetailsInBorrowedIssue()
         {
-            var warehouse = _context.BorrowedIssueDetails.Where(x => x.BorrowedPKey == id)
-                                                         .Select(x => new GetAllDetailsInBorrowedIssueDto
-                                                         {
+            var warehouse = _context.BorrowedIssueDetails
+                                                          .GroupBy(x => new
+                                                          {
+                                                              x.WarehouseId,
+                                                              x.CustomerName,
+                                                              x.CustomerCode,
+                                                              x.BorrowedPKey,
+                                                              x.ItemCode,
+                                                              x.ItemDescription,
+                                                              x.PreparedBy,
+                                                              x.Quantity,
+                                                              x.Consume,
+                                                              x.Remarks,
 
-                                                             BorrowedPKey = x.BorrowedPKey,
-                                                             Customer = x.CustomerName,
-                                                             CustomerCode = x.CustomerCode,
-                                                             PreparedDate = x.PreparedBy,
-                                                             ItemCode = x.ItemCode,
-                                                             ItemDescription = x.ItemDescription,
-                                                             TotalQuantity = x.Quantity,
-                                                             Remarks = x.Remarks,
+                                                          })       
+                                                          .OrderBy(x => x.Key.WarehouseId)
+                                                         .Select(x => new GetAllDetailsInBorrowedIssueDto          
+                                                         {
+                                                             WarehouseId = x.Key.WarehouseId,
+                                                             BorrowedPKey = x.Key.BorrowedPKey,
+                                                             Customer = x.Key.CustomerName,
+                                                             CustomerCode = x.Key.CustomerCode,
+                                                             PreparedDate = x.Key.PreparedBy,
+                                                             ItemCode = x.Key.ItemCode,
+                                                             ItemDescription = x.Key.ItemDescription,
+                                                             TotalQuantity = x.Sum(x => x.Quantity),
+                                                             Consumes = x.Key.Consume != null ? x.Key.Consume : 0,
+                                                             Remarks = x.Key.Remarks
 
                                                          });
 
