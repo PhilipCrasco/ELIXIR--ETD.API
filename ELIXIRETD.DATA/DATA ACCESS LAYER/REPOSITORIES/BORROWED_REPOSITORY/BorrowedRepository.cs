@@ -287,7 +287,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                                               x.Consume,
                                                               x.Remarks,
                                                           })       
-                                                          .OrderBy(x => x.Key.WarehouseId)
+                                                         .OrderBy(x => x.Key.WarehouseId)
                                                          .Select(x => new GetAllDetailsInBorrowedIssueDto          
                                                          {
                                                              WarehouseId = x.Key.WarehouseId,
@@ -306,6 +306,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
             return await warehouse.ToListAsync();
         }
+
 
         public async Task<IReadOnlyList<GetAllAvailableBorrowIssueDto>> GetAllAvailableIssue(int empid)
         {

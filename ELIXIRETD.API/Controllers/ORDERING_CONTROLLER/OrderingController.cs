@@ -318,7 +318,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             order.ItemCode = details.ItemCode;
             order.ItemDescription = details.ItemDescription;
             order.Uom = details.Uom;
-            order.QuantityOrdered = details.QuantityOrder;
             order.Category = details.Category;
             order.IsActive = true;
             order.IsPrepared = true;
