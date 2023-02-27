@@ -160,7 +160,7 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
         public async Task<IActionResult> GetAllDetailsInBorrowedIssue([FromQuery] int id)
         {
 
-            var borrow = await _unitofwork.Borrowed.GetAllDetailsInBorrowedIssue(id);
+            var borrow = await _unitofwork.Borrowed.GetAllDetailsInBorrowedIssue();
 
             return Ok(borrow);
         }
