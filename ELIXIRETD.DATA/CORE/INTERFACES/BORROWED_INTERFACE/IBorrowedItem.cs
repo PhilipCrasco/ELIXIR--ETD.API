@@ -32,7 +32,9 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.BORROWED_INTERFACE
 
         Task<bool> CancelIssuePerItemCode(BorrowedIssueDetails borrowed);
 
-        Task<bool> ValidateBorrowReceiptIssue(BorrowedReceipt borrowed);
+
+
+        Task<bool> EditReturnQuantity(BorrowedIssueDetails borrowed);
 
 
 

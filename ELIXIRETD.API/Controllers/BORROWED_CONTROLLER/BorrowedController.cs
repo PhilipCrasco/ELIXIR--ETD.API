@@ -191,8 +191,22 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
         }
 
 
+        [HttpPut]
+        [Route("EditReturnedQuantity")]
+        public async Task<IActionResult> EditQuantityReturned (BorrowedIssueDetails borrowed)
+        {
+
+           var edit = await _unitofwork.Borrowed.EditReturnQuantity(borrowed);
+
+            if(edit == false)
+               return BadRequest("No id existing");
+
+            await _unitofwork.CompleteAsync();
+
+            return Ok(edit);
 
 
+        }
 
 
 
