@@ -8,6 +8,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.Xml;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 {
@@ -273,8 +274,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
         public async Task<IReadOnlyList<GetAllDetailsInBorrowedIssueDto>> GetAllDetailsInBorrowedIssue()
         {
-            var warehouse = _context.BorrowedIssueDetails
-.GroupBy(x => new
+            var warehouse = _context.BorrowedIssueDetails .GroupBy(x => new
                                                           {
                                                               x.WarehouseId,
                                                               x.CustomerName,
@@ -283,29 +283,38 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                                               x.ItemCode,
                                                               x.ItemDescription,
                                                               x.PreparedBy,
+                                                              x.PreparedDate,
                                                               x.Quantity,
                                                               x.Consume,
                                                               x.Remarks,
-                                                          })       
-                                                         .OrderBy(x => x.Key.WarehouseId)
-                                                         .Select(x => new GetAllDetailsInBorrowedIssueDto          
-                                                         {
+
+                                                          }).OrderBy(x => x.Key.WarehouseId)
+                                                            .Select(x => new GetAllDetailsInBorrowedIssueDto
+                                                            {
+
+
                                                              WarehouseId = x.Key.WarehouseId,
                                                              BorrowedPKey = x.Key.BorrowedPKey,
                                                              Customer = x.Key.CustomerName,
                                                              CustomerCode = x.Key.CustomerCode,
-                                                             PreparedDate = x.Key.PreparedBy,
+                                                             PreparedDate = x.Key.PreparedDate.ToString(),
                                                              ItemCode = x.Key.ItemCode,
                                                              ItemDescription = x.Key.ItemDescription,
                                                              TotalQuantity = x.Sum(x => x.Quantity),
                                                              Consumes = x.Key.Consume != null ? x.Key.Consume : 0,
-                                                             ReturnQuantity = x.Sum(x => x.Quantity) - x.Key.Consume,
+                                                             ReturnQuantity = x.Key.Consume != null ? x.Key.Consume : 0 - x.Sum(x => x.Quantity),
                                                              Remarks = x.Key.Remarks
 
-                                                         });
-
+                                                            });
+                                                          
             return await warehouse.ToListAsync();
         }
+
+
+
+
+
+
 
 
         public async Task<IReadOnlyList<GetAllAvailableBorrowIssueDto>> GetAllAvailableIssue(int empid)

@@ -9,7 +9,9 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection.PortableExecutable;
 using System.Security.Cryptography;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
@@ -32,19 +34,12 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             var existing = await _context.Customers.Where(x => x.CustomerName == Orders.CustomerName)
                                                    .FirstOrDefaultAsync();
 
-
-          
-
-
-            if (existingInfo == null)
-                return false;
-
+           
+            
             if (existing == null)
                 return false;
-
             Orders.ItemdDescription = existingInfo.ItemDescription;
             Orders.Customercode = existing.CustomerCode;
-
             Orders.IsActive = true;
             
 
@@ -1478,26 +1473,41 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
         }
 
-        public async Task<bool>SavePreparedMoveOrder(Ordering order)
+        public async Task<bool>SavePreparedMoveOrder(MoveOrder order )
         {
-            var existing = await _context.Orders.Where(x => x.Id == order.Id)
-                                         .FirstOrDefaultAsync();
+            var existing = await _context.Orders.Where(x => x.OrderNoPKey == order.OrderNo)
+                                            .ToListAsync();
 
-            var existingMoveOrder = await _context.MoveOrders.Where(x => x.OrderNoPkey == order.Id)
+            var existingsMoveOrdes = await _context.MoveOrders.Where(x => x.OrderNo == order.OrderNo)
                                                   .ToListAsync();
 
             if (existing == null)
                 return false;
 
-            existing.IsMove = true;
+            foreach( var x in existing)
+            {
+                x.IsMove = true;
+
+            }
+
+            foreach(var x in existingsMoveOrdes )
+            {
+                x.CompanyCode = order.CompanyCode;
+               x.CompanyName = order.CompanyName;
+                x.DepartmentCode = order.DepartmentCode;
+                x.DepartmentName = order.DepartmentName;
+                x.LocationCode = order.LocationCode;
+                x.LocationName = order.LocationName;
+                x.AccountCode = order.AccountCode;
+                x.AccountTitles = order.AccountTitles;
+            }
+           
 
             return true;
 
         }
 
-
-
-
+      
         //================================= Validation =============================================================================
 
 
@@ -1586,7 +1596,26 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
+        public async Task<bool> ValidateQuantity(decimal quantity)
+        {
+            var existingQuantity = await _context.Orders
+                                 .Where(x => x.QuantityOrdered == quantity)
+                                 .Select(x => x.QuantityOrdered)
+                                 .FirstOrDefaultAsync();
+
+            if( existingQuantity == null)
+            {
+                return false;
+            }
+            if (!decimal.TryParse(existingQuantity.ToString(), out decimal decimalValue))
+                return false;
+
+            return true;
+        }
+
        
+
+
 
 
 

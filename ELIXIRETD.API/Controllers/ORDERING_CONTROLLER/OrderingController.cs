@@ -31,11 +31,12 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                 List<Ordering> CustomerNameNotExist = new List<Ordering>();
                 List<Ordering> UomNotExist = new List<Ordering>();
                 List<Ordering> ItemCodesExist = new List<Ordering>();
+                List<Ordering> QuantityInValid = new List<Ordering>();
                 List<Ordering> PreviousDateNeeded = new List<Ordering>();
                 
                 foreach (Ordering items in order)
                 {
-
+        
                     if (order.Count(x => x.TrasactId == items.TrasactId && x.ItemCode == items.ItemCode && x.CustomerName == items.CustomerName) > 1)
                     {
                         DuplicateList.Add(items);
@@ -47,6 +48,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                         var validateCustomerName = await _unitofwork.Orders.ValidateCustomerName(items.CustomerName);
                         var validateItemCode = await _unitofwork.Orders.ValidateItemCode(items.ItemCode);
                         var validateUom = await _unitofwork.Orders.ValidateUom(items.Uom);
+                        var validateQuantity = await _unitofwork.Orders.ValidateQuantity(items.QuantityOrdered);
 
 
                         if (validateOrderNoAndItemcode == true)
@@ -72,6 +74,10 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                         {
                             UomNotExist.Add(items);
                         }
+                        else if (validateQuantity == false)
+                        {
+                            QuantityInValid.Add(items);
+                        }
 
                         else
                             AvailableImport.Add(items);
@@ -88,10 +94,11 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                    UomNotExist,
                    CustomerNameNotExist,
                    PreviousDateNeeded,
+                    QuantityInValid,
                     //CustomerCodeNotExist
                 };
 
-                if ( DuplicateList.Count == 0 &&  CustomerNameNotExist.Count == 0  && ItemCodesExist.Count == 0 && UomNotExist.Count == 0 && PreviousDateNeeded.Count == 0 )
+                if ( DuplicateList.Count == 0 &&  CustomerNameNotExist.Count == 0  && ItemCodesExist.Count == 0 && UomNotExist.Count == 0 && PreviousDateNeeded.Count == 0 && QuantityInValid.Count == 0)
                 {
                     await _unitofwork.CompleteAsync();
                     return Ok("Successfully Add!");
@@ -447,17 +454,17 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         [HttpPut]
         [Route("AddSavePreparedMoveOrder")]
-        public async Task<IActionResult> AddSavePreparedMoveOrder([FromBody] Ordering[] orders)
+        public async Task<IActionResult> AddSavePreparedMoveOrder([FromBody] MoveOrder[] orders )
         {
 
-            foreach (Ordering items in orders)
+            foreach (MoveOrder items in orders)
             {
                 await _unitofwork.Orders.SavePreparedMoveOrder(items);
-            }
 
+            }
             await _unitofwork.CompleteAsync();
 
-            return new JsonResult("Successfully added! ");
+            return new JsonResult("Successfully added!");
         }
 
 

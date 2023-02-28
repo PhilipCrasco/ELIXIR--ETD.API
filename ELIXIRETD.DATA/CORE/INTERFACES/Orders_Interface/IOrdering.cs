@@ -72,9 +72,9 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
 
         Task<bool> ValidatePrepareDate(Ordering orders);
 
-        Task<bool> SavePreparedMoveOrder(Ordering order);
+        Task<bool> SavePreparedMoveOrder(MoveOrder order);
 
-        
+
 
 
 
@@ -92,6 +92,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         //Task<bool> ValidateCustomerCode(string Customercode);
 
         Task<bool> ValidateWarehouseId(int id , string itemcode);
+
+        Task<bool> ValidateQuantity(decimal quantity);
     
        
 
