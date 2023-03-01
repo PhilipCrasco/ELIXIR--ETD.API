@@ -6,9 +6,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography.Xml;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 {
@@ -290,6 +288,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                 x.Remarks,
 
             }).OrderBy(x => x.Key.WarehouseId)
+
                                                             .Select(x => new GetAllDetailsInBorrowedIssueDto
                                                             {
 
@@ -302,24 +301,15 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                                                 ItemCode = x.Key.ItemCode,
                                                                 ItemDescription = x.Key.ItemDescription,
                                                                 TotalQuantity = x.Sum(x => x.Quantity),
-                                                                Consumes = x.Sum(x => x.Quantity != null ? x.Quantity : 0) - x.Key.ReturnQuantity ,
+                                                                Consumes = x.Sum(x => x.Quantity != null ? x.Quantity : 0) - x.Key.ReturnQuantity,
                                                                 ReturnQuantity = x.Key.ReturnQuantity != null ? x.Key.ReturnQuantity : 0,
                                                                 Remarks = x.Key.Remarks
 
-                                                            }); ; ;
-                                                          
+                                                            });
+
+
             return await warehouse.ToListAsync();
         }
-
-
-
-
-
-
-
-
-
-
 
 
         public async Task<IReadOnlyList<GetAllAvailableBorrowIssueDto>> GetAllAvailableIssue(int empid)

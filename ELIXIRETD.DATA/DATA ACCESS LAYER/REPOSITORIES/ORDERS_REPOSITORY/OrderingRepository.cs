@@ -8,6 +8,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.AspNetCore.Http.Metadata;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -38,6 +39,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             
             if (existing == null)
                 return false;
+
             Orders.ItemdDescription = existingInfo.ItemDescription;
             Orders.Customercode = existing.CustomerCode;
             Orders.IsActive = true;
@@ -1456,18 +1458,37 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
         public async Task<bool> TransanctListOfMoveOrders(TransactMoveOrder transact)
         {
             var existing = await _context.MoveOrders.Where(x => x.OrderNo == transact.OrderNo)
+                                                    .Where(x => x.IsApprove == true )
+                                                    .ToListAsync();
+
+
+            var existingtransact = await _context.TransactOrder.Where(x => x.OrderNo == transact.OrderNo)
                                                        .ToListAsync();
+   
+
+            
+               foreach (var x in existingtransact)
+            {
+               
+                x.IsActive = true;
+                x.IsTransact = true;
+                x.PreparedDate = DateTime.Now;
+
+            }
 
             await _context.TransactOrder.AddAsync(transact);
 
-            if (existing == null)
+            if (!existing.Any())
                 return false;
 
-            foreach (var items in existing)
+
+            foreach (var itemss in existing)
             {
-                items.IsTransact = true;
-                
+                itemss.IsTransact = true;          
             }
+
+
+
 
             return true;
 
@@ -1476,12 +1497,13 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
         public async Task<bool>SavePreparedMoveOrder(MoveOrder order )
         {
             var existing = await _context.Orders.Where(x => x.OrderNoPKey == order.OrderNo)
-                                            .ToListAsync();
+                                                .ToListAsync();
 
-            var existingsMoveOrdes = await _context.MoveOrders.Where(x => x.OrderNo == order.OrderNo)
-                                                  .ToListAsync();
+            var existingsMoveOrders = await _context.MoveOrders.Where(x => x.OrderNo == order.OrderNo)
+                                                              .Where(x => x.IsPrepared == true)
+                                                              .ToListAsync();
 
-            if (existing == null)
+            if (!existingsMoveOrders.Any())
                 return false;
 
             foreach( var x in existing)
@@ -1490,7 +1512,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             }
 
-            foreach(var x in existingsMoveOrdes )
+            foreach(var x in existingsMoveOrders )
             {
                 x.CompanyCode = order.CompanyCode;
                x.CompanyName = order.CompanyName;

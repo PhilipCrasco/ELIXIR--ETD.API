@@ -23,7 +23,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
         public async Task<bool> AddNewReceivingDetails(Warehouse_Receiving receive)
         {
 
-            receive.ActualDelivered = receive.ActualDelivered;
+            receive.ActualGood = receive.ActualDelivered;
             await _context.WarehouseReceived.AddAsync(receive);
 
             return true;

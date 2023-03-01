@@ -459,8 +459,9 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
             foreach (MoveOrder items in orders)
             {
-                await _unitofwork.Orders.SavePreparedMoveOrder(items);
-
+                if (!await _unitofwork.Orders.SavePreparedMoveOrder(items))
+                    return BadRequest("No order no exist");
+                    
             }
             await _unitofwork.CompleteAsync();
 
@@ -720,27 +721,21 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
         [HttpPost]
         [Route("TransactListOfMoveOrders")]
-        public async Task<IActionResult> TransactListOfMoveOrders([FromBody] TransactMoveOrder[] transact)
+        public async Task<IActionResult> TransactListsOfMoveOrders([FromBody] TransactMoveOrder[] transact)
         {
+        
 
-           
             foreach (TransactMoveOrder items in transact)
             {
 
-             var exist =  await _unitofwork.Orders.TransanctListOfMoveOrders(items);
+                if (!await _unitofwork.Orders.TransanctListOfMoveOrders(items))
+                    return BadRequest("no order exist");
 
-                if (exist == false)
-                    return BadRequest("No existing approved move order!");
-
-                items.IsActive = true;
-                items.IsTransact = true;
-                items.PreparedDate = DateTime.Now;
-
-              
+             
             }
-
-
             await _unitofwork.CompleteAsync();
+
+
 
             return Ok(transact);
 
