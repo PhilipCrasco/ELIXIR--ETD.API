@@ -383,6 +383,11 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
             editquantity.ReturnQuantity = borrowed.ReturnQuantity;
 
+            if(editquantity.Quantity < editquantity.ReturnQuantity || editquantity.ReturnQuantity < 0) 
+                return false;
+
+            
+
             return true;
 
         }
@@ -395,8 +400,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                 
             var returnedDetails = await _context.BorrowedIssueDetails.Where(x => x.BorrowedPKey == borrowed.Id)
                                                                      .ToListAsync() ;
-
-
             foreach( var item in returnedDetails)
             {
                 
@@ -405,7 +408,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                 item.IsTransact = false;
                 item.ReturnedDate= DateTime.Now;                           
             }
-
 
             foreach( var item in returned)
             {

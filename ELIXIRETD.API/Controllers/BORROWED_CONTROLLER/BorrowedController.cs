@@ -196,13 +196,15 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
         public async Task<IActionResult> EditQuantityReturned (BorrowedIssueDetails borrowed)
         {
 
-            if ( borrowed.ReturnQuantity < borrowed.Quantity  || borrowed.ReturnQuantity < 0)
-                return BadRequest("Edit failed, please check your input in returned quantity!");
+     
 
             var edit = await _unitofwork.Borrowed.EditReturnQuantity(borrowed);
 
-            if(edit == false)
-               return BadRequest("No id existing");
+            
+ 
+              if(edit == false)
+               return BadRequest("Edit failed, please check your input in returned quantity!");
+
 
             await _unitofwork.CompleteAsync();
 
