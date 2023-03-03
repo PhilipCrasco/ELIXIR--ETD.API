@@ -91,7 +91,7 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
         public async Task<IActionResult> AddNewBorrowedIssueDetails ([FromBody] BorrowedIssueDetails borrowed)
         {
             borrowed.IsActive= true;
-
+            borrowed.IsTransact= true;
             borrowed.PreparedDate= DateTime.Now;
 
             await _unitofwork.Borrowed.AddBorrowedIssueDetails(borrowed);
@@ -160,7 +160,7 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
         public async Task<IActionResult> GetAllDetailsInBorrowedIssue([FromQuery] int id)
         {
 
-            var borrow = await _unitofwork.Borrowed.GetAllDetailsInBorrowedIssue();
+            var borrow = await _unitofwork.Borrowed.GetAllDetailsInBorrowedIssue(id);
 
             return Ok(borrow);
         }
@@ -196,7 +196,10 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
         public async Task<IActionResult> EditQuantityReturned (BorrowedIssueDetails borrowed)
         {
 
-           var edit = await _unitofwork.Borrowed.EditReturnQuantity(borrowed);
+            if ( borrowed.ReturnQuantity < borrowed.Quantity  || borrowed.ReturnQuantity < 0)
+                return BadRequest("Edit failed, please check your input in returned quantity!");
+
+            var edit = await _unitofwork.Borrowed.EditReturnQuantity(borrowed);
 
             if(edit == false)
                return BadRequest("No id existing");

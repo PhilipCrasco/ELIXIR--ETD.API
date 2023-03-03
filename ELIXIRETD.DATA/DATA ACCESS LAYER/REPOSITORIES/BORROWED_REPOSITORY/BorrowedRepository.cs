@@ -5,6 +5,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.MISCELLANEOUS_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.SETUP_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +13,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 {
     public class BorrowedRepository : IBorrowedItem
     {
-        private readonly StoreContext _context; 
+        private readonly StoreContext _context;
 
         public BorrowedRepository(StoreContext context)
         {
@@ -189,18 +190,18 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                     BorrowedOut = borrowOut.Out != null ? borrowOut.Out : 0
 
 
-                                }into total
-                                
-                                
+                                } into total
+
+
                                 select new GetAvailableStocksForBorrowedIssue_Dto
                                 {
 
                                     WarehouseId = total.Key.WarehouseId,
                                     ItemCode = total.Key.ItemCode,
                                     RemainingStocks = total.Key.WarehouseActualGood - total.Key.MoveOrderOut - total.Key.IssueOut - total.Key.BorrowedOut,
-                                    ReceivingDate  = total.Key.RecievingDate
+                                    ReceivingDate = total.Key.RecievingDate
 
-                                }).Where(x => x.RemainingStocks !=0)
+                                }).Where(x => x.RemainingStocks != 0)
                                    .Where(x => x.ItemCode == itemcode);
 
             return await getAvailable.ToListAsync();
@@ -226,7 +227,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
         public async Task<bool> InActiveBorrowedIssues(BorrowedIssue borrowed)
         {
-            
+
             var existing = await _context.BorrowedIssues.Where(x => x.Id == borrowed.Id)
                                                         .FirstOrDefaultAsync();
 
@@ -234,12 +235,12 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             var existingdetails = await _context.BorrowedIssueDetails.Where(x => x.BorrowedPKey == borrowed.Id)
                                                             .ToListAsync();
 
-            if(existing ==null)
+            if (existing == null)
                 return false;
 
             existing.IsActive = false;
 
-            foreach(var items in existingdetails)
+            foreach (var items in existingdetails)
             {
 
                 items.IsActive = false;
@@ -270,40 +271,35 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return true;
         }
 
-        public async Task<IReadOnlyList<GetAllDetailsInBorrowedIssueDto>> GetAllDetailsInBorrowedIssue()
+        public async Task<IReadOnlyList<GetAllDetailsInBorrowedIssueDto>> GetAllDetailsInBorrowedIssue(int id)
         {
-            var warehouse = _context.BorrowedIssueDetails.GroupBy(x => new
-            {
-                x.WarehouseId,
-                x.CustomerName,
-                x.CustomerCode,
-                x.BorrowedPKey,
-                x.ItemCode,
-                x.ItemDescription,
-                x.PreparedBy,
-                x.PreparedDate,
-                x.Quantity,
-                x.Consume,
-                x.ReturnQuantity,
-                x.Remarks,
+            var warehouse = _context.BorrowedIssueDetails
 
-            }).OrderBy(x => x.Key.WarehouseId)
+            .OrderBy(x => x.WarehouseId )
+              .ThenBy(x => x.PreparedDate)
+              .ThenBy(x => x.ItemCode)
+              .ThenBy(x => x.CustomerName )
+              .Where(x => x.Id == id)
+              .Where(x => x.IsTransact == true)
+              .Where(x => x.IsActive == true)
+              
+              
 
                                                             .Select(x => new GetAllDetailsInBorrowedIssueDto
                                                             {
 
 
-                                                                WarehouseId = x.Key.WarehouseId,
-                                                                BorrowedPKey = x.Key.BorrowedPKey,
-                                                                Customer = x.Key.CustomerName,
-                                                                CustomerCode = x.Key.CustomerCode,
-                                                                PreparedDate = x.Key.PreparedDate.ToString(),
-                                                                ItemCode = x.Key.ItemCode,
-                                                                ItemDescription = x.Key.ItemDescription,
-                                                                TotalQuantity = x.Sum(x => x.Quantity),
-                                                                Consumes = x.Sum(x => x.Quantity != null ? x.Quantity : 0) - x.Key.ReturnQuantity,
-                                                                ReturnQuantity = x.Key.ReturnQuantity != null ? x.Key.ReturnQuantity : 0,
-                                                                Remarks = x.Key.Remarks
+                                                                WarehouseId = x.WarehouseId,
+                                                                BorrowedPKey = x.BorrowedPKey,
+                                                                Customer = x.CustomerName,
+                                                                CustomerCode = x.CustomerCode,
+                                                                PreparedDate = x.PreparedDate.ToString(),
+                                                                ItemCode = x.ItemCode,
+                                                                ItemDescription = x.ItemDescription,
+                                                                Quantity = x.Quantity,
+                                                                Consumes = x.Quantity  - x.ReturnQuantity,
+                                                                ReturnQuantity = x.ReturnQuantity != null ? x.ReturnQuantity : 0,
+                                                                Remarks = x.Remarks
 
                                                             });
 
@@ -347,6 +343,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                 return false;
 
             items.IsActive = false;
+            
 
             return true;
 
@@ -390,9 +387,38 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
         }
 
-        public Task<bool> SaveReturnedQuantity(BorrowedIssueDetails borrowed)
+        public async Task<bool> SaveReturnedQuantity(BorrowedIssueDetails borrowed)
         {
-            throw new NotImplementedException();
+            
+            var returned  = await _context.BorrowedIssues.Where(x => x.Id == borrowed.Id)
+                                                               .ToListAsync();
+                
+            var returnedDetails = await _context.BorrowedIssueDetails.Where(x => x.BorrowedPKey == borrowed.Id)
+                                                                     .ToListAsync() ;
+
+
+            foreach( var item in returnedDetails)
+            {
+                
+                item.IsReturned= true;
+                item.IsActive = false;
+                item.IsTransact = false;
+                item.ReturnedDate= DateTime.Now;                           
+            }
+
+
+            foreach( var item in returned)
+            {
+                item.ReturnedDate = DateTime.Now;
+                item.IsActive = false;
+                item.IsTransact =false;
+                item.IsReturned = true;
+
+            }
+            return true;
+
+
+
         }
     }
 }

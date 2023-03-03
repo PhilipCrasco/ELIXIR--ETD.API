@@ -623,7 +623,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                          ItemCode = total.Key.ItemCode,
                                          ItemDescription = total.Key.ItemDescription,
                                          ReceivingDate = total.Key.ReceivingDate.ToString("MM/dd/yyyy"),
-                                         ActualGood  = total.Key.ActualGood - total.Key.Issueout - total.Key.Borrowout - total.Key.MoveOrderOut 
+                                         ActualGood  = total.Key.ActualGood  - total.Key.Issueout - total.Key.Borrowout - total.Key.MoveOrderOut 
 
                                      });
 
