@@ -19,6 +19,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.USER_MODEL
         public string AddedBy { get; set; }
         public bool IsActive { get; set; } = true;
         public string Reason { get; set; }
+        public int MenuOrder { get; set; }
 
     }
 }

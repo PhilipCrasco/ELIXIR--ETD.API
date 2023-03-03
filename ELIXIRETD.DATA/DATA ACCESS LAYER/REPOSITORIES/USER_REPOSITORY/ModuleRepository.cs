@@ -251,6 +251,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
         public async Task<PagedList<ModuleDto>> GetAllMainMenuWithPagination(bool status, UserParams userParams)
         {
             var module = _context.MainMenus.Where(x => x.IsActive == status)
+                                        .OrderBy(x => x.MenuOrder)
                                        .Select(x => new ModuleDto
                                        {
                                            Id = x.Id,
@@ -258,7 +259,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
                                            DateAdded = x.DateAdded.ToString("MM/dd/yyyy"),
                                            AddedBy = x.AddedBy,
                                            MenuPath = x.MenuPath,
-                                            IsActive = x.IsActive
+                                            IsActive = x.IsActive,
+                                            MenuOrder= x.MenuOrder,
+
                                        });
 
             return await PagedList<ModuleDto>.CreateAsync(module, userParams.PageNumber, userParams.PageSize);
@@ -267,6 +270,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
         public async Task<PagedList<ModuleDto>> GetMainMenuPaginationOrig(UserParams userParams, bool status, string search)
         {
             var module = _context.MainMenus.Where(x => x.IsActive == status)
+                                       .OrderBy(x => x.MenuOrder)
                                        .Select(x => new ModuleDto
                                        {
                                            Id = x.Id,
@@ -274,7 +278,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
                                            DateAdded = x.DateAdded.ToString("MM/dd/yyyy"),
                                            AddedBy = x.AddedBy,
                                            MenuPath = x.MenuPath,
-                                            IsActive = x.IsActive
+                                            IsActive = x.IsActive,
+                                           MenuOrder = x.MenuOrder
+
                                        }).Where(x => x.MainMenu.ToLower()
                                         .Contains(search.Trim().ToLower()));
 

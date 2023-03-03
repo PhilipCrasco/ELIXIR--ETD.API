@@ -18,6 +18,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.USER_DTO
         public string AddedBy { get; set; }
         public bool IsActive { get; set; }
         public string Reason { get; set; }
+        public int MenuOrder { get; set; }
 
 
     }

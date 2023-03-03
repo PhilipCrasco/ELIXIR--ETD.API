@@ -17,6 +17,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.USER_DTO
         public int Id { get; set; }
         public bool IsActive { get; set; }
         public int RoleId { get; set; }
+        public int MenuOrder { get; set; }
 
     }
 }

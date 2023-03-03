@@ -227,13 +227,14 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
             var rolemodules = _context.RoleModules
                               .Join(_context.Roles, rolemoduless => rolemoduless.RoleId, role => role.Id, (rolemodoless, role) => new { rolemodoless, role })
                               .Join(_context.Modules, rolemoduless => rolemoduless.rolemodoless.ModuleId, module => module.Id, (rolemoduless, module) => new { rolemoduless, module })
+                              .OrderBy(x => x.module.MainMenu.MenuOrder)
                               .Select(x => new RoleWithModuleDto
                               //from rolemodule in _context.RoleModules
                               //join role in _context.Roles on rolemodule.RoleId equals role.Id
                               //join module in _context.Modules on rolemodule.ModuleId equals module.Id
                               //select new RoleWithModuleDto
                               {
-
+                                  
                                   RoleName = x.rolemoduless.role.RoleName,
                                   MainMenu = x.module.MainMenu.ModuleName,
                                   MainMenuId = x.module.MainMenuId,
@@ -241,6 +242,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
                                   SubMenu = x.module.SubMenuName,
                                   ModuleName = x.module.ModuleName,
                                   Id = x.module.Id,
+                                  MenuOrder= x.module.MenuOrder,
                                   IsActive = x.rolemoduless.rolemodoless.IsActive,
                                   RoleId = x.rolemoduless.rolemodoless.RoleId
                               });
