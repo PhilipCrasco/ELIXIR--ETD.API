@@ -1023,7 +1023,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                 x.IsPrepared,
                                               
 
-                                            }).Where(x => x.Key.IsPrepared != true)
+                                            }).Where(x => x.Key.IsApprove != true)
                                             .Where(x => x.Key.IsPrepared == true)
 
                                             .Select(x => new ForApprovalMoveOrderPaginationDto
@@ -1037,7 +1037,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                 PreparedDate = x.Key.PreparedDate.ToString(),
                                              
 
-                                            }).Where(x => Convert.ToString(x.OrderDate).ToLower()
+                                            }).Where(x => Convert.ToString(x.OrderNo).ToLower()
                                               .Contains(search.Trim().ToLower()));
 
             return await PagedList<ForApprovalMoveOrderPaginationDto>.CreateAsync(orders, userParams.PageNumber, userParams.PageSize);
@@ -1486,9 +1486,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             {
                 itemss.IsTransact = true;          
             }
-
-
-
 
             return true;
 

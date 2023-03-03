@@ -203,7 +203,7 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
 
             await _unitofwork.CompleteAsync();
 
-            return Ok(edit);
+            return Ok("Successfully edit returned quantity!");
 
 
         }
