@@ -336,8 +336,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
         }
 
 
-
-
         public async Task<bool> CancelIssuePerItemCode(BorrowedIssueDetails borrowed)
         {
 
@@ -376,6 +374,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return true;
         }
 
+
         public async Task<bool> EditReturnQuantity(BorrowedIssueDetails borrowed)
         {
           
@@ -391,5 +390,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
         }
 
+        public Task<bool> SaveReturnedQuantity(BorrowedIssueDetails borrowed)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

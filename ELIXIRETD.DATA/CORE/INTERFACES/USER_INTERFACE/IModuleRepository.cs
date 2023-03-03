@@ -37,7 +37,7 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.USER_INTERFACE
         Task<bool> MenuAlreadyExist(string menu);
         Task<PagedList<ModuleDto>> GetAllMainMenuWithPagination(bool status, UserParams userParams);
         Task<PagedList<ModuleDto>> GetMainMenuPaginationOrig(UserParams userParams, bool status, string search);
-
+        Task<bool> UpdateMenuOrder(MainMenu menu);
 
 
     }

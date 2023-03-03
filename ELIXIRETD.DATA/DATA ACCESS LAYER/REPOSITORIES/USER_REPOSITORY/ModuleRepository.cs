@@ -223,6 +223,16 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
             return true;
         }
 
+        public async Task<bool> UpdateMenuOrder(MainMenu menu)
+        {
+            var existing = await _context.MainMenus.Where(x => x.Id == menu.Id)
+                                                                       .FirstOrDefaultAsync();
+
+            existing.MenuOrder = menu.MenuOrder;
+
+            return true;
+        }
+
         public async Task<bool> InActiveMainMenu(MainMenu menu)
         {
             var existingMenu = await _context.MainMenus.Where(x => x.Id == menu.Id)
@@ -310,5 +320,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
 
 
         }
+
+
     }
 }

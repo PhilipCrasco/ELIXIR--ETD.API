@@ -35,6 +35,7 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.BORROWED_INTERFACE
 
 
         Task<bool> EditReturnQuantity(BorrowedIssueDetails borrowed);
+        Task<bool> SaveReturnedQuantity (BorrowedIssueDetails borrowed);
 
 
 

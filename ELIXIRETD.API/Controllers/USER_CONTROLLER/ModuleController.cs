@@ -210,6 +210,18 @@ namespace ELIXIRETD.API.Controllers.USER_CONTROLLER
             return Ok(menu);
         }
 
+        [HttpPut]
+        [Route("UpdateMenuOrder")]
+        public async Task<IActionResult> UpdateMenuOrder([FromBody] MainMenu menu)
+        {
+            await _unitOfWork.Modules.UpdateMenuOrder(menu);
+            await _unitOfWork.CompleteAsync();
+
+            return Ok(menu);
+
+
+        }
+
 
         [HttpPut]
         [Route("InActiveMenu")]
