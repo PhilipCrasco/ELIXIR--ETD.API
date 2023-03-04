@@ -185,7 +185,7 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
             {
                 await _unitofwork.Borrowed.CancelIssuePerItemCode(items);
                 await _unitofwork.CompleteAsync();  
-            }
+            }  
 
             return new JsonResult("Successfully cancelled transaction!");
         }
@@ -195,8 +195,6 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
         [Route("EditReturnedQuantity")]
         public async Task<IActionResult> EditQuantityReturned (BorrowedIssueDetails borrowed)
         {
-
-     
 
             var edit = await _unitofwork.Borrowed.EditReturnQuantity(borrowed);
 
@@ -210,9 +208,32 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
 
             return Ok("Successfully edit returned quantity!");
 
-
         }
 
+        [HttpPut]
+        [Route("SaveReturnedQuantity")]
+        public async Task<IActionResult> SaveReturnedQuantity([FromBody] BorrowedIssueDetails[] borrowed)
+        {
+
+            foreach(BorrowedIssueDetails items in borrowed)
+            {
+                await _unitofwork.Borrowed.SaveReturnedQuantity(items);
+                await _unitofwork.CompleteAsync();
+
+            }
+
+            return Ok(borrowed);
+    
+        }
+
+
+
+
+
+
+
+
+        
 
 
 

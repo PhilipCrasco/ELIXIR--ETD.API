@@ -405,7 +405,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                 
                 item.IsReturned= true;
                 item.IsActive = false;
-                item.IsTransact = false;
+                item.IsTransact = false; 
                 item.ReturnedDate= DateTime.Now;                           
             }
 
