@@ -212,10 +212,10 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
 
         [HttpPut]
         [Route("SaveReturnedQuantity")]
-        public async Task<IActionResult> SaveReturnedQuantity([FromBody] BorrowedIssueDetails[] borrowed)
+        public async Task<IActionResult> SaveReturnedQuantity([FromBody] BorrowedIssue[] borrowed)
         {
 
-            foreach(BorrowedIssueDetails items in borrowed)
+            foreach(BorrowedIssue items in borrowed)
             {
                 await _unitofwork.Borrowed.SaveReturnedQuantity(items);
                 await _unitofwork.CompleteAsync();

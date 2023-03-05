@@ -8,6 +8,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.BORROWED_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.SETUP_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 {
@@ -392,7 +393,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
         }
 
-        public async Task<bool> SaveReturnedQuantity(BorrowedIssueDetails borrowed)
+        public async Task<bool> SaveReturnedQuantity(BorrowedIssue borrowed)
         {
             
             var returned  = await _context.BorrowedIssues.Where(x => x.Id == borrowed.Id)
@@ -420,6 +421,35 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return true;
 
 
+
+        }
+
+        public async Task<PagedList<DtoGetAllReturnedItem>> GetAllReturnedItem(UserParams userParams)
+        {
+            var BorrowIssue = _context.BorrowedIssueDetails.Where(x => x.IsActive == true)
+                                                     .Where(x => x.IsReturned == true)
+                                                     .Where(x => x.IsTransact == false)
+                                                     .GroupBy(x => new
+                                                     {
+                                                         x.BorrowedPKey,
+                                                         x.CustomerCode,
+                                                         x.CustomerName,
+                                                         x.ItemCode,
+                                                         x.Quantity,
+                                                         x.ReturnQuantity,
+                                                         x.ReturnedDate,
+
+                                                     }).Select(total => new DtoGetAllReturnedItem
+                                                     {
+                                                         Id = total.Key.BorrowedPKey,
+                                                         CustomerCode = total.Key.CustomerCode,
+                                                         CustomerName = total.Key.CustomerName,
+                                                         TotalQuantity = total.Sum(x => x.Quantity),
+                                                         TotalReturned = total.Sum(x => x.ReturnQuantity)
+                                                         
+
+
+                                                     }); 
 
         }
     }
