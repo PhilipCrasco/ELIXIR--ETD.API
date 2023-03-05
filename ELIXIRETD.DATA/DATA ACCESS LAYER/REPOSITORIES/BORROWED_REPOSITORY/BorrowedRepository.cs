@@ -457,7 +457,39 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return await PagedList<DtoGetAllReturnedItem>.CreateAsync(BorrowIssue, userParams.PageNumber, userParams.PageSize);
         }
 
+        public async Task<PagedList<DtoGetAllReturnedItem>> GetAllReturnedItemOrig(UserParams userParams, string search)
+        {
+
+            var BorrowIssue = _context.BorrowedIssueDetails.Where(x => x.IsActive == false)
+                                                     .Where(x => x.IsReturned == true)
+                                                     .Where(x => x.IsTransact == false)
+                                                     .GroupBy(x => new
+                                                     {
+
+                                                         x.BorrowedPKey,
+                                                         x.CustomerCode,
+                                                         x.CustomerName,
+                                                         x.PreparedBy,
+                                                         x.ReturnedDate,
 
 
+                                                     }).Select(total => new DtoGetAllReturnedItem
+                                                     {
+                                                         Id = total.Key.BorrowedPKey,
+                                                         CustomerCode = total.Key.CustomerCode,
+                                                         CustomerName = total.Key.CustomerName,
+                                                         TotalQuantity = total.Sum(x => x.Quantity),
+                                                         TotalReturned = total.Sum(x => x.ReturnQuantity),
+                                                         Consume = total.Sum(x => x.Quantity) - total.Sum(x => x.ReturnQuantity),
+                                                         PreparedBy = total.Key.PreparedBy,
+                                                         ReturnedDate = total.Key.ReturnedDate.ToString(),
+
+                                                     }).Where(x => (Convert.ToString(x.Id)).ToLower()
+                                                       .Contains(search.Trim().ToLower())); ;
+
+
+            return await PagedList<DtoGetAllReturnedItem>.CreateAsync(BorrowIssue, userParams.PageNumber, userParams.PageSize);
+
+        }
     }
 }
