@@ -227,13 +227,34 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
         }
 
 
+        [HttpGet]
+        [Route("GetAllReturnedItem")]
+        public async Task<ActionResult<IEnumerable<DtoGetAllReturnedItem>>> GetAllReturnedItem([FromQuery] UserParams userParams)
+        {
+            var issue = await _unitofwork.Borrowed.GetAllReturnedItem(userParams);
+
+            Response.AddPaginationHeader(issue.CurrentPage, issue.PageSize, issue.TotalCount, issue.TotalPages, issue.HasNextPage, issue.HasPreviousPage);
+
+            var issueResult = new
+            {
+                issue,
+                issue.CurrentPage,
+                issue.PageSize,
+                issue.TotalCount,
+                issue.TotalPages,
+                issue.HasNextPage,
+                issue.HasPreviousPage
+            };
+
+            return Ok(issueResult);
+
+        }
 
 
 
 
 
 
-        
 
 
 

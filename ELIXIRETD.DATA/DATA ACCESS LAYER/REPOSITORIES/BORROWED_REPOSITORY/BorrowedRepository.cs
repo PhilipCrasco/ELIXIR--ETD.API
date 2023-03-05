@@ -25,6 +25,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
         public async Task<PagedList<GetAllBorrowedReceiptWithPaginationDto>> GetAllBorrowedReceiptWithPagination(UserParams userParams, bool status)
         {
             var borrow = _context.BorrowedIssues.OrderByDescending(x => x.PreparedDate)
+                                                  .Where(x => x.IsReturned == false)
                                                   .Where(x => x.IsActive == status)
                                                   .Select(x => new GetAllBorrowedReceiptWithPaginationDto
                                                   {
@@ -48,6 +49,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
         {
 
             var issue = _context.BorrowedIssues.OrderByDescending(x => x.PreparedDate)
+                                               .Where(x => x.IsReturned == false)
                                                .Where(x => x.IsActive == status)
                                                .Select(x => new GetAllBorrowedReceiptWithPaginationDto
                                                {
@@ -413,7 +415,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             foreach( var item in returned)
             {
                 item.ReturnedDate = DateTime.Now;
-                item.IsActive = false;
+                item.IsReturned= false;
                 item.IsTransact =false;
                 item.IsReturned = true;
 
@@ -426,18 +428,18 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
         public async Task<PagedList<DtoGetAllReturnedItem>> GetAllReturnedItem(UserParams userParams)
         {
-            var BorrowIssue = _context.BorrowedIssueDetails.Where(x => x.IsActive == true)
+            var BorrowIssue = _context.BorrowedIssueDetails.Where(x => x.IsActive == false)
                                                      .Where(x => x.IsReturned == true)
                                                      .Where(x => x.IsTransact == false)
                                                      .GroupBy(x => new
                                                      {
+
                                                          x.BorrowedPKey,
                                                          x.CustomerCode,
                                                          x.CustomerName,
-                                                         x.ItemCode,
-                                                         x.Quantity,
-                                                         x.ReturnQuantity,
+                                                         x.PreparedBy,
                                                          x.ReturnedDate,
+                                                
 
                                                      }).Select(total => new DtoGetAllReturnedItem
                                                      {
@@ -445,12 +447,17 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                                          CustomerCode = total.Key.CustomerCode,
                                                          CustomerName = total.Key.CustomerName,
                                                          TotalQuantity = total.Sum(x => x.Quantity),
-                                                         TotalReturned = total.Sum(x => x.ReturnQuantity)
-                                                         
+                                                         TotalReturned = total.Sum(x => x.ReturnQuantity),
+                                                         Consume = total.Sum(x => x.Quantity) - total.Sum(x => x.ReturnQuantity),
+                                                         PreparedBy = total.Key.PreparedBy,
+                                                         ReturnedDate = total.Key.ReturnedDate.ToString(),
 
+                                                     });
 
-                                                     }); 
-
+            return await PagedList<DtoGetAllReturnedItem>.CreateAsync(BorrowIssue, userParams.PageNumber, userParams.PageSize);
         }
+
+
+
     }
 }
