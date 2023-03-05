@@ -279,7 +279,15 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
         }
 
 
+        [HttpGet]
+        [Route("ViewBorrowedReturnDetails")]
+        public async Task<IActionResult> ViewBorrowedReturnDetails([FromQuery] int id)
+        {
 
+            var borrow = await _unitofwork.Borrowed.ViewBorrewedReturnedDetails(id);
+
+            return Ok(borrow);
+        }
 
 
 

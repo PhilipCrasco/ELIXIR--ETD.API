@@ -25,7 +25,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
         public async Task<PagedList<GetAllBorrowedReceiptWithPaginationDto>> GetAllBorrowedReceiptWithPagination(UserParams userParams, bool status)
         {
             var borrow = _context.BorrowedIssues.OrderByDescending(x => x.PreparedDate)
-                                                  .Where(x => x.IsReturned == false)
+                                                  .Where(x => x.IsReturned == null)
                                                   .Where(x => x.IsActive == status)
                                                   .Select(x => new GetAllBorrowedReceiptWithPaginationDto
                                                   {
@@ -49,7 +49,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
         {
 
             var issue = _context.BorrowedIssues.OrderByDescending(x => x.PreparedDate)
-                                               .Where(x => x.IsReturned == false)
+                                               .Where(x => x.IsReturned == null)
                                                .Where(x => x.IsActive == status)
                                                .Select(x => new GetAllBorrowedReceiptWithPaginationDto
                                                {
@@ -399,10 +399,15 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
         {
             
             var returned  = await _context.BorrowedIssues.Where(x => x.Id == borrowed.Id)
+                                                         
                                                                .ToListAsync();
                 
             var returnedDetails = await _context.BorrowedIssueDetails.Where(x => x.BorrowedPKey == borrowed.Id)
+                                                                     .Where(x => x.ReturnQuantity != 0)
                                                                      .ToListAsync() ;
+
+            
+
             foreach( var item in returnedDetails)
             {
                 
@@ -414,8 +419,15 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
             foreach( var item in returned)
             {
+                if(item.ReturnedQuantity == 0)
+                {
+                    item.IsReturned= false;
+                    item.IsActive = false;
+
+                }
+
                 item.ReturnedDate = DateTime.Now;
-                item.IsReturned= false;
+                item.IsReturned= true;
                 item.IsTransact =false;
                 item.IsReturned = true;
 
@@ -489,6 +501,32 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
 
             return await PagedList<DtoGetAllReturnedItem>.CreateAsync(BorrowIssue, userParams.PageNumber, userParams.PageSize);
+
+        }
+
+        public async Task<IReadOnlyList<DtoViewBorrewedReturnedDetails>> ViewBorrewedReturnedDetails(int id)
+        {
+            var borrow = _context.BorrowedIssueDetails.Where(x => x.BorrowedPKey == id)
+                                                      .Where(x => x.IsReturned == true)
+                                                      .Where(x => x.IsActive == false)
+                                                      .GroupBy(x => new
+                                                      {
+                                                          x.ItemCode,
+                                                          x.ItemDescription,
+                                                          x.ReturnedDate,
+
+                                                      }).Select(x => new DtoViewBorrewedReturnedDetails
+                                                      {
+                                                          ItemCode = x.Key.ItemCode,
+                                                          ItemDescription = x.Key.ItemDescription,
+                                                          Quantity = x.Sum(x => x.Quantity),
+                                                          Consume = x.Sum(x => x.Quantity) - x.Sum(x => x.ReturnQuantity),
+                                                          ReturnQuantity = x.Sum(x => x.ReturnQuantity),
+
+                                                      }).OrderBy(x => x.ItemCode);
+
+
+            return await borrow.ToListAsync();
 
         }
     }

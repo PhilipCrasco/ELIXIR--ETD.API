@@ -39,6 +39,10 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.BORROWED_INTERFACE
         Task<PagedList<DtoGetAllReturnedItem>> GetAllReturnedItem(UserParams userParams);
         Task<PagedList<DtoGetAllReturnedItem>> GetAllReturnedItemOrig(UserParams userParams , string search);
 
+        Task<IReadOnlyList<DtoViewBorrewedReturnedDetails>> ViewBorrewedReturnedDetails(int id);
+
+
+
 
 
     }
