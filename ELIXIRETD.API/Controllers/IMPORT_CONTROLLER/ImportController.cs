@@ -27,6 +27,7 @@ namespace ELIXIRETD.API.Controllers.IMPORT_CONTROLLER
                 List<PoSummary> supplierNotExist = new List<PoSummary>();
                 List<PoSummary> itemcodeNotExist = new List<PoSummary>(); 
                 List<PoSummary> uomCodeNotExist = new List<PoSummary>();
+                List<PoSummary> quantityInValid = new List<PoSummary>();
 
 
 
@@ -44,6 +45,7 @@ namespace ELIXIRETD.API.Controllers.IMPORT_CONTROLLER
                         var validateItemCode = await _unitOfWork.Imports.CheckItemCode(items.ItemCode);
                         var validatePoandItem = await _unitOfWork.Imports.ValidatePOAndItemcodeManual(items.PO_Number, items.ItemCode);
                         var validateUom = await _unitOfWork.Imports.CheckUomCode(items.Uom);
+                        var validateQuantity = await _unitOfWork.Imports.ValidateQuantityOrder(items.Ordered);
 
 
                         if (validatePoandItem == true)
@@ -65,6 +67,8 @@ namespace ELIXIRETD.API.Controllers.IMPORT_CONTROLLER
                         {
                             itemcodeNotExist.Add(items);
                         }
+                        else if(validateQuantity == false)
+                             quantityInValid.Add(items);
 
                         else
                             availableImport.Add(items);
@@ -81,10 +85,11 @@ namespace ELIXIRETD.API.Controllers.IMPORT_CONTROLLER
                     duplicateList,
                     supplierNotExist,
                     itemcodeNotExist,
-                    uomCodeNotExist
+                    uomCodeNotExist,
+                    quantityInValid,
                 };
 
-                if (duplicateList.Count == 0 && supplierNotExist.Count == 0 && itemcodeNotExist.Count == 0 && uomCodeNotExist.Count == 0)
+                if (duplicateList.Count == 0 && supplierNotExist.Count == 0 && itemcodeNotExist.Count == 0 && uomCodeNotExist.Count == 0 && quantityInValid.Count == 0)
                 {
                     await _unitOfWork.CompleteAsync();
                     return Ok("Successfully Add!");

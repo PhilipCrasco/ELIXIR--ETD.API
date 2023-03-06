@@ -94,6 +94,8 @@ namespace ELIXIRETD.DATA.CORE.INTERFACES.Orders
         Task<bool> ValidateWarehouseId(int id , string itemcode);
 
         Task<bool> ValidateQuantity(decimal quantity);
+
+
     
        
 

@@ -1617,10 +1617,12 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
         {
             var existingQuantity = await _context.Orders
                                  .Where(x => x.QuantityOrdered == quantity)
+                                 
                                  .Select(x => x.QuantityOrdered)
+                                 
                                  .FirstOrDefaultAsync();
 
-            if( existingQuantity == null)
+            if( existingQuantity == 0)
             {
                 return false;
             }
@@ -1630,24 +1632,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
         }
 
-       
 
 
 
-
-
-
-
-        //public async Task<bool> ValidateCustomerCode(string Customercode)
-        //{
-        //    var validate = await _context.Customers.Where(x => x.CustomerCode == Customercode)
-        //                                           .Where(x => x.IsActive == true)
-        //                                           .FirstOrDefaultAsync();
-
-        //    if(validate == null) 
-        //        return false;
-        //    return true;
-        //}
 
     }
 }

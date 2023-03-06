@@ -85,7 +85,24 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.IMPORT_REPOSITORY
             return true;
         }
 
+        public async Task<bool> ValidateQuantityOrder(decimal quantity)
+        {
 
+            var existingQuantity = await _context.PoSummaries
+                                 .Where(x => x.Ordered == quantity)
 
+                                 .Select(x => x.Ordered)
+
+                                 .FirstOrDefaultAsync();
+
+            if (existingQuantity == 0)
+            {
+                return false;
+            }
+            if (!decimal.TryParse(existingQuantity.ToString(), out decimal decimalValue))
+                return false;
+
+            return true;
+        }
     }
 }

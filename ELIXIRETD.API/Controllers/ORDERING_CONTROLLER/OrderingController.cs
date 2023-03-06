@@ -51,6 +51,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                         var validateQuantity = await _unitofwork.Orders.ValidateQuantity(items.QuantityOrdered);
 
 
+
                         if (validateOrderNoAndItemcode == true)
                         {
                             DuplicateList.Add(items);
@@ -59,7 +60,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                         {
                             PreviousDateNeeded.Add(items);
                         }
-                    
+
                         else if (validateCustomerName == false)
                         {
                             CustomerNameNotExist.Add(items);
@@ -79,6 +80,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                             QuantityInValid.Add(items);
                         }
 
+
                         else
                             AvailableImport.Add(items);
                         await _unitofwork.Orders.AddNewOrders(items);
@@ -95,6 +97,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                    CustomerNameNotExist,
                    PreviousDateNeeded,
                     QuantityInValid,
+
                     //CustomerCodeNotExist
                 };
 
