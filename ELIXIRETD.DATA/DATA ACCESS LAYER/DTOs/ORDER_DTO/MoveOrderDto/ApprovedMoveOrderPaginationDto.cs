@@ -30,6 +30,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.MoveOrderDto
         public bool IsPrint { get; set; }
 
         public bool IsTransact { get; set; }
+        public string Address { get; set; } 
 
     }
 }

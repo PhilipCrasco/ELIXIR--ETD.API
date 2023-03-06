@@ -22,6 +22,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.MoveOrderDto
 
         public string PreparedDate { get; set; }
 
+        public string Address { get; set; }
+
 
 
     }
