@@ -158,7 +158,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                     x.ordering.DateNeeded,
                     x.ordering.CustomerName,
                     x.ordering.Customercode,
-                    x.ordering.AddressOrder,
                     x.ordering.Category,
                     x.ordering.ItemCode,
                     x.ordering.ItemdDescription,
@@ -1291,7 +1290,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 items.RejectedDateTempo = DateTime.Now;
                 items.Remarks = moveOrder.Remarks;
                 items.IsReject = true;
-                items.IsActive = false;
+                items.IsActive = true;
                 items.IsPrepared = false;
                 items.IsApproveReject = null;
 

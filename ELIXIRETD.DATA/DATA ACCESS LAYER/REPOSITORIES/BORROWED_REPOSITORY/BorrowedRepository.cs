@@ -314,7 +314,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                                             .Select(x => new GetAllDetailsInBorrowedIssueDto
                                                             {
 
-
                                                                 WarehouseId = x.WarehouseId,
                                                                 BorrowedPKey = x.BorrowedPKey,
                                                                 Customer = x.CustomerName,
@@ -418,48 +417,81 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
         }
 
+        //public async Task<bool> SaveReturnedQuantity(BorrowedIssue borrowed)
+        //{
+
+        //    var returned  = await _context.BorrowedIssues.Where(x => x.Id == borrowed.Id)
+
+        //                                                       .ToListAsync();
+
+        //    var returnedDetails = await _context.BorrowedIssueDetails.Where(x => x.BorrowedPKey == borrowed.Id)
+        //                                                             .Where(x => x.ReturnQuantity != 0)
+        //                                                             .ToListAsync() ;
+
+
+        //    foreach( var item in returned)
+        //    {
+        //        foreach (var items in returnedDetails)
+        //        {
+        //            if(items.ReturnQuantity == 0)
+        //            {
+        //                item.IsTransact = true;
+        //                item.IsActive = true;
+        //            }
+        //                items.IsReturned = true;
+        //                items.IsActive = false;
+        //                items.IsTransact = false;
+        //                items.ReturnedDate = DateTime.Now;
+        //        }
+
+        //        item.ReturnedDate = DateTime.Now;
+        //        item.IsReturned= true;
+        //        item.IsTransact =false;
+        //        item.IsActive = false;
+
+        //    }
+        //    return true;
+
+        //}
         public async Task<bool> SaveReturnedQuantity(BorrowedIssue borrowed)
         {
-            
-            var returned  = await _context.BorrowedIssues.Where(x => x.Id == borrowed.Id)
-                                                         
-                                                               .ToListAsync();
-                
-            var returnedDetails = await _context.BorrowedIssueDetails.Where(x => x.BorrowedPKey == borrowed.Id)
-                                                                     .Where(x => x.ReturnQuantity != 0)
-                                                                     .ToListAsync() ;
+            var returned = await _context.BorrowedIssues
+                .Where(x => x.Id == borrowed.Id)
+                .FirstOrDefaultAsync();
 
-            
+            var returnedDetails = await _context.BorrowedIssueDetails
+                .Where(x => x.BorrowedPKey == borrowed.Id && x.ReturnQuantity != 0)
+                .ToListAsync();
 
-            foreach( var item in returnedDetails)
+            while (returnedDetails.Any(x => x.ReturnQuantity == 0))
             {
-                
-                item.IsReturned= true;
-                item.IsActive = false;
-                item.IsTransact = false; 
-                item.ReturnedDate= DateTime.Now;                           
-            }
-
-            foreach( var item in returned)
-            {
-                if(item.ReturnedQuantity == 0)
+                foreach (var item in returnedDetails)
                 {
-                    item.IsReturned= false;
-                    item.IsActive = false;
+                    if (item.ReturnQuantity == 0)
+                    {
+                        continue; 
+                    }
 
+                    item.IsReturned = true;
+                    item.IsActive = false;
+                    item.IsTransact = false;
+                    item.ReturnedDate = DateTime.Now;
                 }
 
-                item.ReturnedDate = DateTime.Now;
-                item.IsReturned= true;
-                item.IsTransact =false;
-                item.IsReturned = true;
 
+                returnedDetails = await _context.BorrowedIssueDetails
+                    .Where(x => x.BorrowedPKey == borrowed.Id && x.ReturnQuantity != 0)
+                    .ToListAsync();
             }
+
+            returned.ReturnedDate = DateTime.Now;
+            returned.IsReturned = true;
+            returned.IsTransact = false;
+            returned.IsActive = false;
+
             return true;
-
-
-
         }
+
 
         public async Task<PagedList<DtoGetAllReturnedItem>> GetAllReturnedItem(UserParams userParams)
         {
