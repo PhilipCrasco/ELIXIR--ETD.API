@@ -50,5 +50,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL
         public bool IsMove { get; set; }
         public DateTime? SyncDate { get; set; }
 
+        public string AddressOrder { get; set; }
+
+
     }
 }

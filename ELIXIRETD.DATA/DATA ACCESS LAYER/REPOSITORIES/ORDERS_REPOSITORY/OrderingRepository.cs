@@ -7,13 +7,8 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.TransactDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
-using Microsoft.AspNetCore.Http.Metadata;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Reflection.PortableExecutable;
-using System.Security.Cryptography;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 {
@@ -42,6 +37,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
             Orders.ItemdDescription = existingInfo.ItemDescription;
             Orders.Customercode = existing.CustomerCode;
+            Orders.AddressOrder = existing.Address;
             Orders.IsActive = true;
             
 
@@ -162,6 +158,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                     x.ordering.DateNeeded,
                     x.ordering.CustomerName,
                     x.ordering.Customercode,
+                    x.ordering.AddressOrder,
                     x.ordering.Category,
                     x.ordering.ItemCode,
                     x.ordering.ItemdDescription,
@@ -575,6 +572,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 OrderNo = x.OrderNoPKey,
                 CustomerName = x.CustomerName,
                 CustomerCode = x.Customercode,
+                Address = x.AddressOrder,
                 ItemCode = x.ItemCode,
                 ItemDescription = x.ItemdDescription,
                 Uom = x.Uom,
@@ -1616,18 +1614,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
         public async Task<bool> ValidateQuantity(decimal quantity)
         {
             var existingQuantity = await _context.Orders
-                                 .Where(x => x.QuantityOrdered == quantity)
-                                 
-                                 .Select(x => x.QuantityOrdered)
-                                 
+                                 .Where(x => x.QuantityOrdered == quantity)     
                                  .FirstOrDefaultAsync();
-
-            if( existingQuantity == 0)
-            {
-                return false;
-            }
-            if (!decimal.TryParse(existingQuantity.ToString(), out decimal decimalValue))
-                return false;
 
             return true;
         }

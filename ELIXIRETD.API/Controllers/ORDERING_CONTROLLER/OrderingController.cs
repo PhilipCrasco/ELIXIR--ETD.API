@@ -36,11 +36,18 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                 
                 foreach (Ordering items in order)
                 {
-        
-                    if (order.Count(x => x.TrasactId == items.TrasactId && x.ItemCode == items.ItemCode && x.CustomerName == items.CustomerName) > 1)
+
+                    if (items.QuantityOrdered <= 0)
+                    {
+                        QuantityInValid.Add(items);
+                    }
+
+                    else if (order.Count(x => x.TrasactId == items.TrasactId && x.ItemCode == items.ItemCode && x.CustomerName == items.CustomerName) > 1)
                     {
                         DuplicateList.Add(items);
+
                     }
+                 
                     else
                     {
                         var validateOrderNoAndItemcode = await _unitofwork.Orders.ValidateExistOrderandItemCode(items.TrasactId, items.ItemCode , items.CustomerName);
@@ -75,7 +82,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
                         {
                             UomNotExist.Add(items);
                         }
-                        else if (validateQuantity == false)
+                        else if (validateQuantity == false )
                         {
                             QuantityInValid.Add(items);
                         }
@@ -325,6 +332,7 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
             order.PreparedDate = Convert.ToDateTime(details.PrepareDate);
             order.CustomerName= details.CustomerName;
             order.Customercode = details.CustomerCode;
+            order.AddressOrder = details.Address;
             order.ItemCode = details.ItemCode;
             order.ItemDescription = details.ItemDescription;
             order.Uom = details.Uom;

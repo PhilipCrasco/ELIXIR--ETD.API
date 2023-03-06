@@ -19,7 +19,8 @@ namespace ELIXIRETD.API.Controllers.IMPORT_CONTROLLER
         public async Task<IActionResult> AddNewPo([FromBody] PoSummary[] posummary)
         {
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) 
+            return new JsonResult("Something went Wrong!") { StatusCode = 500 };
             {
 
                 List<PoSummary> duplicateList = new List<PoSummary>();
@@ -33,11 +34,16 @@ namespace ELIXIRETD.API.Controllers.IMPORT_CONTROLLER
 
                 foreach (PoSummary items in posummary)
                 {
+                    if (items.Ordered <= 0)
+                    {
+                        quantityInValid.Add(items);
+                    }
 
-                    if (posummary.Count(x => x.PO_Number == items.PO_Number && x.ItemCode == items.ItemCode) > 1)
+                   else if (posummary.Count(x => x.PO_Number == items.PO_Number && x.ItemCode == items.ItemCode) > 1)
                     {
                         duplicateList.Add(items);
                     }
+
                     else
                     {
 
@@ -101,7 +107,7 @@ namespace ELIXIRETD.API.Controllers.IMPORT_CONTROLLER
                     return BadRequest(resultList);
                 }
             }
-            return new JsonResult("Something went Wrong!") { StatusCode = 500 };
+         
         }
 
 
