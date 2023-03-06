@@ -244,21 +244,42 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
 
                                                            });
 
+            var BorrowedReturn = _context.BorrowedIssueDetails.Where(x => x.IsActive == false)
+                                                             .Where(x => x.IsTransact == false)
+                                                             .Where(x => x.IsReturned == true)
+                                                             .GroupBy(x => new
+                                                             {
+                                                                 x.ItemCode,
+                                                                 x.WarehouseId,
+
+                                                             }).Select(x => new ItemStocksDto
+                                                             {
+
+                                                                 ItemCode = x.Key.ItemCode,
+                                                                 In = x.Sum(x => x.ReturnQuantity),
+                                                                 warehouseId = x.Key.WarehouseId,
+
+                                                             });
+
+
             var getAvailable = getWarehouseStocks
                               .GroupJoin(moveorderOut, warehouse => warehouse.WarehouseId, moveorder => moveorder.WarehouseId, (warehouse, moveorder) => new { warehouse, moveorder })
                               .SelectMany(x => x.moveorder.DefaultIfEmpty(), (x, moveorder) => new { x.warehouse, moveorder })
                               .GroupJoin(borrowedOut , warehouse => warehouse.warehouse.WarehouseId , borrowed => borrowed.warehouseId , ( warehouse , borrowed) => new { warehouse, borrowed })
                               .SelectMany(x => x.borrowed.DefaultIfEmpty() , (x , borrowed) => new {x.warehouse , borrowed })
-                              .GroupJoin(issueOut, warehouse => warehouse.warehouse.warehouse.WarehouseId, issue => issue.warehouseId, (warehouse, issue) => new { warehouse, issue })
+                              .GroupJoin(BorrowedReturn, warehouse => warehouse.warehouse.warehouse.WarehouseId, returned => returned.warehouseId , (warehouse , returned) => new {warehouse , returned })
+                              .SelectMany(x => x.returned.DefaultIfEmpty(), (x, returned) => new {x.warehouse, returned})
+                              .GroupJoin(issueOut, warehouse => warehouse.warehouse.warehouse.warehouse.WarehouseId, issue => issue.warehouseId, (warehouse, issue) => new { warehouse, issue })
                               .SelectMany(x => x.issue.DefaultIfEmpty(), (x, issue) => new
                               {
-                                  warehouseId = x.warehouse.warehouse.warehouse.WarehouseId,
-                                  itemcode = x.warehouse.warehouse.warehouse.ItemCode,
-                                  ReceivingDate = x.warehouse.warehouse.warehouse.RecievingDate,
-                                  WarehouseActualGood = x.warehouse.warehouse.warehouse.ActualGood != null ? x.warehouse.warehouse.warehouse.ActualGood : 0,
-                                  MoveOrderOut = x.warehouse.warehouse.moveorder.QuantityOrdered != null ? x.warehouse.warehouse.moveorder.QuantityOrdered : 0,
+                                  warehouseId = x.warehouse.warehouse.warehouse.warehouse.WarehouseId,
+                                  itemcode = x.warehouse.warehouse.warehouse.warehouse.ItemCode,
+                                  ReceivingDate = x.warehouse.warehouse.warehouse.warehouse.RecievingDate,
+                                  WarehouseActualGood = x.warehouse.warehouse.warehouse.warehouse.ActualGood != null ? x.warehouse.warehouse.warehouse.warehouse.ActualGood : 0,
+                                  MoveOrderOut = x.warehouse.warehouse.warehouse.moveorder.QuantityOrdered != null ? x.warehouse.warehouse.warehouse.moveorder.QuantityOrdered : 0,
                                   IssueOut = issue.Out != null ? issue.Out : 0,
-                                  BorrowedOut = x.warehouse.borrowed.Out != null ? x.warehouse.borrowed.Out : 0,
+                                  BorrowedOut = x.warehouse.warehouse.borrowed.Out != null ? x.warehouse.warehouse.borrowed.Out : 0,
+                                  Borrowedreturn = x.warehouse.returned.In != null ? x.warehouse.returned.In : 0,   
 
                               }).GroupBy(x => new
                               {
@@ -269,16 +290,17 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
                                   x.WarehouseActualGood,
                                   x.MoveOrderOut,
                                   x.IssueOut,
-                                  x.BorrowedOut
+                                  x.BorrowedOut,
+                                  x.Borrowedreturn,
 
                               }
-                              ,
-                              x => x
+                              //,
+                              //x => x
                               ).Select(total => new GetAvailableStocksForIssueDto
                               {
                                   WarehouseId = total.Key.warehouseId,
                                   ItemCode = total.Key.itemcode,
-                                  RemainningStocks = total.Key.WarehouseActualGood - total.Key.MoveOrderOut - total.Key.IssueOut - total.Key.BorrowedOut,
+                                  RemainningStocks = total.Key.WarehouseActualGood + total.Key.Borrowedreturn - total.Key.MoveOrderOut - total.Key.IssueOut - total.Key.BorrowedOut,
                                   ReceivingDate = total.Key.ReceivingDate
 
                               }).Where(x => x.RemainningStocks != 0)

@@ -156,6 +156,24 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                                            });
 
 
+            var BorrowedReturn = _context.BorrowedIssueDetails.Where(x => x.IsActive == false)
+                                                             .Where(x => x.IsTransact == false)
+                                                             .Where(x => x.IsReturned == true)
+                                                             .GroupBy(x => new
+                                                             {
+                                                                 x.ItemCode,
+                                                                 x.WarehouseId,
+
+                                                             }).Select(x => new ItemStocksDto
+                                                             {
+
+                                                                 ItemCode = x.Key.ItemCode,
+                                                                 In = x.Sum(x => x.ReturnQuantity),
+                                                                 warehouseId = x.Key.WarehouseId,
+
+                                                             });
+
+
             var getAvailable = (from warehouse in getWarehouseStocks
                                 join Moveorder in moveorderOut
                                 on warehouse.WarehouseId equals Moveorder.WarehouseId
@@ -172,13 +190,19 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                 into leftJ3
                                 from borrowOut in leftJ3.DefaultIfEmpty()
 
+                                join returned in BorrowedReturn
+                                on warehouse.WarehouseId equals returned.warehouseId
+                                into LeftJ4 
+                                from returned in LeftJ4.DefaultIfEmpty()
+
                                 group new
                                 {
 
                                     warehouse,
                                     Moveorder,
                                     issue,
-                                    borrowOut
+                                    borrowOut,
+                                    returned,
                                 }
 
                                 by new
@@ -190,18 +214,17 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                     WarehouseActualGood = warehouse.ActualGood != null ? warehouse.ActualGood : 0,
                                     MoveOrderOut = Moveorder.QuantityOrdered != null ? Moveorder.QuantityOrdered : 0,
                                     IssueOut = issue.Out != null ? issue.Out : 0,
-                                    BorrowedOut = borrowOut.Out != null ? borrowOut.Out : 0
-
+                                    BorrowedOut = borrowOut.Out != null ? borrowOut.Out : 0,
+                                    Borrowedreturned = returned.In != null ? returned.In : 0,
 
                                 } into total
-
 
                                 select new GetAvailableStocksForBorrowedIssue_Dto
                                 {
 
                                     WarehouseId = total.Key.WarehouseId,
                                     ItemCode = total.Key.ItemCode,
-                                    RemainingStocks = total.Key.WarehouseActualGood - total.Key.MoveOrderOut - total.Key.IssueOut - total.Key.BorrowedOut,
+                                    RemainingStocks = total.Key.WarehouseActualGood + total.Key.Borrowedreturned - total.Key.MoveOrderOut - total.Key.IssueOut - total.Key.BorrowedOut,
                                     ReceivingDate = total.Key.RecievingDate
 
                                 }).Where(x => x.RemainingStocks != 0)
@@ -529,5 +552,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
             return await borrow.ToListAsync();
 
         }
+
+
     }
 }
