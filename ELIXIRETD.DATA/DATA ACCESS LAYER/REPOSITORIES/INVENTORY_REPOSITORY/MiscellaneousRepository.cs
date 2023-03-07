@@ -244,8 +244,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
 
                                                            });
 
-            var BorrowedReturn = _context.BorrowedIssueDetails.Where(x => x.IsActive == false)
-                                                             .Where(x => x.IsTransact == false)
+            var BorrowedReturn = _context.BorrowedIssueDetails.Where(x => x.IsActive == true)
                                                              .Where(x => x.IsReturned == true)
                                                              .GroupBy(x => new
                                                              {

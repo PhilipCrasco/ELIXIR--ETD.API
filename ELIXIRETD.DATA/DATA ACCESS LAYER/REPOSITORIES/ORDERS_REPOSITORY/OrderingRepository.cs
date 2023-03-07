@@ -8,6 +8,7 @@ using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.ORDERING_MODEL;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.STORE_CONTEXT;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using System.Globalization;
 
 namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
@@ -81,7 +82,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 }).Select(x => new WarehouseInventory
                 {
                     ItemCode = x.Key.ItemCode,
-                    ActualGood = x.Sum(x => x.ActualDelivered)
+                    ActualGood = x.Sum(x => x.ActualGood)
                 });
 
 
@@ -97,6 +98,19 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 QuantityOrdered = x.Sum(x => x.QuantityOrdered)
             });
 
+            var moveOrderOut = _context.MoveOrders.Where(x => x.IsActive == true)
+                                                  .Where(x => x.IsTransact == true)
+                                                  .GroupBy(x => new
+                                                  {
+                                                      x.ItemCode,
+
+                                                  }).Select(x => new OrderingInventory
+                                                  {
+                                                      ItemCode = x.Key.ItemCode,
+                                                      QuantityOrdered = x.Sum(x => x.QuantityOrdered)
+
+                                                  });
+
             var getIssueOut = _context.MiscellaneousIssueDetail.Where(x => x.IsActive == true)
                                                                .Where(x => x.IsTransact == true)
                                                                .GroupBy(x => new
@@ -110,8 +124,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                                    Quantity = x.Sum(x => x.Quantity)
                                                                });
 
-            var getBorrowedIssue = _context.BorrowedIssueDetails.Where(x => x.IsActive == true)
-                                                                .Where(x => x.IsTransact == true)
+            var getBorrowedIssue = _context.BorrowedIssueDetails.Where(x => x.IsActive == true)                                                       
                                                                 .GroupBy(x => new
                                                                 {
 
@@ -124,6 +137,20 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
                                                                 });
 
+            var BorrowedReturn = _context.BorrowedIssueDetails.Where(x => x.IsActive == true)
+                                                            .Where(x => x.IsReturned == true)
+                                                            .GroupBy(x => new
+                                                            {
+                                                                x.ItemCode,
+
+                                                            }).Select(x => new ItemStocksDto
+                                                            {
+
+                                                                ItemCode = x.Key.ItemCode,
+                                                                In = x.Sum(x => x.ReturnQuantity),                                                        
+
+                                                            });
+
 
 
             var getReserve = getWarehouseStock
@@ -131,17 +158,22 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 .SelectMany(x => x.ordering.DefaultIfEmpty(), (x, ordering) => new { x.warehouse, ordering })
                 .GroupJoin(getIssueOut, warehouse => warehouse.warehouse.ItemCode, issue => issue.ItemCode, (warehouse, issue) => new { warehouse, issue })
                 .SelectMany(x => x.issue.DefaultIfEmpty(), (x, issue) => new { x.warehouse, issue })
-                .GroupJoin(getBorrowedIssue, warehouse => warehouse.warehouse.warehouse.ItemCode, borrowed => borrowed.ItemCode, (warehouse, borrowed) => new { warehouse, borrowed })
+                .GroupJoin(BorrowedReturn, warehouse => warehouse.warehouse.warehouse.ItemCode , returned => returned.ItemCode , (warehouse , returned) => new { warehouse , returned} )
+                .SelectMany(x => x.returned.DefaultIfEmpty() , (x, returned) => new { x.warehouse , returned})
+                .GroupJoin(moveOrderOut , warehouse => warehouse.warehouse.warehouse.warehouse.ItemCode , moveorder => moveorder.ItemCode , (warehouse , moveorder) => new {warehouse , moveorder })
+                .SelectMany(x => x.moveorder.DefaultIfEmpty() , (x , moveorder) => new {x.warehouse , moveorder})
+                .GroupJoin(getBorrowedIssue, warehouse => warehouse.warehouse.warehouse.warehouse.warehouse.ItemCode, borrowed => borrowed.ItemCode, (warehouse, borrowed) => new { warehouse, borrowed })
                 .SelectMany(x => x.borrowed.DefaultIfEmpty(), (x, borrowed) => new { x.warehouse, borrowed })
-                .GroupBy(x => x.warehouse.warehouse.warehouse.ItemCode)
+                .GroupBy(x => x.warehouse.warehouse.warehouse.warehouse.warehouse.ItemCode)
                 .Select(total => new ReserveInventory
                 {
 
                     ItemCode = total.Key,
-                    Reserve = total.Sum(x => x.warehouse.warehouse.warehouse.ActualGood == null ? 0 : x.warehouse.warehouse.warehouse.ActualGood) -
-                              (total.Sum(x => x.warehouse.warehouse.ordering.QuantityOrdered == null ? 0 : x.warehouse.warehouse.ordering.QuantityOrdered) +
-                               total.Sum(x => x.warehouse.issue.Quantity == null ? 0 : x.warehouse.issue.Quantity) +
-                               total.Sum(x => x.borrowed.Quantity == null ? 0 : x.borrowed.Quantity))
+                    Reserve = total.Sum(x => x.warehouse.warehouse.warehouse.warehouse.warehouse.ActualGood == null ? 0 : x.warehouse.warehouse.warehouse.warehouse.warehouse.ActualGood) + 
+                              total.Sum(x => x.warehouse.warehouse.returned.In == null ? 0 : x.warehouse.warehouse.returned.In) -  total.Sum(x => x.warehouse.moveorder.QuantityOrdered == null ? 0 : x.warehouse.moveorder.QuantityOrdered) -                 
+                               total.Sum(x => x.warehouse.warehouse.warehouse.issue.Quantity == null ? 0 : x.warehouse.warehouse.warehouse.issue.Quantity) -
+                                total.Sum(x => x.warehouse.warehouse.warehouse.warehouse.ordering.QuantityOrdered == null ? 0 : x.warehouse.warehouse.warehouse.warehouse.ordering.QuantityOrdered) -
+                               total.Sum(x => x.borrowed.Quantity == null ? 0 : x.borrowed.Quantity) 
 
                 });
 
