@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ELIXIRETD.DATA.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20230223081746_addnewborrowedIsReturned")]
-    partial class addnewborrowedIsReturned
+    [Migration("20230307035411_addInitial")]
+    partial class addInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,6 +32,9 @@ namespace ELIXIRETD.DATA.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<decimal>("Consume")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("CustomerCode")
                         .HasColumnType("nvarchar(max)");
 
@@ -42,6 +45,9 @@ namespace ELIXIRETD.DATA.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsReturned")
                         .HasColumnType("bit");
 
                     b.Property<bool?>("IsTransact")
@@ -55,6 +61,12 @@ namespace ELIXIRETD.DATA.Migrations
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ReturnedDate")
+                        .HasColumnType("Date");
+
+                    b.Property<decimal>("ReturnedQuantity")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("TotalQuantity")
                         .HasColumnType("decimal(18,2)");
@@ -77,6 +89,9 @@ namespace ELIXIRETD.DATA.Migrations
 
                     b.Property<int>("BorrowedPKey")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Consume")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("CustomerCode")
                         .HasColumnType("nvarchar(max)");
@@ -111,6 +126,12 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("ReturnQuantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ReturnedDate")
+                        .HasColumnType("Date");
+
                     b.Property<string>("Uom")
                         .HasColumnType("nvarchar(max)");
 
@@ -130,6 +151,9 @@ namespace ELIXIRETD.DATA.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<decimal?>("Consume")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Customer")
                         .HasColumnType("nvarchar(max)");
 
@@ -142,6 +166,9 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("IsReturned")
+                        .HasColumnType("bit");
+
                     b.Property<string>("PreparedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -150,6 +177,9 @@ namespace ELIXIRETD.DATA.Migrations
 
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("ReturnQuantity")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("TotalQuantity")
                         .HasColumnType("decimal(18,2)");
@@ -379,6 +409,15 @@ namespace ELIXIRETD.DATA.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("AccountCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AccountTitles")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AddressOrder")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("ApproveDateTempo")
                         .HasColumnType("Date");
 
@@ -394,6 +433,12 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CompanyCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CustomerName")
                         .HasColumnType("nvarchar(max)");
 
@@ -402,6 +447,12 @@ namespace ELIXIRETD.DATA.Migrations
 
                     b.Property<DateTime>("DateNeeded")
                         .HasColumnType("Date");
+
+                    b.Property<string>("DepartmentCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepartmentName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -431,6 +482,12 @@ namespace ELIXIRETD.DATA.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ItemDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LocationCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LocationName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("OrderDate")
@@ -483,6 +540,9 @@ namespace ELIXIRETD.DATA.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AddedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AddressOrder")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ApprovedDate")
@@ -1065,6 +1125,9 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<int>("MenuOrder")
+                        .HasColumnType("int");
+
                     b.Property<string>("MenuPath")
                         .HasColumnType("nvarchar(max)");
 
@@ -1097,6 +1160,9 @@ namespace ELIXIRETD.DATA.Migrations
                         .HasColumnType("bit");
 
                     b.Property<int>("MainMenuId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MenuOrder")
                         .HasColumnType("int");
 
                     b.Property<string>("ModuleName")

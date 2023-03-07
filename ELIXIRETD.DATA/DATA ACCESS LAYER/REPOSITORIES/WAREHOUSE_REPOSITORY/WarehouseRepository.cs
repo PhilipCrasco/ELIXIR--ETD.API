@@ -210,6 +210,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                  Uom = posummary.Uom,
                                  QuantityOrdered = posummary.Ordered,
                                  IsActive = posummary.IsActive,
+                                 TotalReject = 0,
                                  ActualRemaining = 0,
                                  ActualGood = receive != null && receive.IsActive != false ? receive.ActualDelivered : 0,
 
@@ -225,7 +226,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                  x.Uom,
                                  x.Supplier,
                                  x.QuantityOrdered,
-                                 x.IsActive
+                                 x.IsActive,
+                                 x.TotalReject,
                              })
                                                   .Select(receive => new WarehouseReceivingDto
                                                   {
@@ -242,6 +244,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                                       ActualGood = receive.Sum(x => x.ActualGood),
                                                       ActualRemaining = receive.Key.QuantityOrdered - (receive.Sum(x => x.ActualGood)),
                                                       IsActive = receive.Key.IsActive,
+                                                      TotalReject = receive.Key.TotalReject,
 
 
                                                   }).OrderBy(x => x.PoNumber)
@@ -490,7 +493,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
 
 
             var BorrowOut = _context.BorrowedIssueDetails.Where(x => x.IsActive == true)
-                                                         .Where(x => x.IsTransact == true)
+                                         
                                                          .GroupBy(x => new
                                                          {
                                                              x.ItemCode,
@@ -504,8 +507,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
 
                                                          });
 
-            var BorrowedReturn = _context.BorrowedIssueDetails.Where(x => x.IsActive == false)
-                                                              .Where(x => x.IsTransact == false)
+            var BorrowedReturn = _context.BorrowedIssueDetails.Where(x => x.IsActive == true)
+                                                              
                                                               .Where(x => x.IsReturned == true)
                                                               .GroupBy(x => new
                                                               {
@@ -601,7 +604,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
 
 
             var BorrowOut = _context.BorrowedIssueDetails.Where(x => x.IsActive == true)
-                                                         .Where(x => x.IsTransact == true)
                                                          .GroupBy(x => new
                                                          {
                                                              x.ItemCode,
@@ -616,8 +618,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
             
                                                          });
 
-            var BorrowedReturn = _context.BorrowedIssueDetails.Where(x => x.IsActive == false)
-                                                             .Where(x => x.IsTransact == false)
+            var BorrowedReturn = _context.BorrowedIssueDetails.Where(x => x.IsActive == true)
                                                              .Where(x => x.IsReturned == true)
                                                              .GroupBy(x => new
                                                              {
@@ -669,7 +670,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                          ItemCode = total.Key.ItemCode,
                                          ItemDescription = total.Key.ItemDescription,
                                          ReceivingDate = total.Key.ReceivingDate.ToString("MM/dd/yyyy"),
-                                         ActualGood  = total.Key.ActualGood+ total.Key.Borrowedreturn - total.Key.Issueout - total.Key.Borrowout - total.Key.MoveOrderOut 
+                                         ActualGood  = total.Key.ActualGood + total.Key.Borrowedreturn - total.Key.Issueout - total.Key.Borrowout - total.Key.MoveOrderOut ,
 
                                      });
 
