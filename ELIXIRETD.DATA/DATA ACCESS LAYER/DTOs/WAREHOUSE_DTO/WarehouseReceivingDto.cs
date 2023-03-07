@@ -23,6 +23,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.WAREHOUSE_DTO
 
         public bool IsActive { get; set; }
         public decimal ActualRemaining { get; set; }
+        public string DateReceive { get; set; }
 
         public decimal TotalReject { get; set; }
 

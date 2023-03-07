@@ -19,32 +19,43 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
         public BorrowedRepository(StoreContext context)
         {
             _context = context;
-
         }
 
         public async Task<PagedList<GetAllBorrowedReceiptWithPaginationDto>> GetAllBorrowedReceiptWithPagination(UserParams userParams, bool status)
         {
-            var borrow = _context.BorrowedIssues.OrderByDescending(x => x.PreparedDate)
-                                                  .Where(x => x.IsReturned == null)
+            var borrow = _context.BorrowedIssueDetails.OrderByDescending(x => x.BorrowedDate)                 
                                                   .Where(x => x.IsActive == status)
+                                                  .GroupBy(x => new
+                                                  {
+
+                                                      x.BorrowedPKey,
+                                                      x.CustomerCode,
+                                                      x.CustomerName,
+                                                      x.Remarks,
+                                                      x.PreparedBy,
+                                                      x.IsActive,
+                                                      x.BorrowedDate,
+                                                    
+                                                  })
                                                   .Select(x => new GetAllBorrowedReceiptWithPaginationDto
                                                   {
 
-                                                      BorrowedPKey = x.Id,
-                                                      CustomerName = x.CustomerName,
-                                                      CustomerCode = x.CustomerCode,
-                                                      TotalQuantity = x.TotalQuantity,
-                                                      PreparedDate = x.PreparedDate.ToString("MM/dd/yyyy"),
-                                                      Remarks = x.Remarks,
-                                                      PreparedBy = x.PreparedBy,
-                                                      IsActive = x.IsActive
-
+                                                      BorrowedPKey = x.Key.BorrowedPKey,
+                                                      CustomerName = x.Key.CustomerName,
+                                                      CustomerCode = x.Key.CustomerCode,
+                                                      TotalQuantity = x.Sum(x => x.Quantity),                              
+                                                      Remarks = x.Key.Remarks,
+                                                      PreparedBy = x.Key.PreparedBy,
+                                                      IsActive = x.Key.IsActive,
+                                                      BorrowDate = x.Key.BorrowedDate.ToString(),
+                                  
                                                   });
 
             return await PagedList<GetAllBorrowedReceiptWithPaginationDto>.CreateAsync(borrow, userParams.PageNumber, userParams.PageSize);
 
 
         }
+
         public async Task<PagedList<GetAllBorrowedReceiptWithPaginationDto>> GetAllBorrowedIssuetWithPaginationOrig(UserParams userParams, string search, bool status)
         {
 
@@ -57,7 +68,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                                    CustomerName = x.CustomerName,
                                                    CustomerCode = x.CustomerCode,
                                                    TotalQuantity = x.TotalQuantity,
-                                                   PreparedDate = x.PreparedDate.ToString("MM/dd/yyyy"),
+                                                   BorrowDate = x.PreparedDate.ToString("MM/dd/yyyy"),
                                                    Remarks = x.Remarks,
                                                    PreparedBy = x.PreparedBy,
                                                    IsActive = x.IsActive

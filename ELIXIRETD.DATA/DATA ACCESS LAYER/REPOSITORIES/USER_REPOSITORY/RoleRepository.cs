@@ -225,6 +225,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
         public async Task<IReadOnlyList<RoleWithModuleDto>> GetRoleModuleWithId(int id)
         {
             var rolemodules = _context.RoleModules
+
                               .Join(_context.Roles, rolemoduless => rolemoduless.RoleId, role => role.Id, (rolemodoless, role) => new { rolemodoless, role })
                               .Join(_context.Modules, rolemoduless => rolemoduless.rolemodoless.ModuleId, module => module.Id, (rolemoduless, module) => new { rolemoduless, module })
                               .OrderBy(x => x.module.MainMenu.MenuOrder)
@@ -234,7 +235,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
                               //join module in _context.Modules on rolemodule.ModuleId equals module.Id
                               //select new RoleWithModuleDto
                               {
-                                  
+
                                   RoleName = x.rolemoduless.role.RoleName,
                                   MainMenu = x.module.MainMenu.ModuleName,
                                   MainMenuId = x.module.MainMenuId,
@@ -242,15 +243,20 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES
                                   SubMenu = x.module.SubMenuName,
                                   ModuleName = x.module.ModuleName,
                                   Id = x.module.Id,
-                                  MenuOrder= x.module.MenuOrder,
+                                  MenuOrder = x.module.MainMenu.MenuOrder,
                                   IsActive = x.rolemoduless.rolemodoless.IsActive,
                                   RoleId = x.rolemoduless.rolemodoless.RoleId
                               });
 
-            return await rolemodules.Where(x => x.RoleId == id)
+            return await rolemodules
+                                     .Where(x => x.RoleId == id)
                                     .Where(x => x.IsActive == true)
                                     .ToListAsync();
-            
+
         }
+
+
+
+    
     }
 }

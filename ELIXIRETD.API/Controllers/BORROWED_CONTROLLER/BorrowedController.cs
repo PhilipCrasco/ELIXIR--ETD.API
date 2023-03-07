@@ -93,6 +93,7 @@ namespace ELIXIRETD.API.Controllers.BORROWED_CONTROLLER
             borrowed.IsActive= true;
             borrowed.IsTransact= true;
             borrowed.PreparedDate= DateTime.Now;
+  
 
             await _unitofwork.Borrowed.AddBorrowedIssueDetails(borrowed);
             await _unitofwork.CompleteAsync();

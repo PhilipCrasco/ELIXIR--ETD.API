@@ -23,6 +23,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
         public async Task<bool> AddNewReceivingDetails(Warehouse_Receiving receive)
         {
 
+            receive.ReceivingDate = DateTime.Now;
             receive.ActualGood = receive.ActualDelivered;
             await _context.WarehouseReceived.AddAsync(receive);
 
@@ -432,7 +433,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                     Id = x.Id,
                     ItemCode = x.ItemCode,
                     ItemDescription = x.ItemDescription,
-                    ActualGood = x.ActualDelivered
+                    ActualGood = x.ActualDelivered,
+                    DateReceive = x.ReceivingDate.ToString(),
                 });
 
             return await PagedList<WarehouseReceivingDto>.CreateAsync(warehouseInventory, userParams.PageNumber, userParams.PageSize);
@@ -446,7 +448,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                    Id = x.Id,
                    ItemCode = x.ItemCode,
                    ItemDescription = x.ItemDescription,
-                   ActualGood = x.ActualDelivered
+                   ActualGood = x.ActualDelivered,
+                   DateReceive = x.ReceivingDate.ToString(),
+
                }).Where(x => x.ItemCode.ToLower()
                  .Contains(search.Trim().ToLower()));
 
