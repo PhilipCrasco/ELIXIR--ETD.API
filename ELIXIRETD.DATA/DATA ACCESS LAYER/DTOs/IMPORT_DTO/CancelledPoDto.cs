@@ -17,5 +17,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.IMPORT_DTO
         public string DateCancelled { get; set; }
         public string Remarks { get; set; }
         public bool IsActive { get; set; }
+        public decimal ActualGood { get; set; }
+
+        public decimal ActualRemaining { get; set; }
     }
 }

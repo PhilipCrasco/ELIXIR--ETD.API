@@ -23,8 +23,10 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
         public async Task<bool> AddNewReceivingDetails(Warehouse_Receiving receive)
         {
 
-            receive.ReceivingDate = DateTime.Now;
             receive.ActualGood = receive.ActualDelivered;
+            receive.TransactionType = "Receiving";
+            receive.IsWarehouseReceived = true;
+            receive.ActualReceivingDate = DateTime.Now;
             await _context.WarehouseReceived.AddAsync(receive);
 
             return true;
@@ -36,71 +38,157 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
 
         public async Task<PagedList<CancelledPoDto>> GetAllCancelledPOWithPagination(UserParams userParams)
         {
-            //var cancelpo = (from posummary in _context.PoSummaries
-            //                join receive in _context.QC_Receiving on posummary.Id equals receive.PO_Summary_Id into leftJ
-            //                from receive in leftJ.DefaultIfEmpty()
 
 
-            //                select new CancelledPoDto
-            //                {
-            //                    Id = posummary.Id,
-            //                    PO_Number = posummary.PO_Number,
-            //                    ItemCode = posummary.ItemCode,
-            //                    ItemDescription = posummary.ItemDescription,
-            //                    Supplier = posummary.VendorName,
-            //                    QuantityOrdered = posummary.Ordered,
-            //                    QuantityCancel = receive != null ? receive.Actual_Delivered : 0,
-            //                    QuantityGood = receive != null ? receive.Actual_Delivered : 0,
-            //                    DateCancelled = posummary.Date_Cancellation.ToString(),
-            //                    Remarks = posummary.Reason,
-            //                    IsActive = posummary.IsActive
-            //                }).Where(x => x.IsActive == false)
-            //                  .Where(x => x.DateCancelled != null)
-            //                  .Where(x => x.Remarks != null);
+            //var cancelpo = _context.PoSummaries.Where(x => x.IsActive == false)
+            //                                   .Where(x => x.IsCancelled == true)
+            //                                   .Where(x => x.Reason != null)
+            //                                   .Select(x => new CancelledPoDto
+            //                                   {
+            //                                       Id = x.Id,
+            //                                       PO_Number = x.PO_Number,
+            //                                       ItemCode = x.ItemCode,
+            //                                       ItemDescription = x.ItemDescription,
+            //                                       Supplier = x.VendorName,
+            //                                       QuantityOrdered = x.Ordered,
+            //                                       //QuantityCancel = actual != null ? receive.Actual_Delivered : 0,
+            //                                       //QuantityGood = x.Orde
+            //                                       DateCancelled = x.DateCancelled.ToString(),
+            //                                       Remarks = x.Reason,
+            //                                       IsActive = x.IsActive
+            //                                   });
+            var poSummary = (from posummary in _context.PoSummaries
+                             where posummary.IsActive == false
+                             where posummary.IsCancelled == true
+                             join warehouse in _context.WarehouseReceived
+                             on posummary.Id equals warehouse.PoSummaryId into leftJ
+                             from receive in leftJ.DefaultIfEmpty()
 
-            var cancelpo = _context.PoSummaries.Where(x => x.IsActive == false)
-                                               .Where(x => x.IsCancelled == true)
-                                               .Where(x => x.Reason != null)
-                                               .Select(x => new CancelledPoDto
-                                               {
-                                                   Id = x.Id,
-                                                   PO_Number = x.PO_Number,
-                                                   ItemCode = x.ItemCode,
-                                                   ItemDescription = x.ItemDescription,
-                                                   Supplier = x.VendorName,
-                                                   QuantityOrdered = x.Ordered,
-                                                   //QuantityCancel = actual != null ? receive.Actual_Delivered : 0,
-                                                   //QuantityGood = x.Orde
-                                                   DateCancelled = x.DateCancelled.ToString(),
-                                                   Remarks = x.Reason,
-                                                   IsActive = x.IsActive
-                                               });
+                             select new CancelledPoDto
+                             {
+                                 Id = posummary.Id,
+                                 PO_Number = posummary.PO_Number,
+                                 ItemCode = posummary.ItemCode,
+                                 ItemDescription = posummary.ItemDescription,
+                                 Supplier = posummary.VendorName,
+                                 QuantityOrdered = posummary.Ordered,
+                                 IsActive = posummary.IsActive,
+                                 DateCancelled = posummary.DateCancelled.ToString(),
+                                 Remarks = posummary.Reason,
+                                 ActualRemaining = 0,
+                                 ActualGood = receive != null && receive.IsActive == false ? receive.ActualDelivered : 0,
 
-            return await PagedList<CancelledPoDto>.CreateAsync(cancelpo, userParams.PageNumber, userParams.PageSize);
+                             }).GroupBy(x => new
+                             {
+                                 x.Id,
+                                 x.PO_Number,
+                                 x.ItemCode,
+                                 x.ItemDescription,
+                                 x.Supplier,
+                                 x.QuantityOrdered,
+                                 x.IsActive,
+                                 x.Remarks,
+                                 x.ActualGood,
+                                 x.DateCancelled,
+
+                             })
+                                                 .Select(receive => new CancelledPoDto
+                                                 {
+                                                     Id = receive.Key.Id,
+                                                     PO_Number = receive.Key.PO_Number,
+                                                     ItemCode = receive.Key.ItemCode,
+                                                     ItemDescription = receive.Key.ItemDescription,
+                                                     Supplier = receive.Key.Supplier,
+                                                     ActualGood = receive.Sum(x => x.ActualGood),
+                                                     QuantityOrdered = receive.Key.QuantityOrdered,
+                                                     IsActive = receive.Key.IsActive,
+                                                     DateCancelled = receive.Key.DateCancelled,
+                                                     ActualRemaining = receive.Key.QuantityOrdered - (receive.Sum(x => x.ActualGood)),
+
+                                                 }).OrderBy(x => x.PO_Number)
+                                                   .Where(x => x.IsActive == false);
+
+
+            return await PagedList<CancelledPoDto>.CreateAsync(poSummary, userParams.PageNumber, userParams.PageSize);
         }
 
         public async Task<PagedList<CancelledPoDto>> GetAllCancelledPOWithPaginationOrig(UserParams userParams, string search)
         {
-            var cancelpo = _context.PoSummaries.Where(x => x.IsActive == false)
-                                           .Where(x => x.IsCancelled == true)
-                                           .Where(x => x.Reason != null)
-                                           .Select(x => new CancelledPoDto
-                                           {
-                                               Id = x.Id,
-                                               PO_Number = x.PO_Number,
-                                               ItemCode = x.ItemCode,
-                                               ItemDescription = x.ItemDescription,
-                                               Supplier = x.VendorName,
-                                               //QuantityOrdered = x.Ordered,
-                                               //QuantityCancel = receive != null ? receive.Actual_Delivered : 0,
-                                               //QuantityGood = receive != null ? receive.Actual_Delivered : 0,
-                                               DateCancelled = x.DateCancelled.ToString(),
-                                               Remarks = x.Reason,
-                                               IsActive = x.IsActive
-                                           }).Where(x => Convert.ToString(x.PO_Number).ToLower()
-                                             .Contains(search.Trim().ToLower()));
+            //var cancelpo = _context.PoSummaries.Where(x => x.IsActive == false)
+            //                               .Where(x => x.IsCancelled == true)
+            //                               .Where(x => x.Reason != null)
+            //                               .Select(x => new CancelledPoDto
+            //                               {
+            //                                   Id = x.Id,
+            //                                   PO_Number = x.PO_Number,
+            //                                   ItemCode = x.ItemCode,
+            //                                   ItemDescription = x.ItemDescription,
+            //                                   Supplier = x.VendorName,
+            //                                   //QuantityOrdered = x.Ordered,
+            //                                   //QuantityCancel = receive != null ? receive.Actual_Delivered : 0,
+            //                                   //QuantityGood = receive != null ? receive.Actual_Delivered : 0,
+            //                                   DateCancelled = x.DateCancelled.ToString(),
+            //                                   Remarks = x.Reason,
+            //                                   IsActive = x.IsActive
+            //                               }).Where(x => Convert.ToString(x.PO_Number).ToLower()
+            //                                 .Contains(search.Trim().ToLower()));
 
-            return await PagedList<CancelledPoDto>.CreateAsync(cancelpo, userParams.PageNumber, userParams.PageSize);
+
+            var poSummary = (from posummary in _context.PoSummaries
+                             where posummary.IsActive == false
+                             where posummary.IsCancelled == true
+                             join warehouse in _context.WarehouseReceived
+                             on posummary.Id equals warehouse.PoSummaryId into leftJ
+                             from receive in leftJ.DefaultIfEmpty()
+
+                             select new CancelledPoDto
+                             {
+                                 Id = posummary.Id,
+                                 PO_Number = posummary.PO_Number,
+                                 ItemCode = posummary.ItemCode,
+                                 ItemDescription = posummary.ItemDescription,
+                                 Supplier = posummary.VendorName,    
+                                 QuantityOrdered = posummary.Ordered,
+                                 IsActive = posummary.IsActive,
+                                 DateCancelled = posummary.DateCancelled.ToString(),
+                                 Remarks = posummary.Reason,
+                                 ActualRemaining = 0,
+                                 ActualGood = receive != null && receive.IsActive == false ? receive.ActualDelivered : 0,
+
+                             }).GroupBy(x => new
+                             {
+                                 x.Id,
+                                 x.PO_Number,
+                                 x.ItemCode,
+                                 x.ItemDescription,
+                                 x.Supplier,
+                                 x.QuantityOrdered,
+                                 x.IsActive,
+                                 x.Remarks,
+                                 x.ActualGood,
+                                 x.DateCancelled,
+
+                             })
+                                                 .Select(receive => new CancelledPoDto
+                                                 {
+                                                     Id = receive.Key.Id,
+                                                     PO_Number = receive.Key.PO_Number,  
+                                                     ItemCode = receive.Key.ItemCode,
+                                                     ItemDescription = receive.Key.ItemDescription,
+                                                     Supplier = receive.Key.Supplier,
+                                                     ActualGood = receive.Sum(x => x.ActualGood),
+                                                     QuantityOrdered = receive.Key.QuantityOrdered,
+                                                     IsActive = receive.Key.IsActive,
+                                                     DateCancelled = receive.Key.DateCancelled,
+                                                     ActualRemaining = receive.Key.QuantityOrdered - (receive.Sum(x => x.ActualGood)),
+
+                                                 }).OrderBy(x => x.PO_Number)
+                                                   .Where(x => x.IsActive == false)
+                                                   .Where(x => Convert.ToString(x.PO_Number).ToLower()
+                                                   .Contains(search.Trim().ToLower()));
+
+
+            return await PagedList<CancelledPoDto>.CreateAsync(poSummary, userParams.PageNumber, userParams.PageSize);
         }
 
         public async Task<PagedList<WarehouseReceivingDto>> GetAllPoSummaryWithPagination(UserParams userParams)

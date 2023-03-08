@@ -421,7 +421,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 return new List<OrderSummaryDto>();
             }
 
-
             var Totalramaining = _context.WarehouseReceived.GroupBy(x => new
             {
                 x.ItemCode,
