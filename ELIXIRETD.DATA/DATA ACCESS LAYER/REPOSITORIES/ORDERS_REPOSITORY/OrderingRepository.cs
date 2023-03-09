@@ -1227,7 +1227,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                         
 
                      }).Where(x => x.Key.IsApprove == true)
-              .Where(x => x.Key.IsReject != true)
+              
 
               .Select(x => new ApprovedMoveOrderPaginationDto
               {
@@ -1271,7 +1271,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
 
             }).Where(x => x.Key.IsApprove == true)
-              .Where(x => x.Key.IsReject != true)
+              
 
               .Select(x => new ApprovedMoveOrderPaginationDto
               {
@@ -1388,9 +1388,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             return true;
             
         }
-
+        
         public async Task<bool> ReturnMoveOrderForApproval(MoveOrder moveorder)
-        {
+        { 
             var existing = await _context.MoveOrders.Where(x => x.OrderNo == moveorder.OrderNo)
                                                     .ToListAsync();
 
