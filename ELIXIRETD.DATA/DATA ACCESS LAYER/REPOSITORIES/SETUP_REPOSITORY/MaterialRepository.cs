@@ -81,7 +81,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
 
             exisitngMaterial.ItemDescription = materials.ItemDescription;
             exisitngMaterial.SubCategoryId = materials.SubCategoryId;
-
+            exisitngMaterial.SubCategory.ItemCategoryId = materials.SubCategory.ItemCategoryId;
             exisitngMaterial.UomId = materials.UomId;
             exisitngMaterial.BufferLevel = materials.BufferLevel;
 

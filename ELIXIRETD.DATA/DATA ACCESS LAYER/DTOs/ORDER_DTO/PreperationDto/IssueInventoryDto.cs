@@ -12,5 +12,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.PreperationDto
         public string ItemCode { get; set; }
 
         public decimal Quantity { get; set; } 
+
+        public int warehouseId { get; set; }
     }
 }

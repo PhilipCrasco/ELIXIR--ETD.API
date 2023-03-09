@@ -10,5 +10,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.INVENTORYDTO
     {
         public string ItemCode { get; set; }
         public decimal QuantityOrdered { get; set; }
+        public int warehouseId { get; set; }
     }
 }
