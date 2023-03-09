@@ -368,6 +368,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                             IsApproved = x.IsApproved != null
 
                                         });
+
             return await orders.ToListAsync();
 
         }
@@ -1327,7 +1328,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                 items.Remarks = moveOrder.Remarks;
                 items.IsReject = true;
                 items.IsActive = true;
-                items.IsPrepared = false;
+                items.IsPrepared = true;
                 items.IsApproveReject = null;
 
             }
@@ -1410,7 +1411,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                 OrderDate = x.Key.OrderDate.ToString(),
                                                 PreparedDate = x.Key.PreparedDate.ToString(),
                                                 IsReject = x.Key.IsReject != null,
-                                                RejectedDate = x.Key.RejectedDateTempo.Value.ToString("MM/dd/yyyy"),
+                                                RejectedDate = x.Key.RejectedDateTempo.Value.ToString(),
                                                 Remarks = x.Key.Remarks,
                                                
 

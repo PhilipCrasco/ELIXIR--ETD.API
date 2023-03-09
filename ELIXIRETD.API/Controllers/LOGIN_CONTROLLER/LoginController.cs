@@ -22,7 +22,7 @@ namespace ELIXIRETD.API.Controllers.LOGIN_CONTROLLER
             var response = _userService.Authenticate(request);
 
             if (response == null)
-                return BadRequest(new { message = " Email or Password is incorrect!" });
+                return BadRequest(new { message = " User or Password is incorrect!" });
 
             return Ok(response);
 

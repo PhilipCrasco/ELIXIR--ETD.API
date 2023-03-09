@@ -214,6 +214,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
             }
 
             existingCategory.ItemCategoryName = category.ItemCategoryName;
+
             return true;
         }
 
@@ -405,6 +406,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
             var valid = await _context.ItemCategories.FindAsync(ItemCateg);
 
             if(valid == null)
+
                 return false;
             return true;
         }

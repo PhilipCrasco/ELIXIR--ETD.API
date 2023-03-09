@@ -408,8 +408,6 @@ namespace ELIXIRETD.API.Controllers.ORDERING_CONTROLLER
 
             var validate = _unitofwork.Orders.ValidateWarehouseId(id , itemcode);
 
-          
-
             if (!await validate)
                 return BadRequest("No id or itemcode existing");
     

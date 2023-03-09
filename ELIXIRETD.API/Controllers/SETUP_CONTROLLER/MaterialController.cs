@@ -86,8 +86,6 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
             if (validDescriptionAndUom == false)
                 return BadRequest("Item Description and Uom already exist");
 
-         
-
             if (uomId == false)
                 return BadRequest("UOM doesn't exist, Please add data first!");
 
@@ -215,11 +213,12 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
         {
          
             var valid = await _unitOfWork.Materials.UpdateItemCategory(category);
+
             if (valid == false)
                 return BadRequest("No Existing Item Category");
           
             if (await _unitOfWork.Materials.ItemCategoryExist(category.ItemCategoryName))
-                return BadRequest("Item category already exist!, Please try something else!");
+                return BadRequest("Item category already exist!");
 
             await _unitOfWork.Materials.UpdateItemCategory(category);
             await _unitOfWork.CompleteAsync();
@@ -309,7 +308,7 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
 
         [HttpGet]
         [Route("GetAllActiveSubCategory")]
-        public async Task<IActionResult> GetallActiveSubCategory ()
+        public async Task<IActionResult> GetallActiveSubCategory()
         {
             var category = await _unitOfWork.Materials.GetAllActiveSubCategory();
 
@@ -333,10 +332,10 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
             var existingSubCategandItemCateg = await _unitOfWork.Materials.ExistSubCategoryAndItemCateg(category);
 
             if (existingSubCategandItemCateg == true)
-                return BadRequest("Sub category and Item category already existing! Please try another input");
+                return BadRequest("Sub category and item category already existing");
 
             if (validateItemCateg == false)
-                return BadRequest("No Item Category Existing! Please try Another input!");
+                return BadRequest("No item category existing");
 
             await _unitOfWork.Materials.AddNewSubCategory(category);
             await _unitOfWork.CompleteAsync();
@@ -347,17 +346,15 @@ namespace ELIXIRETD.API.Controllers.SETUP_CONTROLLER
         [Route("UpdateSubCategory")]
         public async Task<IActionResult> UpdateSubCategory (SubCategory category)
         {
-            var valid = await _unitOfWork.Materials.UpdateSubCategory(category);
+
             var validateItemCateg = await _unitOfWork.Materials.ValidateItemCategory(category.ItemCategoryId);
             var existingSubCategandItemCateg = await _unitOfWork.Materials.ExistSubCategoryAndItemCateg(category);
 
-            if (valid == false)
-                return BadRequest("No Sub Category Exist! Please Try Again");
             if (existingSubCategandItemCateg == true)
-                return BadRequest("Sub category and Item category already existing! Please try another input");
+                return BadRequest("Sub category and item category already existing! ");
 
             if (validateItemCateg == false)
-                return BadRequest("No Item category existing! Please try another input!");
+                return BadRequest("No item category existing!");
 
             await _unitOfWork.Materials.UpdateSubCategory(category);
             await _unitOfWork.CompleteAsync();

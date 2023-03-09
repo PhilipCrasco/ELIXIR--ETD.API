@@ -27,6 +27,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
             receive.TransactionType = "Receiving";
             receive.IsWarehouseReceived = true;
             receive.ActualReceivingDate = DateTime.Now;
+            receive.ReceivingDate = DateTime.Now;
             await _context.WarehouseReceived.AddAsync(receive);
 
             return true;
@@ -76,7 +77,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                  DateCancelled = posummary.DateCancelled.ToString(),
                                  Remarks = posummary.Reason,
                                  ActualRemaining = 0,
-                                 ActualGood = receive != null && receive.IsActive == false ? receive.ActualDelivered : 0,
+                                 ActualGood = receive.ActualDelivered ,
 
                              }).GroupBy(x => new
                              {
@@ -153,7 +154,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                  DateCancelled = posummary.DateCancelled.ToString(),
                                  Remarks = posummary.Reason,
                                  ActualRemaining = 0,
-                                 ActualGood = receive != null && receive.IsActive == false ? receive.ActualDelivered : 0,
+                                 ActualGood = receive.ActualDelivered,
 
                              }).GroupBy(x => new
                              {
