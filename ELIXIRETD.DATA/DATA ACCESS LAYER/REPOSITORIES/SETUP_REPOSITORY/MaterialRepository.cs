@@ -537,8 +537,11 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.SETUP_REPOSITORY
             var subcategory = _context.SubCategories.Where(x => x.IsActive == true)
                                                      .Select(x => new SubCategoryDto
                                                      {
-                                                         SubcategoryName = x.SubCategoryName
-
+                                                         SubCategoryId = x.Id,
+                                                         SubcategoryName = x.SubCategoryName,
+                                                         ItemCategoryId = x.ItemCategoryId,
+                                                         CategoryName = x.ItemCategory.ItemCategoryName,
+                                                         
                                                      }).Distinct();
                                               
                    return await subcategory.ToListAsync();
