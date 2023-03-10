@@ -19,6 +19,8 @@
 
         public bool IsTransact { get; set; }
 
+        public string DeliveryStatus { get; set; }
+
         
     }
 }
