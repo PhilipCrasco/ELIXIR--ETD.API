@@ -101,7 +101,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
             });
 
             var moveOrderOut = _context.MoveOrders.Where(x => x.IsActive == true)
-                                                  .Where(x => x.IsTransact == true)
+                                                  .Where(x => x.IsPrepared == true)
                                                   .GroupBy(x => new
                                                   {
                                                       x.ItemCode,
@@ -749,7 +749,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
                                                            });
 
             var getMoveOrder = _context.MoveOrders.Where(x => x.IsActive == true)
-                                                  .Where(x => x.IsTransact == true)
+                                                  .Where(x => x.IsPrepared == true)
                                                   .GroupBy(x => new
                                                    {
                                                        x.ItemCode,
@@ -858,6 +858,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
         {
             var TotaloutMoveOrder = await _context.MoveOrders.Where(x => x.warehouseId == id)
                                                              .Where(x => x.IsActive == true)
+                                                             .Where(x => x.IsPrepared == true)
                                                              .Where(x => x.ItemCode == itemcode)
                                                              .SumAsync(x => x.QuantityOrdered);
 
@@ -915,7 +916,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
 
             var moveOrderOut = _context.MoveOrders.Where(x => x.IsActive == true)
-                                                 .Where(x => x.IsTransact == true)
+                                                 .Where(x => x.IsPrepared == true)
                                                  .GroupBy(x => new
                                                  {
                                                      x.ItemCode,

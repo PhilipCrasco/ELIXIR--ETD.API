@@ -39,6 +39,7 @@ namespace ELIXIRETD.API.Controllers.INVENTORY_CONTROLLER
         {
             foreach(Warehouse_Receiving items in receive)
             {
+
                 items.IsActive = true;
                 items.ReceivingDate = DateTime.Now;
                 items.IsWarehouseReceived = true;

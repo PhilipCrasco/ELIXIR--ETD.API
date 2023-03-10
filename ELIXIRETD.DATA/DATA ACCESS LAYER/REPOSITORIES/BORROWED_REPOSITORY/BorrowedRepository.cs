@@ -48,7 +48,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                                       Remarks = x.Key.Remarks,
                                                       PreparedBy = x.Key.PreparedBy,
                                                       IsActive = x.Key.IsActive,
-                                                      BorrowDate = x.Key.BorrowedDate.ToString(),
+                                                      BorrowedDate = x.Key.BorrowedDate.ToString(),
                                   
                                                   });
 
@@ -85,7 +85,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                                    Remarks = x.Key.Remarks,
                                                    PreparedBy = x.Key.PreparedBy,
                                                    IsActive = x.Key.IsActive,
-                                                   BorrowDate = x.Key.BorrowedDate.ToString(),
+                                                   BorrowedDate = x.Key.BorrowedDate.ToString(),
 
                                                }).Where(x => (Convert.ToString(x.BorrowedPKey)).ToLower()
                                                  .Contains(search.Trim().ToLower()));
@@ -182,7 +182,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
 
 
             var BorrowedReturn = _context.BorrowedIssueDetails.Where(x => x.IsActive == true)
-                                                             .Where(x => x.IsTransact == false)
                                                              .Where(x => x.IsReturned == true)
                                                              .GroupBy(x => new
                                                              {
@@ -365,7 +364,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.BORROWED_REPOSITORY
                                                 .FirstOrDefaultAsync();
 
             var items = _context.BorrowedIssueDetails.Where(x => x.IsActive == true)
-                                                         .Where(x => x.IsTransact != true)
                                                          .Where(x => x.PreparedBy == employee.FullName)
                                                          .Select(x => new GetAllAvailableBorrowIssueDto
                                                          {

@@ -299,10 +299,10 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
                               {
                                   WarehouseId = total.Key.warehouseId,
                                   ItemCode = total.Key.itemcode,
-                                  RemainningStocks = total.Key.WarehouseActualGood + total.Key.Borrowedreturn - total.Key.MoveOrderOut - total.Key.IssueOut - total.Key.BorrowedOut,
+                                  RemainingStocks = total.Key.WarehouseActualGood + total.Key.Borrowedreturn - total.Key.MoveOrderOut - total.Key.IssueOut - total.Key.BorrowedOut,
                                   ReceivingDate = total.Key.ReceivingDate
 
-                              }).Where(x => x.RemainningStocks != 0)
+                              }).Where(x => x.RemainingStocks != 0)
                               .Where(x => x.ItemCode == itemcode);
 
             return await getAvailable.ToListAsync();
@@ -418,7 +418,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
                                                .FirstOrDefaultAsync();
 
             var items = _context.MiscellaneousIssueDetail.Where(x => x.IsActive == true)
-                                                         .Where(x => x.IsTransact != true)
                                                          .Where(x => x.PreparedBy == employee.FullName)
                                                          .Select(x => new GetAllAvailableIssueDto
                                                          {

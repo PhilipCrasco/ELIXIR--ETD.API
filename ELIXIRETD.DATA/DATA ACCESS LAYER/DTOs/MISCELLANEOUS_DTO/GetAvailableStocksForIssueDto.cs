@@ -14,7 +14,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.MISCELLANEOUS_DTO
 
         public string ReceivingDate { get; set; }
 
-        public decimal RemainningStocks { get; set; }
+        public decimal RemainingStocks { get; set; }
 
     }
 }
