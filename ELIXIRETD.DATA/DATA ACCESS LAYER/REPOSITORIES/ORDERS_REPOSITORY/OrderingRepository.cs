@@ -1321,8 +1321,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.OrderingRepository
 
 
                                             }).Where(x => x.Key.IsApprove == true)
-                                             .Where(x => x.Key.IsReject != true)
-
+                                              
                                              .Select(x => new GetAllApprovedMoveOrderDto
                                              {
                                                  OrderNo = x.Key.OrderNo,
