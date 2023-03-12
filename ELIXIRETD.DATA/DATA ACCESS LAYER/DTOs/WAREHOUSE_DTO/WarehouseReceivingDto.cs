@@ -27,6 +27,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.WAREHOUSE_DTO
 
         public decimal TotalReject { get; set; }
 
+        public decimal ActualAdd { get; set; }
+
 
 
     }

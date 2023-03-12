@@ -1,6 +1,7 @@
 ﻿using ELIXIRETD.DATA.CORE.INTERFACES.WAREHOUSE_INTERFACE;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.IMPORT_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO;
+using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.ORDER_DTO.TransactDto;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.WAREHOUSE_DTO;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.HELPERS;
 using ELIXIRETD.DATA.DATA_ACCESS_LAYER.MODELS.IMPORT_MODEL;
@@ -115,25 +116,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
 
         public async Task<PagedList<CancelledPoDto>> GetAllCancelledPOWithPaginationOrig(UserParams userParams, string search)
         {
-            //var cancelpo = _context.PoSummaries.Where(x => x.IsActive == false)
-            //                               .Where(x => x.IsCancelled == true)
-            //                               .Where(x => x.Reason != null)
-            //                               .Select(x => new CancelledPoDto
-            //                               {
-            //                                   Id = x.Id,
-            //                                   PO_Number = x.PO_Number,
-            //                                   ItemCode = x.ItemCode,
-            //                                   ItemDescription = x.ItemDescription,
-            //                                   Supplier = x.VendorName,
-            //                                   //QuantityOrdered = x.Ordered,
-            //                                   //QuantityCancel = receive != null ? receive.Actual_Delivered : 0,
-            //                                   //QuantityGood = receive != null ? receive.Actual_Delivered : 0,
-            //                                   DateCancelled = x.DateCancelled.ToString(),
-            //                                   Remarks = x.Reason,
-            //                                   IsActive = x.IsActive
-            //                               }).Where(x => Convert.ToString(x.PO_Number).ToLower()
-            //                                 .Contains(search.Trim().ToLower()));
-
+            
 
             var poSummary = (from posummary in _context.PoSummaries
                              where posummary.IsActive == false
@@ -194,11 +177,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
 
         public async Task<PagedList<WarehouseReceivingDto>> GetAllPoSummaryWithPagination(UserParams userParams)
         {
-            var poSummary = //_context.PoSummaries
-                            //               .Where(posummary => posummary.IsActive == true)
-                            //               .GroupJoin(_context.WarehouseReceived, posummary => posummary.Id , warehouse => warehouse.Id, (posummary , warehouse) => new {posummary,warehouse} )
-                            //               .SelectMany(x => x.warehouse.DefaultIfEmpty() , (x , warehouse) => new {x.posummary, warehouse})
-                            //               .Select( x => new WarehouseReceivingDto
+            var poSummary = 
 
                               (from posummary in _context.PoSummaries
                                where posummary.IsActive == true
@@ -207,20 +186,6 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                from receive in leftJ.DefaultIfEmpty()
                                select new WarehouseReceivingDto
                                {
-                                   //Id = x.posummary.Id,
-                                   //PoNumber = x.posummary.PO_Number,
-                                   //PoDate = x.posummary.PO_Date,
-                                   //PrNumber = x.posummary.PR_Number,
-                                   //PrDate = x.posummary.PR_Date,
-                                   //ItemCode = x.posummary.ItemCode,
-                                   //ItemDescription = x.posummary.ItemDescription,
-                                   //Supplier = x.posummary.VendorName,
-                                   //Uom = x.posummary.Uom,
-                                   //QuantityOrdered = x.posummary.Ordered,
-                                   //IsActive =  x.posummary.IsActive,
-                                   //ActualRemaining = 0,
-                                   //TotalReject = 0,
-                                   //ActualGood = x.warehouse != null && x.warehouse.IsActive != false ? x.warehouse.ActualDelivered : 0,
 
                                    Id = posummary.Id,
                                    PoNumber = posummary.PO_Number,
@@ -234,7 +199,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                    QuantityOrdered = posummary.Ordered,
                                    IsActive = posummary.IsActive,
                                    ActualRemaining = 0,
-                                   TotalReject = 0,
+                                   TotalReject = receive.TotalReject != null ? receive.TotalReject : 0,
                                    ActualGood = receive != null && receive.IsActive != false ? receive.ActualDelivered : 0,
 
                                }).GroupBy(x => new
@@ -264,11 +229,12 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                                          ItemDescription = receive.Key.ItemDescription,
                                                          Uom = receive.Key.Uom,
                                                          Supplier = receive.Key.Supplier,
-                                                         QuantityOrdered = receive.Key.QuantityOrdered,
-                                                         ActualGood = receive.Sum(x => x.ActualGood),
-                                                         ActualRemaining = receive.Key.QuantityOrdered - (receive.Sum(x => x.ActualGood)),
+                                                         TotalReject = receive.Key.TotalReject,
+                                                         QuantityOrdered = receive.Key.QuantityOrdered ,
+                                                         ActualGood = receive.Sum(x => x.ActualGood)/* - receive.Key.TotalReject*/,
+                                                         ActualRemaining = receive.Key.QuantityOrdered - receive.Sum(x => x.ActualGood + x.TotalReject),
                                                          IsActive = receive.Key.IsActive,
-                                                         TotalReject = receive.Key.TotalReject
+                                                        
                                                      })
                                                      .OrderBy(x => x.PoNumber)
                                                      .Where(x => x.ActualRemaining != 0 && (x.ActualRemaining > 0))
@@ -299,7 +265,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                  Uom = posummary.Uom,
                                  QuantityOrdered = posummary.Ordered,
                                  IsActive = posummary.IsActive,
-                                 TotalReject = 0,
+                                 TotalReject = receive.TotalReject != null ? receive.TotalReject : 0,
                                  ActualRemaining = 0,
                                  ActualGood = receive != null && receive.IsActive != false ? receive.ActualDelivered : 0,
 
@@ -329,9 +295,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                                       ItemDescription = receive.Key.ItemDescription,
                                                       Uom = receive.Key.Uom,
                                                       Supplier = receive.Key.Supplier,
-                                                      QuantityOrdered = receive.Key.QuantityOrdered,
+                                                      QuantityOrdered = receive.Sum(x => x.QuantityOrdered),
                                                       ActualGood = receive.Sum(x => x.ActualGood),
-                                                      ActualRemaining = receive.Key.QuantityOrdered - (receive.Sum(x => x.ActualGood)),
+                                                      ActualRemaining = receive.Key.QuantityOrdered - receive.Sum(x => x.ActualGood + x.TotalReject),
                                                       IsActive = receive.Key.IsActive,
                                                       TotalReject = receive.Key.TotalReject,
 
