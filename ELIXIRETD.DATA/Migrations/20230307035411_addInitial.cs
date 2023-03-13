@@ -651,8 +651,8 @@ namespace ELIXIRETD.DATA.Migrations
                     DateAdded = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AddedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    Reason = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MenuOrder = table.Column<int>(type: "int", nullable: false)
+                    Reason = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                  
                 },
                 constraints: table =>
                 {

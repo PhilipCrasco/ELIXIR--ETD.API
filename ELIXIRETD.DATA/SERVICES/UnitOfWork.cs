@@ -55,6 +55,8 @@ namespace ELIXIRETD.DATA.SERVICES
 
         public IBorrowedItem Borrowed { get; set; }
 
+        public IMRPInventory Inventory { get; set; }
+
         public UnitOfWork(StoreContext context)
   
         {
@@ -77,6 +79,8 @@ namespace ELIXIRETD.DATA.SERVICES
             Orders = new OrderingRepository(_context);
             miscellaneous = new MiscellaneousRepository(_context);
             Borrowed = new BorrowedRepository(_context);
+            Inventory = new MRPInvetoryRepository(_context);
+
         }
 
         public async Task CompleteAsync()

@@ -78,6 +78,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                  DateCancelled = posummary.DateCancelled.ToString(),
                                  Remarks = posummary.Reason,
                                  ActualRemaining = 0,
+                                 TotalReject = receive.TotalReject != null ? receive.TotalReject : 0,
                                  ActualGood = receive.ActualDelivered ,
 
                              }).GroupBy(x => new
@@ -92,6 +93,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                  x.Remarks,
                                  x.ActualGood,
                                  x.DateCancelled,
+                       
 
                              })
                                                  .Select(receive => new CancelledPoDto
@@ -105,7 +107,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                                      QuantityOrdered = receive.Key.QuantityOrdered,
                                                      IsActive = receive.Key.IsActive,
                                                      DateCancelled = receive.Key.DateCancelled,
-                                                     ActualRemaining = receive.Key.QuantityOrdered - (receive.Sum(x => x.ActualGood)),
+                                                     TotalReject = receive.Sum(x => x.TotalReject),
+                                                     ActualRemaining = receive.Key.QuantityOrdered - receive.Sum(x => x.ActualGood + x.TotalReject),
 
                                                  }).OrderBy(x => x.PO_Number)
                                                    .Where(x => x.IsActive == false);
@@ -131,12 +134,13 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                  PO_Number = posummary.PO_Number,
                                  ItemCode = posummary.ItemCode,
                                  ItemDescription = posummary.ItemDescription,
-                                 Supplier = posummary.VendorName,    
+                                 Supplier = posummary.VendorName,
                                  QuantityOrdered = posummary.Ordered,
                                  IsActive = posummary.IsActive,
                                  DateCancelled = posummary.DateCancelled.ToString(),
                                  Remarks = posummary.Reason,
                                  ActualRemaining = 0,
+                                 TotalReject = receive.TotalReject != null ? receive.TotalReject : 0,
                                  ActualGood = receive.ActualDelivered,
 
                              }).GroupBy(x => new
@@ -151,12 +155,13 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                  x.Remarks,
                                  x.ActualGood,
                                  x.DateCancelled,
+                                
 
                              })
                                                  .Select(receive => new CancelledPoDto
                                                  {
                                                      Id = receive.Key.Id,
-                                                     PO_Number = receive.Key.PO_Number,  
+                                                     PO_Number = receive.Key.PO_Number,
                                                      ItemCode = receive.Key.ItemCode,
                                                      ItemDescription = receive.Key.ItemDescription,
                                                      Supplier = receive.Key.Supplier,
@@ -164,7 +169,8 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                                      QuantityOrdered = receive.Key.QuantityOrdered,
                                                      IsActive = receive.Key.IsActive,
                                                      DateCancelled = receive.Key.DateCancelled,
-                                                     ActualRemaining = receive.Key.QuantityOrdered - (receive.Sum(x => x.ActualGood)),
+                                                     TotalReject = receive.Sum(x => x.TotalReject),
+                                                     ActualRemaining = receive.Key.QuantityOrdered - receive.Sum(x => x.ActualGood + x.TotalReject),
 
                                                  }).OrderBy(x => x.PO_Number)
                                                    .Where(x => x.IsActive == false)
@@ -215,7 +221,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                  x.Supplier,
                                  x.QuantityOrdered,
                                  x.IsActive,
-                                 x.TotalReject
+
 
                              })
                                                      .Select(receive => new WarehouseReceivingDto
@@ -229,9 +235,9 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                                          ItemDescription = receive.Key.ItemDescription,
                                                          Uom = receive.Key.Uom,
                                                          Supplier = receive.Key.Supplier,
-                                                         TotalReject = receive.Key.TotalReject,
+                                                         TotalReject = receive.Sum(x => x.TotalReject),
                                                          QuantityOrdered = receive.Key.QuantityOrdered ,
-                                                         ActualGood = receive.Sum(x => x.ActualGood)/* - receive.Key.TotalReject*/,
+                                                         ActualGood = receive.Sum(x => x.ActualGood),
                                                          ActualRemaining = receive.Key.QuantityOrdered - receive.Sum(x => x.ActualGood + x.TotalReject),
                                                          IsActive = receive.Key.IsActive,
                                                         
@@ -282,7 +288,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                  x.Supplier,
                                  x.QuantityOrdered,
                                  x.IsActive,
-                                 x.TotalReject,
+                              
                              })
                                                   .Select(receive => new WarehouseReceivingDto
                                                   {
@@ -299,7 +305,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.WAREHOUSE_REPOSITORY
                                                       ActualGood = receive.Sum(x => x.ActualGood),
                                                       ActualRemaining = receive.Key.QuantityOrdered - receive.Sum(x => x.ActualGood + x.TotalReject),
                                                       IsActive = receive.Key.IsActive,
-                                                      TotalReject = receive.Key.TotalReject,
+                                                      TotalReject = receive.Sum(x => x.TotalReject),
 
 
                                                   }).OrderBy(x => x.PoNumber)

@@ -1163,8 +1163,6 @@ namespace ELIXIRETD.DATA.Migrations
                     b.Property<int>("MainMenuId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MenuOrder")
-                        .HasColumnType("int");
 
                     b.Property<string>("ModuleName")
                         .HasColumnType("nvarchar(max)");

@@ -18,7 +18,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.IMPORT_DTO
         public string Remarks { get; set; }
         public bool IsActive { get; set; }
         public decimal ActualGood { get; set; }
-
+        public decimal TotalReject { get; set; }    
         public decimal ActualRemaining { get; set; }
     }
 }

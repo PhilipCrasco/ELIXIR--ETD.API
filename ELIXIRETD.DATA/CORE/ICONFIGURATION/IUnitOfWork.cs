@@ -49,6 +49,8 @@ namespace ELIXIRETD.DATA.CORE.ICONFIGURATION
 
         IBorrowedItem Borrowed { get; }
 
+        IMRPInventory Inventory { get; }
+
 
                                            
         Task CompleteAsync();
