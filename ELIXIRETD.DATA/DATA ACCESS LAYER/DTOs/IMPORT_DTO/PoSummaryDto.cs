@@ -21,6 +21,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.DTOs.IMPORT_DTO
         public string UOM { get; set; }
         public decimal UnitPrice { get; set; }
         public string VendorName { get; set; }
+        public decimal TotalPrice { get; set; }
 
     }
 }
