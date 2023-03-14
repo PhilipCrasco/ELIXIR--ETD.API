@@ -74,6 +74,7 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
 
 
             var getWarehouseIn = _context.WarehouseReceived.Where(x => x.IsActive == true)
+                                                           .OrderBy(x => x.ActualReceivingDate)
                                                            .GroupBy(x => new
                                                            {
 
@@ -252,6 +253,120 @@ namespace ELIXIRETD.DATA.DATA_ACCESS_LAYER.REPOSITORIES.INVENTORY_REPOSITORY
                              total.Sum(x => x.borrowed.Quantity == null ? x.borrowed.Quantity : 0)
 
                           });
+
+            var getReserve = (from warehouse in getWarehouseStock
+                              join ordering in getOrderingReserve
+                              on warehouse.ItemCode equals ordering.ItemCode
+                              into leftJ1
+                              from ordering in leftJ1.DefaultIfEmpty()
+
+                              group new
+                              {
+
+                                  warehouse,
+                                  ordering,
+
+                              } by new
+                              {
+
+                                  warehouse.ItemCode
+
+                              } into total
+
+                              select new ReserveInventory
+                              {
+
+                                  ItemCode = total.Key.ItemCode,
+                                  Reserve = total.Sum(x => x.warehouse.ActualGood == null ? x.warehouse.ActualGood : 0) - 
+                                  total.Sum(x => x.ordering.QuantityOrdered == null ? x.ordering.QuantityOrdered : 0)
+
+                              });
+
+
+            var getSuggestedPo = (from posummary in getPoSummarry
+                                  join receive in getWarehouseIn
+                                  on posummary.ItemCode equals receive.ItemCode
+                                  into leftJ1
+                                  from receive in leftJ1.DefaultIfEmpty()
+
+                                  group new
+                                  {
+                                      posummary,
+                                      receive,
+
+                                  }
+                                  by new
+                                  {
+
+                                      posummary.ItemCode,
+
+                                  } into total
+                                  select new DtoPoSummaryInventory
+                                  {
+
+                                      ItemCode = total.Key.ItemCode,
+                                      Ordered = total.Sum(x => x.posummary.Ordered == null ? x.posummary.Ordered : 0 ) -
+                                                total.Sum(x => x.receive.ActualGood == null ? x.receive.ActualGood : 0)
+
+                                  });
+
+            var getMoveOrderoutPerMonth = _context.MoveOrders.Where(x => x.PreparedDate >= StartDate && x.PreparedDate <= EndDate)
+                                                              .Where(x => x.IsActive == true)
+                                                              .Where(x => x.IsPrepared == true)
+                                                              .GroupBy(x => new
+                                                              {
+                                                                  x.ItemCode,
+
+                                                              }).Select(x => new MoveOrderInventory
+                                                              {
+                                                                  ItemCode = x.Key.ItemCode,
+                                                                  QuantityOrdered = x.Sum(x => x.QuantityOrdered)
+
+                                                              });
+
+            var getBorrowedOutPerMonth = _context.BorrowedIssueDetails.Where(x => x.IsActive == true)
+                                                                      .GroupBy(x => new
+                                                                      {
+
+                                                                          x.ItemCode,
+
+                                                                      }).Select(x => new DtoBorrowedIssue
+                                                                      {
+
+                                                                          ItemCode = x.Key.ItemCode,
+                                                                          Quantity = x.Sum(x => x.Quantity),
+
+                                                                      });
+
+            var getReserveUsage = (from warehouse in getWarehouseStock
+                                   join moveorder in getMoveOrderoutPerMonth
+                                   on warehouse.ItemCode equals moveorder.ItemCode
+                                   into leftJ1
+                                   from moveorder in leftJ1.DefaultIfEmpty()
+                                   
+                                   join borrowed in getBorrowedOutPerMonth
+                                   on warehouse.ItemCode equals borrowed.ItemCode
+                                   into leftJ2
+                                   from borrowed in leftJ2.DefaultIfEmpty()
+                                   
+                                   group new
+                                   {
+                                       warehouse,
+                                       borrowed,
+                                       moveorder,
+                                   }
+                                   by new 
+                                   )
+
+
+
+
+
+
+
+
+
+
 
 
 
